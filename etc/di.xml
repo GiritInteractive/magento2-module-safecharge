@@ -1,0 +1,119 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Girit Safecharge di config.
+ *
+ * @category Girit
+ * @package  Girit_Safecharge
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <!-- Grid configuration. -->
+    <virtualType name="GiritSafechargeRequestGridFilterPool"
+                 type="Magento\Framework\View\Element\UiComponent\DataProvider\FilterPool">
+        <arguments>
+            <argument name="appliers"
+                      xsi:type="array">
+                <item name="regular"
+                      xsi:type="object">Magento\Framework\View\Element\UiComponent\DataProvider\RegularFilter</item>
+                <item name="fulltext"
+                      xsi:type="object">Magento\Framework\View\Element\UiComponent\DataProvider\FulltextFilter</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="GiritSafechargeRequestDataProvider"
+                 type="Magento\Framework\View\Element\UiComponent\DataProvider\DataProvider">
+        <arguments>
+            <argument name="collection"
+                      xsi:type="object"
+                      shared="false">Girit\Safecharge\Model\ResourceModel\Request\Collection</argument>
+            <argument name="filterPool"
+                      xsi:type="object"
+                      shared="false">GiritSafechargeRequestGridFilterPool</argument>
+        </arguments>
+    </virtualType>
+    <type name="Girit\Safecharge\Model\ResourceModel\Request\Grid\Collection">
+        <arguments>
+            <argument name="mainTable"
+                      xsi:type="string">girit_safecharge_api_request_grid</argument>
+            <argument name="eventPrefix"
+                      xsi:type="string">girit_safecharge_api_request_grid_grid_collection</argument>
+            <argument name="eventObject"
+                      xsi:type="string">api_request_grid_collection</argument>
+            <argument name="resourceModel"
+                      xsi:type="string">Girit\Safecharge\Model\ResourceModel\Request</argument>
+        </arguments>
+    </type>
+    <type name="Magento\Framework\View\Element\UiComponent\DataProvider\CollectionFactory">
+        <arguments>
+            <argument name="collections"
+                      xsi:type="array">
+                <item name="girit_safecharge_api_request_grid_listing_data_source"
+                      xsi:type="string">Girit\HelloWorld\Safecharge\ResourceModel\Request\Grid\Collection</item>
+            </argument>
+        </arguments>
+    </type>
+
+    <!-- Logger configuration. -->
+    <type name="Girit\Safecharge\Model\Logger\Handler">
+        <arguments>
+            <argument name="filesystem"
+                      xsi:type="object">Magento\Framework\Filesystem\Driver\File</argument>
+        </arguments>
+    </type>
+    <type name="Girit\Safecharge\Model\Logger">
+        <arguments>
+            <argument name="name"
+                      xsi:type="string">safechargeLogger</argument>
+            <argument name="handlers"
+                      xsi:type="array">
+                <item name="system"
+                      xsi:type="object">Girit\Safecharge\Model\Logger\Handler</item>
+            </argument>
+        </arguments>
+    </type>
+
+    <!-- Vault configuration. -->
+    <virtualType name="SafechargeCreditCardVaultFacade" type="Magento\Vault\Model\Method\Vault">
+        <arguments>
+            <argument name="config" xsi:type="object">SafechargeVaultPaymentConfig</argument>
+            <argument name="valueHandlerPool" xsi:type="object">SafechargeVaultPaymentValueHandlerPool</argument>
+            <argument name="vaultProvider" xsi:type="object">Girit\Safecharge\Model\Payment</argument>
+            <argument name="code" xsi:type="const">Girit\Safecharge\Model\Payment::CC_VAULT_CODE</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="SafechargeVaultPaymentValueHandlerPool" type="Magento\Payment\Gateway\Config\Config">
+        <arguments>
+            <argument name="methodCode" xsi:type="const">Girit\Safecharge\Model\Payment::CC_VAULT_CODE</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="SafechargeVaultPaymentValueHandlerPool" type="VaultPaymentValueHandlerPool">
+        <arguments>
+            <argument name="handlers" xsi:type="array">
+                <item name="default" xsi:type="string">SafechargeVaultPaymentValueHandler</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="SafechargeVaultPaymentValueHandler" type="VaultPaymentDefaultValueHandler">
+        <arguments>
+            <argument name="configInterface" xsi:type="object">SafechargeVaultPaymentConfig</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="SafechargeVaultPaymentConfig" type="Magento\Payment\Gateway\Config\Config">
+        <arguments>
+            <argument name="methodCode" xsi:type="const">Girit\Safecharge\Model\Payment::CC_VAULT_CODE</argument>
+        </arguments>
+    </virtualType>
+    <type name="Girit\Safecharge\Model\Service\CardTokenization">
+        <arguments>
+            <argument name="paymentTokenFactory" xsi:type="object">Magento\Vault\Model\CreditCardTokenFactory</argument>
+        </arguments>
+    </type>
+
+    <!-- Interface preferences. -->
+    <preference for="Girit\Safecharge\Api\RequestLogRepositoryInterface"
+                type="Girit\Safecharge\Model\ResourceModel\RequestLogRepository"/>
+    <preference for="Girit\Safecharge\Api\Data\RequestLogInterface"
+                type="Girit\Safecharge\Model\Data\RequestLog"/>
+</config>
