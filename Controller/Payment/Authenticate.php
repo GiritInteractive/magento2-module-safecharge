@@ -1,14 +1,14 @@
 <?php
 
-namespace Girit\Safecharge\Controller\Payment;
+namespace Safecharge\Safecharge\Controller\Payment;
 
 use Magento\Framework\App\Action\Action;
 
 /**
- * Girit Safecharge payment authenticate controller.
+ * Safecharge Safecharge payment authenticate controller.
  *
- * @category Girit
- * @package  Girit_Safecharge
+ * @category Safecharge
+ * @package  Safecharge_Safecharge
  */
 class Authenticate extends Action
 {
@@ -17,8 +17,8 @@ class Authenticate extends Action
         /** @var \Magento\Framework\View\Layout $layout */
         $layout = $this->_view->getLayout();
 
-        $block = $layout->createBlock(\Girit\Safecharge\Block\Payment\Authenticate\Form::class);
-        $block->setTemplate('Girit_Safecharge::payment/authenticate/form.phtml');
+        $block = $layout->createBlock(\Safecharge\Safecharge\Block\Payment\Authenticate\Form::class);
+        $block->setTemplate('Safecharge_Safecharge::payment/authenticate/form.phtml');
 
         $this->getResponse()->setBody($block->toHtml());
     }

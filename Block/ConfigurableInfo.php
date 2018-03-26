@@ -1,17 +1,17 @@
 <?php
 
-namespace Girit\Safecharge\Block;
+namespace Safecharge\Safecharge\Block;
 
-use Girit\Safecharge\Model\Payment;
+use Safecharge\Safecharge\Model\Payment;
 use Magento\Framework\Phrase;
 use Magento\Framework\View\Element\Template\Context;
 use Magento\Payment\Gateway\ConfigInterface;
 
 /**
- * Girit Safecharge configurable info block.
+ * Safecharge Safecharge configurable info block.
  *
- * @category Girit
- * @package  Girit_Safecharge
+ * @category Safecharge
+ * @package  Safecharge_Safecharge
  */
 class ConfigurableInfo extends \Magento\Payment\Block\ConfigurableInfo
 {

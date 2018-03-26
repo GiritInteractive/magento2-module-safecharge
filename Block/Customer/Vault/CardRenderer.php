@@ -1,16 +1,16 @@
 <?php
 
-namespace Girit\Safecharge\Block\Customer\Vault;
+namespace Safecharge\Safecharge\Block\Customer\Vault;
 
-use Girit\Safecharge\Model\Payment;
+use Safecharge\Safecharge\Model\Payment;
 use Magento\Vault\Api\Data\PaymentTokenInterface;
 use Magento\Vault\Block\AbstractCardRenderer;
 
 /**
- * Girit Safecharge card vault renderer.
+ * Safecharge Safecharge card vault renderer.
  *
- * @category Girit
- * @package  Girit_Safecharge
+ * @category Safecharge
+ * @package  Safecharge_Safecharge
  */
 class CardRenderer extends AbstractCardRenderer
 {

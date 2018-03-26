@@ -1,15 +1,15 @@
 <?php
 
-namespace Girit\Safecharge\Model\Adminhtml\Source;
+namespace Safecharge\Safecharge\Model\Adminhtml\Source;
 
 use Magento\Payment\Model\Method\AbstractMethod;
 use Magento\Framework\Option\ArrayInterface;
 
 /**
- * Girit Safecharge payment action source model.
+ * Safecharge Safecharge payment action source model.
  *
- * @category Girit
- * @package  Girit_Safecharge
+ * @category Safecharge
+ * @package  Safecharge_Safecharge
  */
 class PaymentAction implements ArrayInterface
 {

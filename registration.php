@@ -1,15 +1,15 @@
 <?php
 /**
- * Girit Safecharge module registration.
+ * Safecharge Safecharge module registration.
  *
- * @category Girit
- * @package  Girit_Safecharge
+ * @category Safecharge
+ * @package  Safecharge_Safecharge
  */
 
 use Magento\Framework\Component\ComponentRegistrar;
 
 ComponentRegistrar::register(
     ComponentRegistrar::MODULE,
-    'Girit_Safecharge',
+    'Safecharge_Safecharge',
     __DIR__
 );

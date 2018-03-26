@@ -1,8 +1,8 @@
 <?php
 
-namespace Girit\Safecharge\Model;
+namespace Safecharge\Safecharge\Model;
 
-use Girit\Safecharge\Model\Config as ModuleConfig;
+use Safecharge\Safecharge\Model\Config as ModuleConfig;
 use Magento\Customer\Model\Session\Proxy as CustomerSession;
 use Magento\Framework\UrlInterface;
 use Magento\Payment\Helper\Data as PaymentHelper;
@@ -12,10 +12,10 @@ use Magento\Vault\Api\PaymentTokenManagementInterface;
 use Magento\Vault\Model\CreditCardTokenFactory;
 
 /**
- * Girit Safecharge config provider model.
+ * Safecharge Safecharge config provider model.
  *
- * @category Girit
- * @package  Girit_Safecharge
+ * @category Safecharge
+ * @package  Safecharge_Safecharge
  */
 class ConfigProvider extends CcGenericConfigProvider
 {

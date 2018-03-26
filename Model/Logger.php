@@ -1,20 +1,20 @@
 <?php
 
-namespace Girit\Safecharge\Model;
+namespace Safecharge\Safecharge\Model;
 
-use Girit\Safecharge\Api\Data\RequestLogInterface;
-use Girit\Safecharge\Api\RequestLogRepositoryInterface;
-use Girit\Safecharge\Model\Data\RequestLogFactory;
+use Safecharge\Safecharge\Api\Data\RequestLogInterface;
+use Safecharge\Safecharge\Api\RequestLogRepositoryInterface;
+use Safecharge\Safecharge\Model\Data\RequestLogFactory;
 use Magento\Customer\Model\Session\Proxy as CustomerSession;
 use Magento\Framework\Api\DataObjectHelper;
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\Framework\Registry as CoreRegistry;
 
 /**
- * Girit Safecharge logger model.
+ * Safecharge Safecharge logger model.
  *
- * @category Girit
- * @package  Girit_Safecharge
+ * @category Safecharge
+ * @package  Safecharge_Safecharge
  */
 class Logger extends \Monolog\Logger
 {

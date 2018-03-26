@@ -1,8 +1,8 @@
 {
-    "name": "girit/module-Safecharge",
+    "name": "safecharge/module-safecharge",
     "description": "N/A",
     "require": {
-        "php": "~5.5.0|~5.6.0|~7.0.0"
+        "php": "~5.5.0|~5.6.0|~7.0.0|~7.1.0"
     },
     "type": "magento2-module",
     "version": "1.0.1",
@@ -11,9 +11,7 @@
         "AFL-3.0"
     ],
     "authors": [{
-        "name": "Girit",
-        "email": "giritgroup@gmail.com",
-        "homepage": "https://www.girit-tech.com/",
+        "name": "Safecharge",
         "role": "Developer"
     }],
     "autoload": {
@@ -21,7 +19,7 @@
             "registration.php"
         ],
         "psr-4": {
-            "Girit\\Safecharge\\": ""
+            "Safecharge\\Safecharge\\": ""
         }
     }
 }

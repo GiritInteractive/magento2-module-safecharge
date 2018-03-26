@@ -1,20 +1,20 @@
 <?php
 
-namespace Girit\Safecharge\Model\Redirect;
+namespace Safecharge\Safecharge\Model\Redirect;
 
-use Girit\Safecharge\Model\AbstractRequest;
-use Girit\Safecharge\Model\Config as ModuleConfig;
-use Girit\Safecharge\Model\Payment;
+use Safecharge\Safecharge\Model\AbstractRequest;
+use Safecharge\Safecharge\Model\Config as ModuleConfig;
+use Safecharge\Safecharge\Model\Payment;
 use Magento\Checkout\Model\Session\Proxy as CheckoutSession;
 use Magento\Framework\Exception\PaymentException;
 use Magento\Framework\UrlInterface;
 use Magento\Quote\Model\Quote;
 
 /**
- * Girit Safecharge config provider model.
+ * Safecharge Safecharge config provider model.
  *
- * @category Girit
- * @package  Girit_Safecharge
+ * @category Safecharge
+ * @package  Safecharge_Safecharge
  */
 class Url
 {

@@ -1,14 +1,14 @@
 <?php
 
-namespace Girit\Safecharge\Model\ResourceModel;
+namespace Safecharge\Safecharge\Model\ResourceModel;
 
 use Magento\Framework\Model\ResourceModel\Db\AbstractDb;
 
 /**
- * Girit Safecharge request log resource model.
+ * Safecharge Safecharge request log resource model.
  *
- * @category Girit
- * @package  Girit_Safecharge
+ * @category Safecharge
+ * @package  Safecharge_Safecharge
  */
 class RequestLog extends AbstractDb
 {
@@ -19,6 +19,6 @@ class RequestLog extends AbstractDb
      */
     protected function _construct()
     {
-        $this->_init('girit_safecharge_api_request_log_grid', 'request_id');
+        $this->_init('safecharge_safecharge_api_request_log_grid', 'request_id');
     }
 }

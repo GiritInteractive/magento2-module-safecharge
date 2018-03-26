@@ -1,14 +1,14 @@
 <?php
 
-namespace Girit\Safecharge\Model\Logger;
+namespace Safecharge\Safecharge\Model\Logger;
 
 use Magento\Framework\Logger\Handler\Base;
 
 /**
- * Girit Safecharge logger handler model.
+ * Safecharge Safecharge logger handler model.
  *
- * @category Girit
- * @package  Girit_Safecharge
+ * @category Safecharge
+ * @package  Safecharge_Safecharge
  */
 class Handler extends Base
 {
@@ -16,5 +16,5 @@ class Handler extends Base
      * File name
      * @var string
      */
-    protected $fileName = '/var/log/girit_safecharge.log';
+    protected $fileName = '/var/log/safecharge_safecharge.log';
 }

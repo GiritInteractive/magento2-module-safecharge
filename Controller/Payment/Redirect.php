@@ -1,19 +1,19 @@
 <?php
 
-namespace Girit\Safecharge\Controller\Payment;
+namespace Safecharge\Safecharge\Controller\Payment;
 
-use Girit\Safecharge\Model\Config as ModuleConfig;
-use Girit\Safecharge\Model\Logger as SafechargeLogger;
-use Girit\Safecharge\Model\Redirect\Url as RedirectUrlBuilder;
+use Safecharge\Safecharge\Model\Config as ModuleConfig;
+use Safecharge\Safecharge\Model\Logger as SafechargeLogger;
+use Safecharge\Safecharge\Model\Redirect\Url as RedirectUrlBuilder;
 use Magento\Framework\App\Action\Action;
 use Magento\Framework\App\Action\Context;
 use Magento\Framework\App\ResponseInterface;
 
 /**
- * Girit Safecharge payment redirect controller.
+ * Safecharge Safecharge payment redirect controller.
  *
- * @category Girit
- * @package  Girit_Safecharge
+ * @category Safecharge
+ * @package  Safecharge_Safecharge
  */
 class Redirect extends Action
 {

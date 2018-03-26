@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
 <!--
 /**
- * Girit Safecharge config config.
+ * Safecharge Safecharge config config.
  *
- * @category Girit
- * @package  Girit_Safecharge
+ * @category Safecharge
+ * @package  Safecharge_Safecharge
  */
 -->
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -44,7 +44,7 @@
                 <specificcountry/>
 
                 <!-- Gateway Configuration. -->
-                <model>Girit\Safecharge\Model\Payment</model>
+                <model>Safecharge\Safecharge\Model\Payment</model>
                 <privateInfoKeys>payment_solution,external_payment_method,authorization_code,transaction_id,safecharge_order_id,transaction_request_id</privateInfoKeys>
                 <paymentInfoKeys>payment_solution,external_payment_method,authorization_code,transaction_id,card_number,card_type,safecharge_order_id,transaction_request_id</paymentInfoKeys>
             </safecharge>

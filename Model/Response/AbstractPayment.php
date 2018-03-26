@@ -1,19 +1,19 @@
 <?php
 
-namespace Girit\Safecharge\Model\Response;
+namespace Safecharge\Safecharge\Model\Response;
 
-use Girit\Safecharge\Lib\Http\Client\Curl;
-use Girit\Safecharge\Model\AbstractResponse;
-use Girit\Safecharge\Model\Config;
-use Girit\Safecharge\Model\Logger as SafechargeLogger;
+use Safecharge\Safecharge\Lib\Http\Client\Curl;
+use Safecharge\Safecharge\Model\AbstractResponse;
+use Safecharge\Safecharge\Model\Config;
+use Safecharge\Safecharge\Model\Logger as SafechargeLogger;
 use Magento\Sales\Model\Order\Payment as OrderPayment;
 use Magento\Sales\Model\Order\Payment\Transaction as OrderTransaction;
 
 /**
- * Girit Safecharge abstract payment response model.
+ * Safecharge Safecharge abstract payment response model.
  *
- * @category Girit
- * @package  Girit_Safecharge
+ * @category Safecharge
+ * @package  Safecharge_Safecharge
  */
 abstract class AbstractPayment extends AbstractResponse
 {

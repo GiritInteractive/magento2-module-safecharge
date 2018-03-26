@@ -1,12 +1,12 @@
 <?php
 
-namespace Girit\Safecharge\Model;
+namespace Safecharge\Safecharge\Model;
 
 /**
- * Girit Safecharge private data keys provider model.
+ * Safecharge Safecharge private data keys provider model.
  *
- * @category Girit
- * @package  Girit_Safecharge
+ * @category Safecharge
+ * @package  Safecharge_Safecharge
  */
 class PrivateDataKeysProvider
 {

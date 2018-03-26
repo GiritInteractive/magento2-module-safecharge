@@ -1,18 +1,18 @@
 <?php
 
-namespace Girit\Safecharge\Model\Request;
+namespace Safecharge\Safecharge\Model\Request;
 
-use Girit\Safecharge\Model\AbstractRequest;
-use Girit\Safecharge\Model\AbstractResponse;
-use Girit\Safecharge\Model\RequestInterface;
+use Safecharge\Safecharge\Model\AbstractRequest;
+use Safecharge\Safecharge\Model\AbstractResponse;
+use Safecharge\Safecharge\Model\RequestInterface;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Exception\PaymentException;
 
 /**
- * Girit Safecharge create user request model.
+ * Safecharge Safecharge create user request model.
  *
- * @category Girit
- * @package  Girit_Safecharge
+ * @category Safecharge
+ * @package  Safecharge_Safecharge
  */
 class CreateUser extends AbstractRequest implements RequestInterface
 {

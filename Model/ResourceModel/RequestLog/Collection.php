@@ -1,14 +1,14 @@
 <?php
 
-namespace Girit\Safecharge\Model\ResourceModel\RequestLog;
+namespace Safecharge\Safecharge\Model\ResourceModel\RequestLog;
 
 use Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection;
 
 /**
- * Girit Safecharge request log collection model.
+ * Safecharge Safecharge request log collection model.
  *
- * @category Girit
- * @package  Girit_Safecharge
+ * @category Safecharge
+ * @package  Safecharge_Safecharge
  */
 class Collection extends AbstractCollection
 {
@@ -22,8 +22,8 @@ class Collection extends AbstractCollection
         parent::_construct();
 
         $this->_init(
-            \Girit\Safecharge\Model\RequestLog::class,
-            \Girit\Safecharge\Model\ResourceModel\RequestLog::class
+            \Safecharge\Safecharge\Model\RequestLog::class,
+            \Safecharge\Safecharge\Model\ResourceModel\RequestLog::class
         );
     }
 }

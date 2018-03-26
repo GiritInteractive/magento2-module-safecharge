@@ -1,15 +1,15 @@
 <?php
 
-namespace Girit\Safecharge\Model\Response;
+namespace Safecharge\Safecharge\Model\Response;
 
-use Girit\Safecharge\Model\AbstractResponse;
-use Girit\Safecharge\Model\ResponseInterface;
+use Safecharge\Safecharge\Model\AbstractResponse;
+use Safecharge\Safecharge\Model\ResponseInterface;
 
 /**
- * Girit Safecharge open order response model.
+ * Safecharge Safecharge open order response model.
  *
- * @category Girit
- * @package  Girit_Safecharge
+ * @category Safecharge
+ * @package  Safecharge_Safecharge
  */
 class OpenOrder extends AbstractResponse implements ResponseInterface
 {

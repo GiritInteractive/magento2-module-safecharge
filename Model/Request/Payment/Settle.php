@@ -1,22 +1,22 @@
 <?php
 
-namespace Girit\Safecharge\Model\Request\Payment;
+namespace Safecharge\Safecharge\Model\Request\Payment;
 
-use Girit\Safecharge\Model\AbstractRequest;
-use Girit\Safecharge\Model\AbstractResponse;
-use Girit\Safecharge\Model\Payment;
-use Girit\Safecharge\Model\Request\AbstractPayment;
-use Girit\Safecharge\Model\RequestInterface;
+use Safecharge\Safecharge\Model\AbstractRequest;
+use Safecharge\Safecharge\Model\AbstractResponse;
+use Safecharge\Safecharge\Model\Payment;
+use Safecharge\Safecharge\Model\Request\AbstractPayment;
+use Safecharge\Safecharge\Model\RequestInterface;
 use Magento\Framework\Exception\PaymentException;
 use Magento\Sales\Model\Order;
 use Magento\Sales\Model\Order\Payment as OrderPayment;
 use Magento\Sales\Model\Order\Payment\Transaction;
 
 /**
- * Girit Safecharge settle payment request model.
+ * Safecharge Safecharge settle payment request model.
  *
- * @category Girit
- * @package  Girit_Safecharge
+ * @category Safecharge
+ * @package  Safecharge_Safecharge
  */
 class Settle extends AbstractPayment implements RequestInterface
 {

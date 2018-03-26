@@ -1,17 +1,17 @@
 <?php
 
-namespace Girit\Safecharge\Model\Request;
+namespace Safecharge\Safecharge\Model\Request;
 
-use Girit\Safecharge\Model\AbstractRequest;
-use Girit\Safecharge\Model\RequestInterface;
+use Safecharge\Safecharge\Model\AbstractRequest;
+use Safecharge\Safecharge\Model\RequestInterface;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\ObjectManagerInterface;
 
 /**
- * Girit Safecharge request factory model.
+ * Safecharge Safecharge request factory model.
  *
- * @category Girit
- * @package  Girit_Safecharge
+ * @category Safecharge
+ * @package  Safecharge_Safecharge
  */
 class Factory
 {
@@ -21,10 +21,10 @@ class Factory
      * @var array
      */
     private $invokableClasses = [
-        AbstractRequest::GET_SESSION_TOKEN_METHOD => \Girit\Safecharge\Model\Request\Token::class,
-        AbstractRequest::CREATE_USER_METHOD => \Girit\Safecharge\Model\Request\CreateUser::class,
-        AbstractRequest::GET_USER_DETAILS_METHOD => \Girit\Safecharge\Model\Request\GetUserDetails::class,
-        AbstractRequest::OPEN_ORDER_METHOD => \Girit\Safecharge\Model\Request\OpenOrder::class,
+        AbstractRequest::GET_SESSION_TOKEN_METHOD => \Safecharge\Safecharge\Model\Request\Token::class,
+        AbstractRequest::CREATE_USER_METHOD => \Safecharge\Safecharge\Model\Request\CreateUser::class,
+        AbstractRequest::GET_USER_DETAILS_METHOD => \Safecharge\Safecharge\Model\Request\GetUserDetails::class,
+        AbstractRequest::OPEN_ORDER_METHOD => \Safecharge\Safecharge\Model\Request\OpenOrder::class,
     ];
 
     /**
@@ -68,7 +68,7 @@ class Factory
         if (!$model instanceof RequestInterface) {
             throw new LocalizedException(
                 __(
-                    '%1 doesn\'t implement \Girit\Safecharge\Mode\RequestInterface',
+                    '%1 doesn\'t implement \Safecharge\Safecharge\Mode\RequestInterface',
                     $className
                 )
             );

@@ -1,20 +1,20 @@
 <?php
 
-namespace Girit\Safecharge\Controller\Adminhtml\Request;
+namespace Safecharge\Safecharge\Controller\Adminhtml\Request;
 
 use Magento\Backend\App\Action;
 use Magento\Backend\App\Action\Context;
 use Magento\Framework\View\Result\PageFactory;
 
 /**
- * Girit Safecharge admin request index controller.
+ * Safecharge Safecharge admin request index controller.
  *
- * @category Girit
- * @package  Girit_Safecharge
+ * @category Safecharge
+ * @package  Safecharge_Safecharge
  */
 class Index extends Action
 {
-    const ADMIN_RESOURCE = 'Girit_Safecharge::sales_safecharge_request';
+    const ADMIN_RESOURCE = 'Safecharge_Safecharge::sales_safecharge_request';
 
     /**
      * @var PageFactory
@@ -34,7 +34,7 @@ class Index extends Action
     {
         $resultPage = $this->resultPageFactory->create();
 
-        $resultPage->setActiveMenu('Girit_Safecharge::sales_safecharge_request');
+        $resultPage->setActiveMenu('Safecharge_Safecharge::sales_safecharge_request');
         $resultPage->getConfig()->getTitle()->prepend(__('Safecharge Api Requests'));
 
         $resultPage->addBreadcrumb(__('Safecharge'), __('Safecharge'));

@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
 <!--
 /**
- * Girit Safecharge layout configuration.
+ * Safecharge Safecharge layout configuration.
  *
- * @category Girit
- * @package  Girit_Safecharge
+ * @category Safecharge
+ * @package  Safecharge_Safecharge
  */
 -->
 <page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -13,7 +13,7 @@
         <referenceBlock name="order_create_billing_form">
             <action method="setMethodFormTemplate">
                 <argument name="method" xsi:type="string">safecharge</argument>
-                <argument name="template" xsi:type="string">Girit_Safecharge::payment/safecharge.phtml</argument>
+                <argument name="template" xsi:type="string">Safecharge_Safecharge::payment/safecharge.phtml</argument>
             </action>
         </referenceBlock>
     </body>

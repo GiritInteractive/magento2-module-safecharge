@@ -1,12 +1,12 @@
 <?php
 
-namespace Girit\Safecharge\Controller\Payment\Redirect;
+namespace Safecharge\Safecharge\Controller\Payment\Redirect;
 
-use Girit\Safecharge\Model\AbstractRequest;
-use Girit\Safecharge\Model\Config as ModuleConfig;
-use Girit\Safecharge\Model\Logger as SafechargeLogger;
-use Girit\Safecharge\Model\Payment;
-use Girit\Safecharge\Model\Request\Payment\Factory as PaymentRequestFactory;
+use Safecharge\Safecharge\Model\AbstractRequest;
+use Safecharge\Safecharge\Model\Config as ModuleConfig;
+use Safecharge\Safecharge\Model\Logger as SafechargeLogger;
+use Safecharge\Safecharge\Model\Payment;
+use Safecharge\Safecharge\Model\Request\Payment\Factory as PaymentRequestFactory;
 use Magento\Checkout\Model\Session\Proxy as CheckoutSession;
 use Magento\Checkout\Model\Type\Onepage;
 use Magento\Framework\App\Action\Action;
@@ -26,10 +26,10 @@ use Magento\Sales\Model\Order\Payment\Transaction;
 use Magento\Sales\Model\OrderFactory;
 
 /**
- * Girit Safecharge redirect success controller.
+ * Safecharge Safecharge redirect success controller.
  *
- * @category Girit
- * @package  Girit_Safecharge
+ * @category Safecharge
+ * @package  Safecharge_Safecharge
  */
 class Success extends Action
 {

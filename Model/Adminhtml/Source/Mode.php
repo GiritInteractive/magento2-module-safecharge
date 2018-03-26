@@ -1,15 +1,15 @@
 <?php
 
-namespace Girit\Safecharge\Model\Adminhtml\Source;
+namespace Safecharge\Safecharge\Model\Adminhtml\Source;
 
 use Magento\Framework\Option\ArrayInterface;
-use Girit\Safecharge\Model\Payment;
+use Safecharge\Safecharge\Model\Payment;
 
 /**
- * Girit Safecharge mode source model.
+ * Safecharge Safecharge mode source model.
  *
- * @category Girit
- * @package  Girit_Safecharge
+ * @category Safecharge
+ * @package  Safecharge_Safecharge
  */
 class Mode implements ArrayInterface
 {

@@ -1,15 +1,15 @@
 <?php
 
-namespace Girit\Safecharge\Ui\Component\Listing\Column;
+namespace Safecharge\Safecharge\Ui\Component\Listing\Column;
 
-use Girit\Safecharge\Model\AbstractResponse;
+use Safecharge\Safecharge\Model\AbstractResponse;
 use Magento\Ui\Component\Listing\Columns\Column;
 
 /**
- * Girit Safecharge status column handler.
+ * Safecharge Safecharge status column handler.
  *
- * @category Girit
- * @package  Girit_Safecharge
+ * @category Safecharge
+ * @package  Safecharge_Safecharge
  */
 class Status extends Column
 {

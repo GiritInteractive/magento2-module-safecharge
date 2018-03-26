@@ -1,12 +1,12 @@
 <?php
 
-namespace Girit\Safecharge\Model;
+namespace Safecharge\Safecharge\Model;
 
 /**
- * Girit Safecharge response interface.
+ * Safecharge Safecharge response interface.
  *
- * @category Girit
- * @package  Girit_Safecharge
+ * @category Safecharge
+ * @package  Safecharge_Safecharge
  */
 interface ResponseInterface
 {

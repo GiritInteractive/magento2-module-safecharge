@@ -1,8 +1,8 @@
 /**
- * Girit Safecharge js component.
+ * Safecharge Safecharge js component.
  *
- * @category Girit
- * @package  Girit_Safecharge
+ * @category Safecharge
+ * @package  Safecharge_Safecharge
  */
 define(
     [
@@ -17,7 +17,7 @@ define(
         rendererList.push(
             {
                 type: 'safecharge',
-                component: 'Girit_Safecharge/js/view/payment/method-renderer/safecharge'
+                component: 'Safecharge_Safecharge/js/view/payment/method-renderer/safecharge'
             }
         );
 

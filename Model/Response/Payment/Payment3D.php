@@ -1,13 +1,13 @@
 <?php
 
-namespace Girit\Safecharge\Model\Response\Payment;
+namespace Safecharge\Safecharge\Model\Response\Payment;
 
-use Girit\Safecharge\Lib\Http\Client\Curl;
-use Girit\Safecharge\Model\Config;
-use Girit\Safecharge\Model\Logger as SafechargeLogger;
-use Girit\Safecharge\Model\Payment;
-use Girit\Safecharge\Model\Response\AbstractPayment;
-use Girit\Safecharge\Model\ResponseInterface;
+use Safecharge\Safecharge\Lib\Http\Client\Curl;
+use Safecharge\Safecharge\Model\Config;
+use Safecharge\Safecharge\Model\Logger as SafechargeLogger;
+use Safecharge\Safecharge\Model\Payment;
+use Safecharge\Safecharge\Model\Response\AbstractPayment;
+use Safecharge\Safecharge\Model\ResponseInterface;
 use Magento\Checkout\Model\Session\Proxy as CheckoutSession;
 use Magento\Sales\Model\Order;
 use Magento\Sales\Model\Order\Invoice;
@@ -17,10 +17,10 @@ use Magento\Sales\Model\Order\Payment\State\CaptureCommand;
 use Magento\Sales\Model\Order\Payment\Transaction;
 
 /**
- * Girit Safecharge 3d secure payment response model.
+ * Safecharge Safecharge 3d secure payment response model.
  *
- * @category Girit
- * @package  Girit_Safecharge
+ * @category Safecharge
+ * @package  Safecharge_Safecharge
  */
 class Payment3D extends AbstractPayment implements ResponseInterface
 {

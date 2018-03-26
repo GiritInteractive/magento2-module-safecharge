@@ -1,8 +1,8 @@
 <?php
 
-namespace Girit\Safecharge\Observer\Sales\Order\Invoice;
+namespace Safecharge\Safecharge\Observer\Sales\Order\Invoice;
 
-use Girit\Safecharge\Model\Payment;
+use Safecharge\Safecharge\Model\Payment;
 use Magento\Framework\Event\ObserverInterface;
 use Magento\Framework\Event\Observer;
 use Magento\Sales\Model\Order;
@@ -10,10 +10,10 @@ use Magento\Sales\Model\Order\Invoice;
 use Magento\Sales\Model\Order\Payment as OrderPayment;
 
 /**
- * Girit Safecharge sales order invoice register observer.
+ * Safecharge Safecharge sales order invoice register observer.
  *
- * @category Girit
- * @package  Girit_Safecharge
+ * @category Safecharge
+ * @package  Safecharge_Safecharge
  */
 class Register implements ObserverInterface
 {

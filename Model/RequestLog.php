@@ -1,9 +1,9 @@
 <?php
 
-namespace Girit\Safecharge\Model;
+namespace Safecharge\Safecharge\Model;
 
-use Girit\Safecharge\Api\Data\RequestLogInterface;
-use Girit\Safecharge\Api\Data\RequestLogInterfaceFactory;
+use Safecharge\Safecharge\Api\Data\RequestLogInterface;
+use Safecharge\Safecharge\Api\Data\RequestLogInterfaceFactory;
 use Magento\Framework\Api\DataObjectHelper;
 use Magento\Framework\Data\Collection\AbstractDb;
 use Magento\Framework\Model\AbstractModel;
@@ -14,10 +14,10 @@ use Magento\Framework\Registry;
 use Magento\Framework\Stdlib\DateTime\DateTime;
 
 /**
- * Girit Safecharge request log model.
+ * Safecharge Safecharge request log model.
  *
- * @category Girit
- * @package  Girit_Safecharge
+ * @category Safecharge
+ * @package  Safecharge_Safecharge
  */
 class RequestLog extends AbstractModel
 {
@@ -95,7 +95,7 @@ class RequestLog extends AbstractModel
     {
         parent::_construct();
 
-        $this->_init(\Girit\Safecharge\Model\ResourceModel\RequestLog::class);
+        $this->_init(\Safecharge\Safecharge\Model\ResourceModel\RequestLog::class);
     }
 
     /**

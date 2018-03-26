@@ -1,15 +1,15 @@
 <?php
 
-namespace Girit\Safecharge\Cron;
+namespace Safecharge\Safecharge\Cron;
 
-use Girit\Safecharge\Model\Config as ModuleConfig;
-use Girit\Safecharge\Model\ResourceModel\RequestLog\CollectionFactory;
+use Safecharge\Safecharge\Model\Config as ModuleConfig;
+use Safecharge\Safecharge\Model\ResourceModel\RequestLog\CollectionFactory;
 
 /**
- * Girit Safecharge delete old request log entries cron job.
+ * Safecharge Safecharge delete old request log entries cron job.
  *
- * @category Girit
- * @package  Girit_Safecharge
+ * @category Safecharge
+ * @package  Safecharge_Safecharge
  */
 class DeleteOldRequestLog
 {

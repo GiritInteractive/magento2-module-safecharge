@@ -1,17 +1,17 @@
 <?php
 
-namespace Girit\Safecharge\Model\ResourceModel;
+namespace Safecharge\Safecharge\Model\ResourceModel;
 
-use Girit\Safecharge\Api\Data\RequestLogInterface;
-use Girit\Safecharge\Api\RequestLogRepositoryInterface;
-use Girit\Safecharge\Model\RequestLogFactory;
+use Safecharge\Safecharge\Api\Data\RequestLogInterface;
+use Safecharge\Safecharge\Api\RequestLogRepositoryInterface;
+use Safecharge\Safecharge\Model\RequestLogFactory;
 use Magento\Framework\Event\ManagerInterface;
 
 /**
- * Girit Safecharge request log repository model.
+ * Safecharge Safecharge request log repository model.
  *
- * @category Girit
- * @package  Girit_Safecharge
+ * @category Safecharge
+ * @package  Safecharge_Safecharge
  */
 class RequestLogRepository implements RequestLogRepositoryInterface
 {

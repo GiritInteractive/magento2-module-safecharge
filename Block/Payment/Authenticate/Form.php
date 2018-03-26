@@ -1,16 +1,16 @@
 <?php
 
-namespace Girit\Safecharge\Block\Payment\Authenticate;
+namespace Safecharge\Safecharge\Block\Payment\Authenticate;
 
 use Magento\Framework\View\Element\Template;
 use Magento\Framework\View\Element\Template\Context;
 use Magento\Checkout\Model\Session\Proxy as CheckoutSession;
 
 /**
- * Girit Safecharge payment authenticate form block.
+ * Safecharge Safecharge payment authenticate form block.
  *
- * @category Girit
- * @package  Girit_Safecharge
+ * @category Safecharge
+ * @package  Safecharge_Safecharge
  */
 class Form extends Template
 {

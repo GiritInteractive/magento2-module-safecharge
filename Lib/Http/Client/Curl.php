@@ -1,12 +1,12 @@
 <?php
 
-namespace Girit\Safecharge\Lib\Http\Client;
+namespace Safecharge\Safecharge\Lib\Http\Client;
 
 /**
- * Girit Safecharge curl http client library.
+ * Safecharge Safecharge curl http client library.
  *
- * @category Girit
- * @package  Girit_Safecharge
+ * @category Safecharge
+ * @package  Safecharge_Safecharge
  */
 class Curl extends \Magento\Framework\HTTP\Client\Curl
 {

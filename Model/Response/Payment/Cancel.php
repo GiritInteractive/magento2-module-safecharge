@@ -1,15 +1,15 @@
 <?php
 
-namespace Girit\Safecharge\Model\Response\Payment;
+namespace Safecharge\Safecharge\Model\Response\Payment;
 
-use Girit\Safecharge\Model\Response\AbstractPayment;
-use Girit\Safecharge\Model\ResponseInterface;
+use Safecharge\Safecharge\Model\Response\AbstractPayment;
+use Safecharge\Safecharge\Model\ResponseInterface;
 
 /**
- * Girit Safecharge payment void response model.
+ * Safecharge Safecharge payment void response model.
  *
- * @category Girit
- * @package  Girit_Safecharge
+ * @category Safecharge
+ * @package  Safecharge_Safecharge
  */
 class Cancel extends AbstractPayment implements ResponseInterface
 {

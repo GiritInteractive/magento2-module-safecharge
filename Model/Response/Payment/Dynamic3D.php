@@ -1,16 +1,16 @@
 <?php
 
-namespace Girit\Safecharge\Model\Response\Payment;
+namespace Safecharge\Safecharge\Model\Response\Payment;
 
-use Girit\Safecharge\Model\Payment;
-use Girit\Safecharge\Model\Response\AbstractPayment;
-use Girit\Safecharge\Model\ResponseInterface;
+use Safecharge\Safecharge\Model\Payment;
+use Safecharge\Safecharge\Model\Response\AbstractPayment;
+use Safecharge\Safecharge\Model\ResponseInterface;
 
 /**
- * Girit Safecharge 3d secure payment response model.
+ * Safecharge Safecharge 3d secure payment response model.
  *
- * @category Girit
- * @package  Girit_Safecharge
+ * @category Safecharge
+ * @package  Safecharge_Safecharge
  */
 class Dynamic3D extends AbstractPayment implements ResponseInterface
 {

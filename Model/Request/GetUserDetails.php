@@ -1,17 +1,17 @@
 <?php
 
-namespace Girit\Safecharge\Model\Request;
+namespace Safecharge\Safecharge\Model\Request;
 
-use Girit\Safecharge\Model\AbstractRequest;
-use Girit\Safecharge\Model\AbstractResponse;
-use Girit\Safecharge\Model\RequestInterface;
+use Safecharge\Safecharge\Model\AbstractRequest;
+use Safecharge\Safecharge\Model\AbstractResponse;
+use Safecharge\Safecharge\Model\RequestInterface;
 use Magento\Framework\Exception\PaymentException;
 
 /**
- * Girit Safecharge get user details request model.
+ * Safecharge Safecharge get user details request model.
  *
- * @category Girit
- * @package  Girit_Safecharge
+ * @category Safecharge
+ * @package  Safecharge_Safecharge
  */
 class GetUserDetails extends AbstractRequest implements RequestInterface
 {

@@ -1,12 +1,12 @@
 <?php
 
-namespace Girit\Safecharge\Controller\Payment;
+namespace Safecharge\Safecharge\Controller\Payment;
 
-use Girit\Safecharge\Model\AbstractRequest;
-use Girit\Safecharge\Model\Config as ModuleConfig;
-use Girit\Safecharge\Model\Logger as SafechargeLogger;
-use Girit\Safecharge\Model\Payment;
-use Girit\Safecharge\Model\Request\Payment\Factory as PaymentRequestFactory;
+use Safecharge\Safecharge\Model\AbstractRequest;
+use Safecharge\Safecharge\Model\Config as ModuleConfig;
+use Safecharge\Safecharge\Model\Logger as SafechargeLogger;
+use Safecharge\Safecharge\Model\Payment;
+use Safecharge\Safecharge\Model\Request\Payment\Factory as PaymentRequestFactory;
 use Magento\Framework\App\Action\Action;
 use Magento\Framework\App\Action\Context;
 use Magento\Framework\Controller\ResultFactory;
@@ -17,10 +17,10 @@ use Magento\Sales\Model\Order\Payment as OrderPayment;
 use Magento\Sales\Model\OrderFactory;
 
 /**
- * Girit Safecharge payment place controller.
+ * Safecharge Safecharge payment place controller.
  *
- * @category Girit
- * @package  Girit_Safecharge
+ * @category Safecharge
+ * @package  Safecharge_Safecharge
  */
 class Update extends Action
 {

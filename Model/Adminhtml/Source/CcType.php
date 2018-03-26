@@ -1,12 +1,12 @@
 <?php
 
-namespace Girit\Safecharge\Model\Adminhtml\Source;
+namespace Safecharge\Safecharge\Model\Adminhtml\Source;
 
 /**
- * Girit Safecharge cc type source model.
+ * Safecharge Safecharge cc type source model.
  *
- * @category Girit
- * @package  Girit_Safecharge
+ * @category Safecharge
+ * @package  Safecharge_Safecharge
  */
 class CcType extends \Magento\Payment\Model\Source\Cctype
 {

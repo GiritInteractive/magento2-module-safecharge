@@ -1,6 +1,6 @@
 <?php
 
-namespace Girit\Safecharge\Setup;
+namespace Safecharge\Safecharge\Setup;
 
 use Magento\Framework\DB\Adapter\AdapterInterface;
 use Magento\Framework\DB\Ddl\Table;
@@ -9,10 +9,10 @@ use Magento\Framework\Setup\ModuleContextInterface;
 use Magento\Framework\Setup\SchemaSetupInterface;
 
 /**
- * Girit Safecharge install schema.
+ * Safecharge Safecharge install schema.
  *
- * @category Girit
- * @package  Girit_Safecharge
+ * @category Safecharge
+ * @package  Safecharge_Safecharge
  */
 class InstallSchema implements InstallSchemaInterface
 {
@@ -31,10 +31,10 @@ class InstallSchema implements InstallSchemaInterface
     ) {
         $setup->startSetup();
 
-        if (!$setup->tableExists('girit_safecharge_api_request_log_grid')) {
+        if (!$setup->tableExists('safecharge_safecharge_api_request_log_grid')) {
             $table = $setup->getConnection()
                 ->newTable(
-                    $setup->getTable('girit_safecharge_api_request_log_grid')
+                    $setup->getTable('safecharge_safecharge_api_request_log_grid')
                 )
                 ->addColumn(
                     'request_id',
@@ -152,14 +152,14 @@ class InstallSchema implements InstallSchemaInterface
                     ],
                     'Updated At'
                 )
-                ->setComment('Girit Safecharge Api Request Log Grid Table');
+                ->setComment('Safecharge Safecharge Api Request Log Grid Table');
             $setup->getConnection()->createTable($table);
 
             $setup->getConnection()
                 ->addIndex(
-                    $setup->getTable('girit_safecharge_api_request_log_grid'),
+                    $setup->getTable('safecharge_safecharge_api_request_log_grid'),
                     $setup->getIdxName(
-                        $setup->getTable('girit_safecharge_api_request_log_grid'),
+                        $setup->getTable('safecharge_safecharge_api_request_log_grid'),
                         ['method', 'request', 'response', 'increment_id'],
                         AdapterInterface::INDEX_TYPE_FULLTEXT
                     ),
@@ -169,9 +169,9 @@ class InstallSchema implements InstallSchemaInterface
 
             $setup->getConnection()
                 ->addIndex(
-                    $setup->getTable('girit_safecharge_api_request_log_grid'),
+                    $setup->getTable('safecharge_safecharge_api_request_log_grid'),
                     $setup->getIdxName(
-                        $setup->getTable('girit_safecharge_api_request_log_grid'),
+                        $setup->getTable('safecharge_safecharge_api_request_log_grid'),
                         ['parent_request_id'],
                         AdapterInterface::INDEX_TYPE_INDEX
                     ),
@@ -181,9 +181,9 @@ class InstallSchema implements InstallSchemaInterface
 
             $setup->getConnection()
                 ->addIndex(
-                    $setup->getTable('girit_safecharge_api_request_log_grid'),
+                    $setup->getTable('safecharge_safecharge_api_request_log_grid'),
                     $setup->getIdxName(
-                        $setup->getTable('girit_safecharge_api_request_log_grid'),
+                        $setup->getTable('safecharge_safecharge_api_request_log_grid'),
                         ['status'],
                         AdapterInterface::INDEX_TYPE_INDEX
                     ),

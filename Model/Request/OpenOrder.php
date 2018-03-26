@@ -1,22 +1,22 @@
 <?php
 
-namespace Girit\Safecharge\Model\Request;
+namespace Safecharge\Safecharge\Model\Request;
 
-use Girit\Safecharge\Lib\Http\Client\Curl;
-use Girit\Safecharge\Model\AbstractRequest;
-use Girit\Safecharge\Model\AbstractResponse;
-use Girit\Safecharge\Model\Config;
-use Girit\Safecharge\Model\Logger as SafechargeLogger;
-use Girit\Safecharge\Model\RequestInterface;
-use Girit\Safecharge\Model\Response\Factory as ResponseFactory;
+use Safecharge\Safecharge\Lib\Http\Client\Curl;
+use Safecharge\Safecharge\Model\AbstractRequest;
+use Safecharge\Safecharge\Model\AbstractResponse;
+use Safecharge\Safecharge\Model\Config;
+use Safecharge\Safecharge\Model\Logger as SafechargeLogger;
+use Safecharge\Safecharge\Model\RequestInterface;
+use Safecharge\Safecharge\Model\Response\Factory as ResponseFactory;
 use Magento\Framework\Exception\PaymentException;
-use Girit\Safecharge\Model\Request\Factory as RequestFactory;
+use Safecharge\Safecharge\Model\Request\Factory as RequestFactory;
 
 /**
- * Girit Safecharge open order request model.
+ * Safecharge Safecharge open order request model.
  *
- * @category Girit
- * @package  Girit_Safecharge
+ * @category Safecharge
+ * @package  Safecharge_Safecharge
  */
 class OpenOrder extends AbstractRequest implements RequestInterface
 {

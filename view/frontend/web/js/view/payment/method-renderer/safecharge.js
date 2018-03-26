@@ -1,8 +1,8 @@
 /**
- * Girit Safecharge js component.
+ * Safecharge Safecharge js component.
  *
- * @category Girit
- * @package  Girit_Safecharge
+ * @category Safecharge
+ * @package  Safecharge_Safecharge
  */
 define(
     [
@@ -25,7 +25,7 @@ define(
 
         return Component.extend({
             defaults: {
-                template: 'Girit_Safecharge/payment/safecharge',
+                template: 'Safecharge_Safecharge/payment/safecharge',
                 isCcFormShown: true,
                 creditCardToken: '',
                 creditCardSave: 0,

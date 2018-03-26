@@ -1,12 +1,12 @@
 <?php
 
-namespace Girit\Safecharge\Ui\Component\Listing\Column\Type;
+namespace Safecharge\Safecharge\Ui\Component\Listing\Column\Type;
 
 /**
- * Girit Safecharge column type data formatter.
+ * Safecharge Safecharge column type data formatter.
  *
- * @category Girit
- * @package  Girit_Safecharge
+ * @category Safecharge
+ * @package  Safecharge_Safecharge
  */
 class Json
 {

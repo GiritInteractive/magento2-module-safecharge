@@ -1,19 +1,19 @@
 <?php
 
-namespace Girit\Safecharge\Ui\DataProvider;
+namespace Safecharge\Safecharge\Ui\DataProvider;
 
-use Girit\Safecharge\Model\ResourceModel\RequestLog\CollectionFactory;
-use Girit\Safecharge\Model\ResourceModel\RequestLog\Collection;
+use Safecharge\Safecharge\Model\ResourceModel\RequestLog\CollectionFactory;
+use Safecharge\Safecharge\Model\ResourceModel\RequestLog\Collection;
 use Magento\Ui\DataProvider\AbstractDataProvider;
 use Magento\Ui\DataProvider\AddFieldToCollectionInterface;
 use Magento\Ui\DataProvider\AddFilterToCollectionInterface;
 use Magento\Framework\Api\Filter;
 
 /**
- * Girit Safecharge request log ui data provider.
+ * Safecharge Safecharge request log ui data provider.
  *
- * @category Girit
- * @package  Girit_Safecharge
+ * @category Safecharge
+ * @package  Safecharge_Safecharge
  */
 class RequestLogDataProvider extends AbstractDataProvider
 {

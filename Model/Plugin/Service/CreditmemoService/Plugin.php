@@ -1,20 +1,20 @@
 <?php
 
-namespace Girit\Safecharge\Model\Plugin\Service\CreditmemoService;
+namespace Safecharge\Safecharge\Model\Plugin\Service\CreditmemoService;
 
-use Girit\Safecharge\Api\Data\RequestLogInterface;
-use Girit\Safecharge\Model\RequestLogFactory;
-use Girit\Safecharge\Model\Logger;
+use Safecharge\Safecharge\Api\Data\RequestLogInterface;
+use Safecharge\Safecharge\Model\RequestLogFactory;
+use Safecharge\Safecharge\Model\Logger;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Registry as CoreRegistry;
 use Magento\Sales\Model\Order\Creditmemo;
 use Magento\Sales\Model\Service\CreditmemoService;
 
 /**
- * Girit Safecharge credit memo service plugin model.
+ * Safecharge Safecharge credit memo service plugin model.
  *
- * @category Girit
- * @package  Girit_Safecharge
+ * @category Safecharge
+ * @package  Safecharge_Safecharge
  */
 class Plugin
 {

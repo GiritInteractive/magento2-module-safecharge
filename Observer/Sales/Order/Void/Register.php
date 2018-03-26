@@ -1,18 +1,18 @@
 <?php
 
-namespace Girit\Safecharge\Observer\Sales\Order\Void;
+namespace Safecharge\Safecharge\Observer\Sales\Order\Void;
 
-use Girit\Safecharge\Model\Payment;
+use Safecharge\Safecharge\Model\Payment;
 use Magento\Framework\Event\ObserverInterface;
 use Magento\Framework\Event\Observer;
 use Magento\Sales\Model\Order;
 use Magento\Sales\Model\Order\Payment as OrderPayment;
 
 /**
- * Girit Safecharge sales order void observer.
+ * Safecharge Safecharge sales order void observer.
  *
- * @category Girit
- * @package  Girit_Safecharge
+ * @category Safecharge
+ * @package  Safecharge_Safecharge
  */
 class Register implements ObserverInterface
 {

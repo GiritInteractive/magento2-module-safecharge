@@ -1,15 +1,15 @@
 <?php
 
-namespace Girit\Safecharge\Api;
+namespace Safecharge\Safecharge\Api;
 
-use Girit\Safecharge\Api\Data\RequestLogInterface;
+use Safecharge\Safecharge\Api\Data\RequestLogInterface;
 use Magento\Framework\Exception\LocalizedException;
 
 /**
- * Girit Safecharge request log repository interface.
+ * Safecharge Safecharge request log repository interface.
  *
- * @category Girit
- * @package  Girit_Safecharge
+ * @category Safecharge
+ * @package  Safecharge_Safecharge
  */
 interface RequestLogRepositoryInterface
 {

@@ -1,10 +1,10 @@
 <?php
 
-namespace Girit\Safecharge\Model\Service;
+namespace Safecharge\Safecharge\Model\Service;
 
-use Girit\Safecharge\Model\AbstractRequest;
-use Girit\Safecharge\Model\Payment;
-use Girit\Safecharge\Model\Request\Payment\Factory as PaymentRequestFactory;
+use Safecharge\Safecharge\Model\AbstractRequest;
+use Safecharge\Safecharge\Model\Payment;
+use Safecharge\Safecharge\Model\Request\Payment\Factory as PaymentRequestFactory;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Sales\Model\Order\Payment as OrderPayment;
 use Magento\Vault\Api\Data\PaymentTokenInterface;
@@ -12,10 +12,10 @@ use Magento\Vault\Api\Data\PaymentTokenInterfaceFactory;
 use Magento\Vault\Api\PaymentTokenRepositoryInterface;
 
 /**
- * Girit Safecharge payment card tokenization service model.
+ * Safecharge Safecharge payment card tokenization service model.
  *
- * @category Girit
- * @package  Girit_Safecharge
+ * @category Safecharge
+ * @package  Safecharge_Safecharge
  */
 class CardTokenization
 {

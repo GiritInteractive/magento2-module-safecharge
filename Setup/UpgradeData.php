@@ -1,6 +1,6 @@
 <?php
 
-namespace Girit\Safecharge\Setup;
+namespace Safecharge\Safecharge\Setup;
 
 use Magento\Sales\Model\Order\StatusFactory as OrderStatusFactory;
 use Magento\Framework\Setup\UpgradeDataInterface;
@@ -9,10 +9,10 @@ use Magento\Framework\Setup\ModuleDataSetupInterface;
 use Magento\Sales\Model\Order;
 
 /**
- * Girit Safecharge upgrade data.
+ * Safecharge Safecharge upgrade data.
  *
- * @category Girit
- * @package  Girit_Safecharge
+ * @category Safecharge
+ * @package  Safecharge_Safecharge
  */
 class UpgradeData implements UpgradeDataInterface
 {

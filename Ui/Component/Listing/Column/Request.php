@@ -1,17 +1,17 @@
 <?php
 
-namespace Girit\Safecharge\Ui\Component\Listing\Column;
+namespace Safecharge\Safecharge\Ui\Component\Listing\Column;
 
-use Girit\Safecharge\Ui\Component\Listing\Column\Type\Json;
+use Safecharge\Safecharge\Ui\Component\Listing\Column\Type\Json;
 use Magento\Framework\View\Element\UiComponent\ContextInterface;
 use Magento\Framework\View\Element\UiComponentFactory;
 use Magento\Ui\Component\Listing\Columns\Column;
 
 /**
- * Girit Safecharge request column handler.
+ * Safecharge Safecharge request column handler.
  *
- * @category Girit
- * @package  Girit_Safecharge
+ * @category Safecharge
+ * @package  Safecharge_Safecharge
  */
 class Request extends Column
 {

@@ -1,16 +1,16 @@
 <?php
 
-namespace Girit\Safecharge\Model;
+namespace Safecharge\Safecharge\Model;
 
-use Girit\Safecharge\Lib\Http\Client\Curl;
-use Girit\Safecharge\Model\Logger as SafechargeLogger;
+use Safecharge\Safecharge\Lib\Http\Client\Curl;
+use Safecharge\Safecharge\Model\Logger as SafechargeLogger;
 use Magento\Framework\Exception\PaymentException;
 
 /**
- * Girit Safecharge abstract response model.
+ * Safecharge Safecharge abstract response model.
  *
- * @category Girit
- * @package  Girit_Safecharge
+ * @category Safecharge
+ * @package  Safecharge_Safecharge
  */
 abstract class AbstractResponse extends AbstractApi
 {

@@ -1,26 +1,26 @@
 <?xml version="1.0"?>
 <!--
 /**
- * Girit Safecharge ui component configuration.
+ * Safecharge Safecharge ui component configuration.
  *
- * @category Girit
- * @package  Girit_Safecharge
+ * @category Safecharge
+ * @package  Safecharge_Safecharge
  */
 -->
 <listing xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd">
     <argument name="data" xsi:type="array">
         <item name="js_config" xsi:type="array">
-            <item name="provider" xsi:type="string">girit_safecharge_api_request_grid_listing.girit_safecharge_api_request_grid_listing_data_source</item>
-            <item name="deps" xsi:type="string">girit_safecharge_api_request_grid_listing.girit_safecharge_api_request_grid_listing_data_source</item>
+            <item name="provider" xsi:type="string">safecharge_safecharge_api_request_grid_listing.safecharge_safecharge_api_request_grid_listing_data_source</item>
+            <item name="deps" xsi:type="string">safecharge_safecharge_api_request_grid_listing.safecharge_safecharge_api_request_grid_listing_data_source</item>
         </item>
-        <item name="spinner" xsi:type="string">girit_safecharge_api_request_grid_columns</item>
-        <item name="acl" xsi:type="string">Girit_Safecharge::sales_safecharge_request</item>
+        <item name="spinner" xsi:type="string">safecharge_safecharge_api_request_grid_columns</item>
+        <item name="acl" xsi:type="string">Safecharge_Safecharge::sales_safecharge_request</item>
     </argument>
-    <dataSource name="girit_safecharge_api_request_grid_listing_data_source">
+    <dataSource name="safecharge_safecharge_api_request_grid_listing_data_source">
         <argument name="dataProvider" xsi:type="configurableObject">
-            <argument name="class" xsi:type="string">Girit\Safecharge\Ui\DataProvider\RequestLogDataProvider</argument>
-            <argument name="name" xsi:type="string">girit_safecharge_api_request_grid_listing_data_source</argument>
+            <argument name="class" xsi:type="string">Safecharge\Safecharge\Ui\DataProvider\RequestLogDataProvider</argument>
+            <argument name="name" xsi:type="string">safecharge_safecharge_api_request_grid_listing_data_source</argument>
             <argument name="primaryFieldName" xsi:type="string">request_id</argument>
             <argument name="requestFieldName" xsi:type="string">id</argument>
             <argument name="data" xsi:type="array">
@@ -48,17 +48,17 @@
                 <item name="config"
                       xsi:type="array">
                     <item name="selectProvider"
-                          xsi:type="string">girit_safecharge_api_request_grid_listing.girit_safecharge_api_request_grid_listing.girit_safecharge_api_request_grid_columns.ids</item>
+                          xsi:type="string">safecharge_safecharge_api_request_grid_listing.safecharge_safecharge_api_request_grid_listing.safecharge_safecharge_api_request_grid_columns.ids</item>
                 </item>
             </argument>
         </exportButton>
         <filterSearch name="fulltext">
             <argument name="data" xsi:type="array">
                 <item name="config" xsi:type="array">
-                    <item name="provider" xsi:type="string">girit_safecharge_api_request_grid_listing.girit_safecharge_api_request_grid_listing_data_source</item>
-                    <item name="chipsProvider" xsi:type="string">girit_safecharge_api_request_grid_listing.girit_safecharge_api_request_grid_listing.listing_top.listing_filters_chips</item>
+                    <item name="provider" xsi:type="string">safecharge_safecharge_api_request_grid_listing.safecharge_safecharge_api_request_grid_listing_data_source</item>
+                    <item name="chipsProvider" xsi:type="string">safecharge_safecharge_api_request_grid_listing.safecharge_safecharge_api_request_grid_listing.listing_top.listing_filters_chips</item>
                     <item name="storageConfig" xsi:type="array">
-                        <item name="provider" xsi:type="string">girit_safecharge_api_request_grid_listing.girit_safecharge_api_request_grid_listing.listing_top.bookmarks</item>
+                        <item name="provider" xsi:type="string">safecharge_safecharge_api_request_grid_listing.safecharge_safecharge_api_request_grid_listing.listing_top.bookmarks</item>
                         <item name="namespace" xsi:type="string">current.search</item>
                     </item>
                 </item>
@@ -67,9 +67,9 @@
         <filters name="listing_filters">
             <argument name="data" xsi:type="array">
                 <item name="config" xsi:type="array">
-                    <item name="columnsProvider" xsi:type="string">girit_safecharge_api_request_grid_listing.girit_safecharge_api_request_grid_listing.girit_safecharge_api_request_grid_columns</item>
+                    <item name="columnsProvider" xsi:type="string">safecharge_safecharge_api_request_grid_listing.safecharge_safecharge_api_request_grid_listing.safecharge_safecharge_api_request_grid_columns</item>
                     <item name="storageConfig" xsi:type="array">
-                        <item name="provider" xsi:type="string">girit_safecharge_api_request_grid_listing.girit_safecharge_api_request_grid_listing.listing_top.bookmarks</item>
+                        <item name="provider" xsi:type="string">safecharge_safecharge_api_request_grid_listing.safecharge_safecharge_api_request_grid_listing.listing_top.bookmarks</item>
                         <item name="namespace" xsi:type="string">current.filters</item>
                     </item>
                     <item name="templates" xsi:type="array">
@@ -81,9 +81,9 @@
                         </item>
                     </item>
                     <item name="childDefaults" xsi:type="array">
-                        <item name="provider" xsi:type="string">girit_safecharge_api_request_grid_listing.girit_safecharge_api_request_grid_listing.listing_top.listing_filters</item>
+                        <item name="provider" xsi:type="string">safecharge_safecharge_api_request_grid_listing.safecharge_safecharge_api_request_grid_listing.listing_top.listing_filters</item>
                         <item name="imports" xsi:type="array">
-                            <item name="visible" xsi:type="string">girit_safecharge_api_request_grid_listing.girit_safecharge_api_request_grid_listing.girit_safecharge_api_request_grid_columns.${ $.index }:visible</item>
+                            <item name="visible" xsi:type="string">safecharge_safecharge_api_request_grid_listing.safecharge_safecharge_api_request_grid_listing.safecharge_safecharge_api_request_grid_columns.${ $.index }:visible</item>
                         </item>
                     </item>
                 </item>
@@ -114,7 +114,7 @@
         </massaction>
         <paging name="listing_paging"/>
     </listingToolbar>
-    <columns name="girit_safecharge_api_request_grid_columns">
+    <columns name="safecharge_safecharge_api_request_grid_columns">
         <selectionsColumn name="ids">
             <argument name="data" xsi:type="array">
                 <item name="config" xsi:type="array">
@@ -151,7 +151,7 @@
                 </item>
             </argument>
         </column>
-        <column name="status" class="Girit\Safecharge\Ui\Component\Listing\Column\Status">
+        <column name="status" class="Safecharge\Safecharge\Ui\Component\Listing\Column\Status">
             <argument name="data" xsi:type="array">
                 <item name="config" xsi:type="array">
                     <item name="filter" xsi:type="string">text</item>
@@ -161,7 +161,7 @@
                 </item>
             </argument>
         </column>
-        <column name="request" class="Girit\Safecharge\Ui\Component\Listing\Column\Request">
+        <column name="request" class="Safecharge\Safecharge\Ui\Component\Listing\Column\Request">
             <argument name="data" xsi:type="array">
                 <item name="config" xsi:type="array">
                     <item name="filter" xsi:type="string">text</item>
@@ -172,7 +172,7 @@
                 </item>
             </argument>
         </column>
-        <column name="response" class="Girit\Safecharge\Ui\Component\Listing\Column\Response">
+        <column name="response" class="Safecharge\Safecharge\Ui\Component\Listing\Column\Response">
             <argument name="data" xsi:type="array">
                 <item name="config" xsi:type="array">
                     <item name="filter" xsi:type="string">text</item>

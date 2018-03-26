@@ -1,19 +1,19 @@
 <?php
 
-namespace Girit\Safecharge\Controller\Payment\Redirect;
+namespace Safecharge\Safecharge\Controller\Payment\Redirect;
 
-use Girit\Safecharge\Model\Config as ModuleConfig;
-use Girit\Safecharge\Model\Logger as SafechargeLogger;
+use Safecharge\Safecharge\Model\Config as ModuleConfig;
+use Safecharge\Safecharge\Model\Logger as SafechargeLogger;
 use Magento\Framework\App\Action\Action;
 use Magento\Framework\App\Action\Context;
 use Magento\Framework\Controller\ResultFactory;
 use Magento\Framework\Controller\ResultInterface;
 
 /**
- * Girit Safecharge payment place controller.
+ * Safecharge Safecharge payment place controller.
  *
- * @category Girit
- * @package  Girit_Safecharge
+ * @category Safecharge
+ * @package  Safecharge_Safecharge
  */
 class Error extends Action
 {

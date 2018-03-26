@@ -1,10 +1,10 @@
 <?php
 
-namespace Girit\Safecharge\Model;
+namespace Safecharge\Safecharge\Model;
 
-use Girit\Safecharge\Model\Config as ModuleConfig;
-use Girit\Safecharge\Model\Request\Payment\Factory as PaymentRequestFactory;
-use Girit\Safecharge\Model\Response\Payment\Dynamic3D as Dynamic3DResponse;
+use Safecharge\Safecharge\Model\Config as ModuleConfig;
+use Safecharge\Safecharge\Model\Request\Payment\Factory as PaymentRequestFactory;
+use Safecharge\Safecharge\Model\Response\Payment\Dynamic3D as Dynamic3DResponse;
 use Magento\Checkout\Model\Session\Proxy as CheckoutSession;
 use Magento\Customer\Model\Session\Proxy as CustomerSession;
 use Magento\Framework\Api\AttributeValueFactory;
@@ -28,10 +28,10 @@ use Magento\Quote\Api\Data\PaymentInterface;
 use Magento\Vault\Api\PaymentTokenManagementInterface;
 
 /**
- * Girit Safecharge payment model.
+ * Safecharge Safecharge payment model.
  *
- * @category Girit
- * @package  Girit_Safecharge
+ * @category Safecharge
+ * @package  Safecharge_Safecharge
  */
 class Payment extends Cc implements TransparentInterface
 {
@@ -104,7 +104,7 @@ class Payment extends Cc implements TransparentInterface
      *
      * @var string
      */
-    protected $_infoBlockType = \Girit\Safecharge\Block\ConfigurableInfo::class;
+    protected $_infoBlockType = \Safecharge\Safecharge\Block\ConfigurableInfo::class;
 
     /**
      * Payment Method feature.

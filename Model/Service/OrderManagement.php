@@ -1,15 +1,15 @@
 <?php
 
-namespace Girit\Safecharge\Model\Service;
+namespace Safecharge\Safecharge\Model\Service;
 
-use Girit\Safecharge\Model\AbstractRequest;
-use Girit\Safecharge\Model\Request\Factory as RequestFactory;
+use Safecharge\Safecharge\Model\AbstractRequest;
+use Safecharge\Safecharge\Model\Request\Factory as RequestFactory;
 
 /**
- * Girit Safecharge order management service model.
+ * Safecharge Safecharge order management service model.
  *
- * @category Girit
- * @package  Girit_Safecharge
+ * @category Safecharge
+ * @package  Safecharge_Safecharge
  */
 class OrderManagement
 {

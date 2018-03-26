@@ -1,14 +1,14 @@
 <?php
 
-namespace Girit\Safecharge\Model;
+namespace Safecharge\Safecharge\Model;
 
-use Girit\Safecharge\Model\Logger as SafechargeLogger;
+use Safecharge\Safecharge\Model\Logger as SafechargeLogger;
 
 /**
- * Girit Safecharge abstract api model.
+ * Safecharge Safecharge abstract api model.
  *
- * @category Girit
- * @package  Girit_Safecharge
+ * @category Safecharge
+ * @package  Safecharge_Safecharge
  */
 abstract class AbstractApi
 {

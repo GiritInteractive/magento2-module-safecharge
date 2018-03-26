@@ -1,28 +1,28 @@
 <?php
 
-namespace Girit\Safecharge\Model\Request\Payment;
+namespace Safecharge\Safecharge\Model\Request\Payment;
 
-use Girit\Safecharge\Lib\Http\Client\Curl;
-use Girit\Safecharge\Model\AbstractRequest;
-use Girit\Safecharge\Model\AbstractResponse;
-use Girit\Safecharge\Model\Config;
-use Girit\Safecharge\Model\Logger as SafechargeLogger;
-use Girit\Safecharge\Model\Payment;
-use Girit\Safecharge\Model\Request\AbstractPayment;
-use Girit\Safecharge\Model\Request\Factory as RequestFactory;
-use Girit\Safecharge\Model\Request\Payment\Factory as PaymentRequestFactory;
-use Girit\Safecharge\Model\RequestInterface;
-use Girit\Safecharge\Model\Response\Factory as ResponseFactory;
-use Girit\Safecharge\Model\Service\UserManagement;
+use Safecharge\Safecharge\Lib\Http\Client\Curl;
+use Safecharge\Safecharge\Model\AbstractRequest;
+use Safecharge\Safecharge\Model\AbstractResponse;
+use Safecharge\Safecharge\Model\Config;
+use Safecharge\Safecharge\Model\Logger as SafechargeLogger;
+use Safecharge\Safecharge\Model\Payment;
+use Safecharge\Safecharge\Model\Request\AbstractPayment;
+use Safecharge\Safecharge\Model\Request\Factory as RequestFactory;
+use Safecharge\Safecharge\Model\Request\Payment\Factory as PaymentRequestFactory;
+use Safecharge\Safecharge\Model\RequestInterface;
+use Safecharge\Safecharge\Model\Response\Factory as ResponseFactory;
+use Safecharge\Safecharge\Model\Service\UserManagement;
 use Magento\Sales\Api\Data\OrderAddressInterface;
 use Magento\Sales\Model\Order;
 use Magento\Sales\Model\Order\Payment as OrderPayment;
 
 /**
- * Girit Safecharge user payment option payment request model.
+ * Safecharge Safecharge user payment option payment request model.
  *
- * @category Girit
- * @package  Girit_Safecharge
+ * @category Safecharge
+ * @package  Safecharge_Safecharge
  */
 class UserPaymentOption extends AbstractPayment implements RequestInterface
 {

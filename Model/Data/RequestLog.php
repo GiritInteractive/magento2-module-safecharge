@@ -1,15 +1,15 @@
 <?php
 
-namespace Girit\Safecharge\Model\Data;
+namespace Safecharge\Safecharge\Model\Data;
 
-use Girit\Safecharge\Api\Data\RequestLogInterface;
+use Safecharge\Safecharge\Api\Data\RequestLogInterface;
 use Magento\Framework\Api\AbstractSimpleObject;
 
 /**
- * Girit Safecharge request log data object.
+ * Safecharge Safecharge request log data object.
  *
- * @category Girit
- * @package  Girit_Safecharge
+ * @category Safecharge
+ * @package  Safecharge_Safecharge
  */
 class RequestLog extends AbstractSimpleObject implements RequestLogInterface
 {

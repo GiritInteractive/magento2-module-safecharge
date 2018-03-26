@@ -1,12 +1,12 @@
 <?php
 
-namespace Girit\Safecharge\Api\Data;
+namespace Safecharge\Safecharge\Api\Data;
 
 /**
- * Girit Safecharge request log entity interface.
+ * Safecharge Safecharge request log entity interface.
  *
- * @category Girit
- * @package  Girit_Safecharge
+ * @category Safecharge
+ * @package  Safecharge_Safecharge
  */
 interface RequestLogInterface
 {

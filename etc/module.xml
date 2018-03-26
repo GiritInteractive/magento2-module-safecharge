@@ -1,15 +1,15 @@
 <?xml version="1.0"?>
 <!--
 /**
- * Girit Safecharge module config.
+ * Safecharge Safecharge module config.
  *
- * @category Girit
- * @package  Girit_Safecharge
+ * @category Safecharge
+ * @package  Safecharge_Safecharge
  */
 -->
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="urn:magento:framework:Module/etc/module.xsd">
-    <module name="Girit_Safecharge" setup_version="1.0.1">
+    <module name="Safecharge_Safecharge" setup_version="1.0.1">
         <sequence>
             <module name="Magento_Sales"/>
             <module name="Magento_Payment"/>
