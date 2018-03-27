@@ -1,5 +1,5 @@
-# Magento2-Girit_Safecharge
-Girit_Safecharge - Magento 2 Payment Method Module
+# Magento2-Safecharge_Safecharge
+Safecharge_Safecharge - Magento 2 Payment Method Module
 Installation Steps:
 1. Place the contents of this repository under: {YOUR-MAGENTO2-ROOT-DIR}/app/code/Safecharge/Safecharge/
 2. Open the terminal & run the following commands:
