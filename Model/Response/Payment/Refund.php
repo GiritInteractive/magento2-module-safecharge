@@ -48,7 +48,14 @@ class Refund extends AbstractPayment implements ResponseInterface
         }
 
         $body = $this->getBody();
-        if (strtolower($body['transactionStatus']) === 'error') {
+
+        $responseTransactionStatus = strtolower(!empty($body['transactionStatus']) ? $body['transactionStatus'] : '');
+
+        if ($responseTransactionStatus === 'error') {
+            return false;
+        }
+
+        if ($responseTransactionType !== 'approved') {
             return false;
         }
 
