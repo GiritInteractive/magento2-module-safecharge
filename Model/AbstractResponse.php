@@ -2,9 +2,9 @@
 
 namespace Safecharge\Safecharge\Model;
 
+use Magento\Framework\Exception\PaymentException;
 use Safecharge\Safecharge\Lib\Http\Client\Curl;
 use Safecharge\Safecharge\Model\Logger as SafechargeLogger;
-use Magento\Framework\Exception\PaymentException;
 
 /**
  * Safecharge Safecharge abstract response model.
@@ -129,6 +129,10 @@ abstract class AbstractResponse extends AbstractApi
      */
     protected function getErrorReason()
     {
+        $body = $this->getBody();
+        if (is_array($body) && !empty($body['gwErrorReason'])) {
+            return $body['gwErrorReason'];
+        }
         return false;
     }
 
@@ -147,7 +151,17 @@ abstract class AbstractResponse extends AbstractApi
         $body = $this->getBody();
 
         $responseStatus = strtolower(!empty($body['status']) ? $body['status'] : '');
-        if ($responseStatus !== 'success') {
+        $responseTransactionStatus = strtolower(!empty($body['transactionStatus']) ? $body['transactionStatus'] : '');
+        $responseTransactionType = strtolower(!empty($body['transactionType']) ? $body['transactionType'] : '');
+        $responsetThreeDFlow = (int)(!empty($body['threeDFlow']) ? $body['threeDFlow'] : '');
+
+        if (
+            !(
+                (!in_array($responseTransactionType, ['auth', 'sale', 'sale3d']) && $responseStatus === 'success' && $responseTransactionType !== 'error') ||
+                ($responseTransactionType === 'sale3d' && $responsetThreeDFlow === 0 && $responseTransactionStatus === 'approved') ||
+                (in_array($responseTransactionType, ['auth', 'sale']) && $responseTransactionStatus === 'approved')
+            )
+        ) {
             return false;
         }
 
