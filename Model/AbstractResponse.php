@@ -157,7 +157,7 @@ abstract class AbstractResponse extends AbstractApi
 
         if (
             !(
-                (!in_array($responseTransactionType, ['auth', 'sale', 'sale3d']) && $responseStatus === 'success' && $responseTransactionType !== 'error') ||
+                (!(in_array($responseTransactionType, ['auth', 'sale']) || ($responseTransactionType === 'sale3d' && $responsetThreeDFlow === 0)) && $responseStatus === 'success' && $responseTransactionType !== 'error') ||
                 ($responseTransactionType === 'sale3d' && $responsetThreeDFlow === 0 && $responseTransactionStatus === 'approved') ||
                 (in_array($responseTransactionType, ['auth', 'sale']) && $responseTransactionStatus === 'approved')
             )
