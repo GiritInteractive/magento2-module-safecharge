@@ -55,7 +55,7 @@ class Refund extends AbstractPayment implements ResponseInterface
             return false;
         }
 
-        if ($responseTransactionType !== 'approved') {
+        if ($responseTransactionStatus !== 'approved') {
             return false;
         }
 
