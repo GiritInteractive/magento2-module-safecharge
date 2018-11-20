@@ -79,7 +79,7 @@ class Settle extends AbstractPayment implements RequestInterface
         $params = [
             'sessionToken' => $tokenResponse->getToken(),
             'clientUniqueId' => $order->getIncrementId(),
-            'currency' => $order->getBaseCurrencyCode(),
+            'currency' => $order->getOrderCurrencyCode(),
             'amount' => (float)$this->amount,
             'relatedTransactionId' => $relatedTransactionId,
             'authCode' => $authCode,

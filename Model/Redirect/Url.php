@@ -76,7 +76,7 @@ class Url
             'total_amount' => round($quote->getBaseGrandTotal(), 2),
             'discount' => round($quote->getBaseSubtotal() - $quote->getBaseSubtotalWithDiscount(), 2),
             'shipping' => round($shipping, 2),
-            'currency' => $quote->getBaseCurrencyCode(),
+            'currency' => $quote->getOrderCurrencyCode(),
             'user_token_id' => $quote->getCustomerId(),
             'time_stamp' => date('YmdHis'),
             'version' => '3.0.0',

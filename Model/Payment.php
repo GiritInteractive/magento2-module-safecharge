@@ -364,14 +364,14 @@ class Payment extends Cc implements TransparentInterface
      *
      * @return bool
      */
-    public function canUseForCurrency($currencyCode)
-    {
-        if (!in_array($currencyCode, $this->supportedCurrencyCodes, true)) {
-            return false;
-        }
-
-        return true;
-    }
+//    public function canUseForCurrency($currencyCode)
+//    {
+//        if (!in_array($currencyCode, $this->supportedCurrencyCodes, true)) {
+//            return false;
+//        }
+//
+//        return true;
+//    }
 
     /**
      * Authorize payment method.

@@ -169,6 +169,7 @@ abstract class AbstractRequest extends AbstractApi
             'merchantSiteId' => $this->config->getMerchantSiteId(),
             'clientRequestId' => (string)$this->getRequestId(),
             'timeStamp' => date('YmdHis'),
+            'platform' => 'Magento 2.0',
         ];
 
         return $params;
@@ -296,7 +297,7 @@ abstract class AbstractRequest extends AbstractApi
         $orderData = [
             'userTokenId' => $order->getCustomerId() ?: $order->getCustomerEmail(),
             'clientUniqueId' => $order->getIncrementId(),
-            'currency' => $order->getBaseCurrencyCode(),
+            'currency' => $order->getOrderCurrencyCode(),
             'amountDetails' => [
                 'totalShipping' => (float)$order->getBaseShippingAmount(),
                 'totalHandling' => (float)0,
