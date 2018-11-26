@@ -131,13 +131,22 @@ class Payment3D extends AbstractPayment implements RequestInterface
             $this->processCardTokenization();
         }
 
+        $orderDetails =  $this->getOrderData($order);
+
         $params = array_merge_recursive(
-            $this->getOrderData($order),
+            $orderDetails,
             [
                 'orderId' => $orderPayment->getAdditionalInformation(Payment::TRANSACTION_ORDER_ID),
                 'sessionToken' => $orderPayment->getAdditionalInformation(Payment::TRANSACTION_SESSION_TOKEN),
                 'transactionType' => $this->getActionType(),
                 'amount' => (float)$this->amount,
+                'email' => $orderDetails['billingAddress']['email'],
+                'address' => $orderDetails['billingAddress']['address'],
+                'zip' => $orderDetails['billingAddress']['zip'],
+                'firstName' => $orderDetails['billingAddress']['firstName'],
+                'lastName' => $orderDetails['billingAddress']['lastName'],
+                'phone' => $orderDetails['billingAddress']['phone'],
+                'ipAddress' => $orderDetails['deviceDetails']['ipAddress'],
             ]
         );
 

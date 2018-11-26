@@ -118,13 +118,22 @@ class Cc extends AbstractPayment implements RequestInterface
             ->create(AbstractRequest::GET_SESSION_TOKEN_METHOD);
         $tokenResponse = $tokenRequest->process();
 
+        $orderDetails =  $this->getOrderData($order);
+
         $params = array_merge_recursive(
-            $this->getOrderData($order),
+            $orderDetails,
             [
                 'sessionToken' => $tokenResponse->getToken(),
                 'transactionType' => $this->getActionType(),
                 'isRebilling' => 0,
                 'amount' => (float)$this->amount,
+                'email' => $orderDetails['billingAddress']['email'],
+                'address' => $orderDetails['billingAddress']['address'],
+                'zip' => $orderDetails['billingAddress']['zip'],
+                'firstName' => $orderDetails['billingAddress']['firstName'],
+                'lastName' => $orderDetails['billingAddress']['lastName'],
+                'phone' => $orderDetails['billingAddress']['phone'],
+                'ipAddress' => $orderDetails['deviceDetails']['ipAddress'],
             ]
         );
 
