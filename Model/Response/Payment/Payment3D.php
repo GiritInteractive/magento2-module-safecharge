@@ -123,14 +123,14 @@ class Payment3D extends AbstractPayment implements ResponseInterface
         if ($isSettled) {
             $message = $this->captureCommand->execute(
                 $this->orderPayment,
-                $order->getBaseGrandTotal(),
+                $order->getOrderGrandTotal(),
                 $order
             );
             $transactionType = Transaction::TYPE_CAPTURE;
         } else {
             $message = $this->authorizeCommand->execute(
                 $this->orderPayment,
-                $order->getBaseGrandTotal(),
+                $order->getOrderGrandTotal(),
                 $order
             );
             $transactionType = Transaction::TYPE_AUTH;

@@ -178,14 +178,15 @@
                     </field>
                     <field id="currency"
                            translate="label"
-                           type="select"
+                           type="multiselect"
                            sortOrder="40"
                            showInDefault="1"
                            showInWebsite="1"
                            showInStore="0"
                            canRestore="1">
-                        <label>Accepted Currency</label>
-                        <source_model>Magento\Config\Model\Config\Source\Locale\Currency</source_model>
+                       <label>Allowed Currencies</label>
+                       <source_model>Magento\Config\Model\Config\Source\Locale\Currency</source_model>
+                       <backend_model>Magento\Config\Model\Config\Backend\Currency\Allow</backend_model>
                         <config_path>payment/safecharge/currency</config_path>
                     </field>
                     <field id="use_vault"

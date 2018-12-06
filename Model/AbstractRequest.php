@@ -2,12 +2,13 @@
 
 namespace Safecharge\Safecharge\Model;
 
-use Safecharge\Safecharge\Lib\Http\Client\Curl;
-use Safecharge\Safecharge\Model\Logger as SafechargeLogger;
-use Safecharge\Safecharge\Model\Response\Factory as ResponseFactory;
+use Magento\Framework\App\ProductMetadataInterface;
 use Magento\Framework\Exception\PaymentException;
 use Magento\Sales\Api\Data\OrderAddressInterface;
 use Magento\Sales\Model\Order;
+use Safecharge\Safecharge\Lib\Http\Client\Curl;
+use Safecharge\Safecharge\Model\Logger as SafechargeLogger;
+use Safecharge\Safecharge\Model\Response\Factory as ResponseFactory;
 
 /**
  * Safecharge Safecharge abstract request model.
@@ -50,6 +51,11 @@ abstract class AbstractRequest extends AbstractApi
     protected $responseFactory;
 
     /**
+     * @var ProductMetadataInterface
+     */
+    protected $productMetadata;
+
+    /**
      * @var int
      */
     protected $requestId;
@@ -75,6 +81,7 @@ abstract class AbstractRequest extends AbstractApi
 
         $this->curl = $curl;
         $this->responseFactory = $responseFactory;
+        $this->productMetadata = \Magento\Framework\App\ObjectManager::getInstance()->get('\Magento\Framework\App\ProductMetadataInterface');
     }
 
     /**
@@ -169,6 +176,7 @@ abstract class AbstractRequest extends AbstractApi
             'merchantSiteId' => $this->config->getMerchantSiteId(),
             'clientRequestId' => (string)$this->getRequestId(),
             'timeStamp' => date('YmdHis'),
+            'customField1' => "{$this->productMetadata->getName()} {$this->productMetadata->getEdition()} {$this->productMetadata->getVersion()}",
         ];
 
         return $params;
@@ -237,7 +245,7 @@ abstract class AbstractRequest extends AbstractApi
     {
         $endpoint = $this->getEndpoint();
         $headers = $this->getHeaders();
-        $params = $this->prepareParams();
+        $params = $this->utf8_urlencode($this->prepareParams());
 
         $this->curl->setHeaders($headers);
 
@@ -296,18 +304,19 @@ abstract class AbstractRequest extends AbstractApi
         $orderData = [
             'userTokenId' => $order->getCustomerId() ?: $order->getCustomerEmail(),
             'clientUniqueId' => $order->getIncrementId(),
-            'currency' => $order->getBaseCurrencyCode(),
+            'currency' => $order->getOrderCurrencyCode(),
             'amountDetails' => [
-                'totalShipping' => (float)$order->getBaseShippingAmount(),
+                'totalShipping' => (float)$order->getShippingAmount(),
                 'totalHandling' => (float)0,
-                'totalDiscount' => (float)abs($order->getBaseDiscountAmount()),
-                'totalTax' => (float)$order->getBaseTaxAmount(),
+                'totalDiscount' => (float)abs($order->getDiscountAmount()),
+                'totalTax' => (float)$order->getTaxAmount(),
             ],
             'items' => [],
             'deviceDetails' => [
                 'deviceType' => 'DESKTOP',
                 'ipAddress' => $order->getRemoteIp(),
             ],
+            'ipAddress' => $order->getRemoteIp(),
         ];
 
         if ($billing !== null) {
@@ -325,12 +334,13 @@ abstract class AbstractRequest extends AbstractApi
                 'state' => $billing->getRegionCode(),
                 'email' => $billing->getEmail(),
             ];
+            $orderData = array_merge($orderData, $orderData['billingAddress']);
         }
 
         // Add items details.
         $orderItems = $order->getAllVisibleItems();
         foreach ($orderItems as $orderItem) {
-            $price = (float)$orderItem->getBasePrice();
+            $price = (float)$orderItem->getPrice();
             if (!$price) {
                 continue;
             }
@@ -343,5 +353,36 @@ abstract class AbstractRequest extends AbstractApi
         }
 
         return $orderData;
+    }
+
+    /**
+    * URLencode & Convert Anything To UTF-8
+    * @param mixed $var The variable you want to convert.
+    * @param boolean $deep Go deep (recursive) *Default: true
+    * @return mixed
+    */
+    public function utf8_urlencode($var, $deep = true)
+    {
+        if (is_array($var)) {
+            foreach ($var as $key => $value) {
+                if ($deep) {
+                    $var[$key] = $this->utf8_urlencode($value, $deep);
+                } elseif (!is_array($value) && !is_object($value) && !mb_detect_encoding($value, 'utf-8', true)) {
+                    $var[$key] = rawurlencode(utf8_encode($var));
+                }
+            }
+            return $var;
+        } elseif (is_object($var)) {
+            foreach ($var as $key => $value) {
+                if ($deep) {
+                    $var->$key = $this->utf8_urlencode($value, $deep);
+                } elseif (!is_array($value) && !is_object($value) && !mb_detect_encoding($value, 'utf-8', true)) {
+                    $var->$key = rawurlencode(utf8_encode($var));
+                }
+            }
+            return $var;
+        } else {
+            return rawurlencode(((!mb_detect_encoding($var, 'utf-8', true)) ? utf8_encode($var) : $var));
+        }
     }
 }

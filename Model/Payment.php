@@ -2,9 +2,6 @@
 
 namespace Safecharge\Safecharge\Model;
 
-use Safecharge\Safecharge\Model\Config as ModuleConfig;
-use Safecharge\Safecharge\Model\Request\Payment\Factory as PaymentRequestFactory;
-use Safecharge\Safecharge\Model\Response\Payment\Dynamic3D as Dynamic3DResponse;
 use Magento\Checkout\Model\Session\Proxy as CheckoutSession;
 use Magento\Customer\Model\Session\Proxy as CustomerSession;
 use Magento\Framework\Api\AttributeValueFactory;
@@ -26,6 +23,9 @@ use Magento\Payment\Model\Method\Logger as PaymentLogger;
 use Magento\Payment\Model\Method\TransparentInterface;
 use Magento\Quote\Api\Data\PaymentInterface;
 use Magento\Vault\Api\PaymentTokenManagementInterface;
+use Safecharge\Safecharge\Model\Config as ModuleConfig;
+use Safecharge\Safecharge\Model\Request\Payment\Factory as PaymentRequestFactory;
+use Safecharge\Safecharge\Model\Response\Payment\Dynamic3D as Dynamic3DResponse;
 
 /**
  * Safecharge Safecharge payment model.
@@ -168,11 +168,6 @@ class Payment extends Cc implements TransparentInterface
      * @var bool
      */
     protected $_isInitializeNeeded = false;
-
-    /**
-     * @var array
-     */
-    private $supportedCurrencyCodes = ['USD'];
 
     /**
      * @var PaymentRequestFactory
@@ -366,7 +361,8 @@ class Payment extends Cc implements TransparentInterface
      */
     public function canUseForCurrency($currencyCode)
     {
-        if (!in_array($currencyCode, $this->supportedCurrencyCodes, true)) {
+        $currencyCode = $this->moduleConfig->getStoreManager()->getStore()->getCurrentCurrency()->getCode();
+        if (!in_array($currencyCode, (array)$this->moduleConfig->getCurrency(), true)) {
             return false;
         }
 

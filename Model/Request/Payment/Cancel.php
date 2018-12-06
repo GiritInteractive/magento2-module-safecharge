@@ -2,15 +2,15 @@
 
 namespace Safecharge\Safecharge\Model\Request\Payment;
 
+use Magento\Framework\Exception\PaymentException;
+use Magento\Sales\Model\Order;
+use Magento\Sales\Model\Order\Payment as OrderPayment;
+use Magento\Sales\Model\Order\Payment\Transaction as OrderTransaction;
 use Safecharge\Safecharge\Model\AbstractRequest;
 use Safecharge\Safecharge\Model\AbstractResponse;
 use Safecharge\Safecharge\Model\Payment;
 use Safecharge\Safecharge\Model\Request\AbstractPayment;
 use Safecharge\Safecharge\Model\RequestInterface;
-use Magento\Framework\Exception\PaymentException;
-use Magento\Sales\Model\Order;
-use Magento\Sales\Model\Order\Payment as OrderPayment;
-use Magento\Sales\Model\Order\Payment\Transaction as OrderTransaction;
 
 /**
  * Safecharge Safecharge void payment request model.
@@ -73,8 +73,8 @@ class Cancel extends AbstractPayment implements RequestInterface
 
         $params = [
             'clientUniqueId' => $order->getIncrementId(),
-            'currency' => $order->getBaseCurrencyCode(),
-            'amount' => (float)$order->getBaseGrandTotal(),
+            'currency' => $order->getOrderCurrencyCode(),
+            'amount' => (float)$order->getOrderGrandTotal(),
             'relatedTransactionId' => $transaction->getTxnId(),
             'authCode' => $authCode,
             'comment' => '',

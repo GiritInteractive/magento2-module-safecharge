@@ -2,13 +2,12 @@
 
 namespace Safecharge\Safecharge\Model\Redirect;
 
+use Magento\Checkout\Model\Session\Proxy as CheckoutSession;
+use Magento\Framework\UrlInterface;
+use Magento\Quote\Model\Quote;
 use Safecharge\Safecharge\Model\AbstractRequest;
 use Safecharge\Safecharge\Model\Config as ModuleConfig;
 use Safecharge\Safecharge\Model\Payment;
-use Magento\Checkout\Model\Session\Proxy as CheckoutSession;
-use Magento\Framework\Exception\PaymentException;
-use Magento\Framework\UrlInterface;
-use Magento\Quote\Model\Quote;
 
 /**
  * Safecharge Safecharge config provider model.
@@ -76,7 +75,7 @@ class Url
             'total_amount' => round($quote->getBaseGrandTotal(), 2),
             'discount' => round($quote->getBaseSubtotal() - $quote->getBaseSubtotalWithDiscount(), 2),
             'shipping' => round($shipping, 2),
-            'currency' => $quote->getBaseCurrencyCode(),
+            'currency' => $quote->getOrderCurrencyCode(),
             'user_token_id' => $quote->getCustomerId(),
             'time_stamp' => date('YmdHis'),
             'version' => '3.0.0',

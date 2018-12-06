@@ -69,6 +69,15 @@ class Config
     }
 
     /**
+     * Return store manager.
+     * @return StoreManagerInterface
+     */
+    public function getStoreManager()
+    {
+        return $this->storeManager;
+    }
+
+    /**
      * Return store id.
      *
      * @return int
@@ -207,7 +216,8 @@ class Config
      */
     public function getCurrency()
     {
-        return $this->getConfigValue('currency');
+        $currency = $this->getConfigValue('currency');
+        return (is_array($currency)) ? $currency : explode(',', (string) $this->getConfigValue('currency'));
     }
 
     /**
