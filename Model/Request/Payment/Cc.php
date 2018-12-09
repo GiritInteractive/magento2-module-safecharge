@@ -124,7 +124,7 @@ class Cc extends AbstractPayment implements RequestInterface
                 'sessionToken' => $tokenResponse->getToken(),
                 'transactionType' => $this->getActionType(),
                 'isRebilling' => 0,
-                'amount' => (float)$this->amount,
+                'amount' => (float)$order->getGrandTotal(),
             ]
         );
 

@@ -129,7 +129,7 @@ class Dynamic3D extends AbstractPayment implements RequestInterface
             [
                 'sessionToken' => $tokenResponse->getToken(),
                 'isDynamic3D' => 1,
-                'amount' => (float)$this->amount,
+                'amount' => (float)$order->getGrandTotal(),
             ]
         );
 

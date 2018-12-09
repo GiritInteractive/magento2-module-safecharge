@@ -73,8 +73,8 @@ class Cancel extends AbstractPayment implements RequestInterface
 
         $params = [
             'clientUniqueId' => $order->getIncrementId(),
-            'currency' => $order->getOrderCurrencyCode(),
-            'amount' => (float)$order->getOrderGrandTotal(),
+            'currency' => $order->getBaseCurrencyCode(),
+            'amount' => (float)$order->getBaseGrandTotal(),
             'relatedTransactionId' => $transaction->getTxnId(),
             'authCode' => $authCode,
             'comment' => '',

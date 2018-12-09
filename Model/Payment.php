@@ -361,11 +361,6 @@ class Payment extends Cc implements TransparentInterface
      */
     public function canUseForCurrency($currencyCode)
     {
-        $currencyCode = $this->moduleConfig->getStoreManager()->getStore()->getCurrentCurrency()->getCode();
-        if (!in_array($currencyCode, (array)$this->moduleConfig->getCurrency(), true)) {
-            return false;
-        }
-
         return true;
     }
 

@@ -30,7 +30,6 @@
                 <payment_action>authorize</payment_action>
                 <payment_solution>internal</payment_solution>
                 <order_status>sc_auth</order_status>
-                <currency>USD</currency>
                 <use_vault>1</use_vault>
                 <debug>0</debug>
                 <cctypes>AE,VI,MC,MI,DN</cctypes>

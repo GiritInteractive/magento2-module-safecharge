@@ -3,6 +3,8 @@
 namespace Safecharge\Safecharge\Model;
 
 use Magento\Framework\App\Config\ScopeConfigInterface;
+use Magento\Framework\App\ProductMetadataInterface;
+use Magento\Framework\Module\ModuleListInterface;
 use Magento\Store\Model\ScopeInterface;
 use Magento\Store\Model\StoreManagerInterface;
 
@@ -14,6 +16,8 @@ use Magento\Store\Model\StoreManagerInterface;
  */
 class Config
 {
+    const MODULE_NAME = 'Safecharge_Safecharge';
+
     /**
      * Scope config object.
      *
@@ -27,6 +31,16 @@ class Config
      * @var StoreManagerInterface
      */
     private $storeManager;
+
+    /**
+     * @var ProductMetadataInterface
+     */
+    private $productMetadata;
+
+    /**
+     * @var ModuleListInterface
+     */
+    private $moduleList;
 
     /**
      * Store id.
@@ -47,13 +61,19 @@ class Config
      *
      * @param ScopeConfigInterface  $scopeConfig Scope config object.
      * @param StoreManagerInterface $storeManager Store manager object.
+     * @param ProductMetadataInterface $productMetadata
+     * @param ModuleListInterface $moduleList
      */
     public function __construct(
         ScopeConfigInterface $scopeConfig,
-        StoreManagerInterface $storeManager
+        StoreManagerInterface $storeManager,
+        ProductMetadataInterface $productMetadata,
+        ModuleListInterface $moduleList
     ) {
         $this->scopeConfig = $scopeConfig;
         $this->storeManager = $storeManager;
+        $this->productMetadata = $productMetadata;
+        $this->moduleList = $moduleList;
 
         $this->storeId = $this->getStoreId();
     }
@@ -210,17 +230,6 @@ class Config
     }
 
     /**
-     * Return currency configuration value.
-     *
-     * @return string
-     */
-    public function getCurrency()
-    {
-        $currency = $this->getConfigValue('currency');
-        return (is_array($currency)) ? $currency : explode(',', (string) $this->getConfigValue('currency'));
-    }
-
-    /**
      * Return bool value depends of that if payment method sandbox mode
      * is enabled or not.
      *
@@ -274,5 +283,41 @@ class Config
     public function getUseCcv()
     {
         return (bool)$this->getConfigValue('useccv');
+    }
+
+    public function getSourcePlatformField()
+    {
+        return "{$this->productMetadata->getName()} {$this->productMetadata->getEdition()} {$this->productMetadata->getVersion()}, " . self::MODULE_NAME . "-{$this->moduleList->getOne(self::MODULE_NAME)['setup_version']}";
+    }
+
+    /**
+    * UTF-8-encode & Convert special characters to HTML entities
+    * @param mixed $var The variable you want to convert.
+    * @param boolean $deep Go deep (recursive) *Default: true
+    * @return mixed
+    */
+    public function utf8_escape($var, $deep = true)
+    {
+        if (is_array($var)) {
+            foreach ($var as $key => $value) {
+                if ($deep) {
+                    $var[$key] = $this->utf8_escape($value, $deep);
+                } elseif (!is_array($value) && !is_object($value) && !mb_detect_encoding($value, 'utf-8', true)) {
+                    $var[$key] = htmlspecialchars(utf8_encode($var), ENT_QUOTES, 'UTF-8', false);
+                }
+            }
+            return $var;
+        } elseif (is_object($var)) {
+            foreach ($var as $key => $value) {
+                if ($deep) {
+                    $var->$key = $this->utf8_escape($value, $deep);
+                } elseif (!is_array($value) && !is_object($value) && !mb_detect_encoding($value, 'utf-8', true)) {
+                    $var->$key = htmlspecialchars(utf8_encode($var), ENT_QUOTES, 'UTF-8', false);
+                }
+            }
+            return $var;
+        } else {
+            return htmlspecialchars(((!mb_detect_encoding($var, 'utf-8', true)) ? utf8_encode($var) : $var), ENT_QUOTES, 'UTF-8', false);
+        }
     }
 }

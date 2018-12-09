@@ -176,19 +176,6 @@
                         <source_model>Safecharge\Safecharge\Model\Adminhtml\Source\PaymentSolution</source_model>
                         <config_path>payment/safecharge/payment_solution</config_path>
                     </field>
-                    <field id="currency"
-                           translate="label"
-                           type="multiselect"
-                           sortOrder="40"
-                           showInDefault="1"
-                           showInWebsite="1"
-                           showInStore="0"
-                           canRestore="1">
-                       <label>Allowed Currencies</label>
-                       <source_model>Magento\Config\Model\Config\Source\Locale\Currency</source_model>
-                       <backend_model>Magento\Config\Model\Config\Backend\Currency\Allow</backend_model>
-                        <config_path>payment/safecharge/currency</config_path>
-                    </field>
                     <field id="use_vault"
                            translate="label"
                            type="select"

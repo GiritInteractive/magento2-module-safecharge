@@ -137,7 +137,7 @@ class Payment3D extends AbstractPayment implements RequestInterface
                 'orderId' => $orderPayment->getAdditionalInformation(Payment::TRANSACTION_ORDER_ID),
                 'sessionToken' => $orderPayment->getAdditionalInformation(Payment::TRANSACTION_SESSION_TOKEN),
                 'transactionType' => $this->getActionType(),
-                'amount' => (float)$this->amount,
+                'amount' => (float)$order->getGrandTotal(),
             ]
         );
 

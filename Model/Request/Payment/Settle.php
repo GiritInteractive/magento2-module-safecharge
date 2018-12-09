@@ -2,15 +2,14 @@
 
 namespace Safecharge\Safecharge\Model\Request\Payment;
 
+use Magento\Framework\Exception\PaymentException;
+use Magento\Sales\Model\Order;
+use Magento\Sales\Model\Order\Payment as OrderPayment;
 use Safecharge\Safecharge\Model\AbstractRequest;
 use Safecharge\Safecharge\Model\AbstractResponse;
 use Safecharge\Safecharge\Model\Payment;
 use Safecharge\Safecharge\Model\Request\AbstractPayment;
 use Safecharge\Safecharge\Model\RequestInterface;
-use Magento\Framework\Exception\PaymentException;
-use Magento\Sales\Model\Order;
-use Magento\Sales\Model\Order\Payment as OrderPayment;
-use Magento\Sales\Model\Order\Payment\Transaction;
 
 /**
  * Safecharge Safecharge settle payment request model.
@@ -79,7 +78,7 @@ class Settle extends AbstractPayment implements RequestInterface
         $params = [
             'sessionToken' => $tokenResponse->getToken(),
             'clientUniqueId' => $order->getIncrementId(),
-            'currency' => $order->getOrderCurrencyCode(),
+            'currency' => $order->getBaseCurrencyCode(),
             'amount' => (float)$this->amount,
             'relatedTransactionId' => $relatedTransactionId,
             'authCode' => $authCode,

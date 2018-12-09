@@ -2,7 +2,6 @@
 
 namespace Safecharge\Safecharge\Model;
 
-use Magento\Framework\App\ProductMetadataInterface;
 use Magento\Framework\Exception\PaymentException;
 use Magento\Sales\Api\Data\OrderAddressInterface;
 use Magento\Sales\Model\Order;
@@ -51,11 +50,6 @@ abstract class AbstractRequest extends AbstractApi
     protected $responseFactory;
 
     /**
-     * @var ProductMetadataInterface
-     */
-    protected $productMetadata;
-
-    /**
      * @var int
      */
     protected $requestId;
@@ -81,7 +75,6 @@ abstract class AbstractRequest extends AbstractApi
 
         $this->curl = $curl;
         $this->responseFactory = $responseFactory;
-        $this->productMetadata = \Magento\Framework\App\ObjectManager::getInstance()->get('\Magento\Framework\App\ProductMetadataInterface');
     }
 
     /**
@@ -176,7 +169,7 @@ abstract class AbstractRequest extends AbstractApi
             'merchantSiteId' => $this->config->getMerchantSiteId(),
             'clientRequestId' => (string)$this->getRequestId(),
             'timeStamp' => date('YmdHis'),
-            'customField1' => "{$this->productMetadata->getName()} {$this->productMetadata->getEdition()} {$this->productMetadata->getVersion()}",
+            'customField1' => $this->config->getSourcePlatformField(),
         ];
 
         return $params;
@@ -245,7 +238,7 @@ abstract class AbstractRequest extends AbstractApi
     {
         $endpoint = $this->getEndpoint();
         $headers = $this->getHeaders();
-        $params = $this->utf8_urlencode($this->prepareParams());
+        $params = $this->prepareParams();
 
         $this->curl->setHeaders($headers);
 
@@ -304,12 +297,12 @@ abstract class AbstractRequest extends AbstractApi
         $orderData = [
             'userTokenId' => $order->getCustomerId() ?: $order->getCustomerEmail(),
             'clientUniqueId' => $order->getIncrementId(),
-            'currency' => $order->getOrderCurrencyCode(),
+            'currency' => $order->getBaseCurrencyCode(),
             'amountDetails' => [
-                'totalShipping' => (float)$order->getShippingAmount(),
+                'totalShipping' => (float)$order->getBaseShippingAmount(),
                 'totalHandling' => (float)0,
-                'totalDiscount' => (float)abs($order->getDiscountAmount()),
-                'totalTax' => (float)$order->getTaxAmount(),
+                'totalDiscount' => (float)abs($order->getBaseDiscountAmount()),
+                'totalTax' => (float)$order->getBaseTaxAmount(),
             ],
             'items' => [],
             'deviceDetails' => [
@@ -321,17 +314,17 @@ abstract class AbstractRequest extends AbstractApi
 
         if ($billing !== null) {
             $orderData['billingAddress'] = [
-                'firstName' => $billing->getFirstname(),
-                'lastName' => $billing->getLastname(),
-                'address' => is_array($billing->getStreet())
+                'firstName' => $this->config->utf8_escape($billing->getFirstname()),
+                'lastName' => $this->config->utf8_escape($billing->getLastname()),
+                'address' => $this->config->utf8_escape(is_array($billing->getStreet())
                     ? implode(' ', $billing->getStreet())
-                    : '',
+                    : ''),
                 'cell' => '',
-                'phone' => $billing->getTelephone(),
-                'zip' => $billing->getPostcode(),
-                'city' => $billing->getCity(),
-                'country' => $billing->getCountryId(),
-                'state' => $billing->getRegionCode(),
+                'phone' => $this->config->utf8_escape($billing->getTelephone()),
+                'zip' => $this->config->utf8_escape($billing->getPostcode()),
+                'city' => $this->config->utf8_escape($billing->getCity()),
+                'country' => $this->config->utf8_escape($billing->getCountryId()),
+                'state' => $this->config->utf8_escape($billing->getRegionCode()),
                 'email' => $billing->getEmail(),
             ];
             $orderData = array_merge($orderData, $orderData['billingAddress']);
@@ -340,49 +333,18 @@ abstract class AbstractRequest extends AbstractApi
         // Add items details.
         $orderItems = $order->getAllVisibleItems();
         foreach ($orderItems as $orderItem) {
-            $price = (float)$orderItem->getPrice();
+            $price = (float)$orderItem->getBasePrice();
             if (!$price) {
                 continue;
             }
 
             $orderData['items'][] = [
-                'name' => $orderItem->getName(),
+                'name' => $this->config->utf8_escape($orderItem->getName()),
                 'price' => $price,
                 'quantity' => (int)$orderItem->getQtyOrdered(),
             ];
         }
 
         return $orderData;
-    }
-
-    /**
-    * URLencode & Convert Anything To UTF-8
-    * @param mixed $var The variable you want to convert.
-    * @param boolean $deep Go deep (recursive) *Default: true
-    * @return mixed
-    */
-    public function utf8_urlencode($var, $deep = true)
-    {
-        if (is_array($var)) {
-            foreach ($var as $key => $value) {
-                if ($deep) {
-                    $var[$key] = $this->utf8_urlencode($value, $deep);
-                } elseif (!is_array($value) && !is_object($value) && !mb_detect_encoding($value, 'utf-8', true)) {
-                    $var[$key] = rawurlencode(utf8_encode($var));
-                }
-            }
-            return $var;
-        } elseif (is_object($var)) {
-            foreach ($var as $key => $value) {
-                if ($deep) {
-                    $var->$key = $this->utf8_urlencode($value, $deep);
-                } elseif (!is_array($value) && !is_object($value) && !mb_detect_encoding($value, 'utf-8', true)) {
-                    $var->$key = rawurlencode(utf8_encode($var));
-                }
-            }
-            return $var;
-        } else {
-            return rawurlencode(((!mb_detect_encoding($var, 'utf-8', true)) ? utf8_encode($var) : $var));
-        }
     }
 }

@@ -2,6 +2,11 @@
 
 namespace Safecharge\Safecharge\Model\Request\Payment;
 
+use Magento\Framework\Exception\PaymentException;
+use Magento\Sales\Api\TransactionRepositoryInterface;
+use Magento\Sales\Model\Order;
+use Magento\Sales\Model\Order\Payment as OrderPayment;
+use Magento\Sales\Model\Order\Payment\Transaction as OrderTransaction;
 use Safecharge\Safecharge\Lib\Http\Client\Curl;
 use Safecharge\Safecharge\Model\AbstractRequest;
 use Safecharge\Safecharge\Model\AbstractResponse;
@@ -13,11 +18,6 @@ use Safecharge\Safecharge\Model\Request\Factory as RequestFactory;
 use Safecharge\Safecharge\Model\Request\Payment\Factory as PaymentRequestFactory;
 use Safecharge\Safecharge\Model\RequestInterface;
 use Safecharge\Safecharge\Model\Response\Factory as ResponseFactory;
-use Magento\Framework\Exception\PaymentException;
-use Magento\Sales\Api\TransactionRepositoryInterface;
-use Magento\Sales\Model\Order;
-use Magento\Sales\Model\Order\Payment as OrderPayment;
-use Magento\Sales\Model\Order\Payment\Transaction as OrderTransaction;
 
 /**
  * Safecharge Safecharge refund payment request model.
@@ -141,7 +141,7 @@ class Refund extends AbstractPayment implements RequestInterface
 
         $params = [
             'clientUniqueId' => $order->getIncrementId(),
-            'currency' => $order->getOrderCurrencyCode(),
+            'currency' => $order->getBaseCurrencyCode(),
             'amount' => (float)$this->amount,
             'relatedTransactionId' => $transactionId,
             'authCode' => $authCode,
