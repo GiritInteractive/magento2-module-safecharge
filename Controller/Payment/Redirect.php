@@ -67,15 +67,14 @@ class Redirect extends Action
      */
     public function execute()
     {
-        $result = $this->jsonResultFactory->create();
-        $result->setHttpResponseCode(\Magento\Framework\Webapi\Response::HTTP_OK);
+        $result = $this->jsonResultFactory->create()
+            ->setHttpResponseCode(\Magento\Framework\Webapi\Response::HTTP_OK);
 
         if (!$this->moduleConfig->isActive()) {
             if ($this->moduleConfig->isDebugEnabled()) {
                 $this->safechargeLogger->debug('Safecharge payments module is not active at the moment!');
             }
-            $result->setData(['error_message' => __('Safecharge payments module is not active at the moment!')]);
-            return $result;
+            return $result->setData(['error_message' => __('Safecharge payments module is not active at the moment!')]);
         }
 
         $postData = $this->redirectUrlBuilder->getPostData();
@@ -84,7 +83,6 @@ class Redirect extends Action
             $this->safechargeLogger->debug('PostData: ' . print_r($postData, 1));
         }
 
-        $result->setData($postData);
-        return $result;
+        return $result->setData($postData);
     }
 }

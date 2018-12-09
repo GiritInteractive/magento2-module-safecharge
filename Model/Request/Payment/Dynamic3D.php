@@ -130,6 +130,10 @@ class Dynamic3D extends AbstractPayment implements RequestInterface
                 'sessionToken' => $tokenResponse->getToken(),
                 'isDynamic3D' => 1,
                 'amount' => (float)$order->getGrandTotal(),
+                'merchant_unique_id' => $order->getIncrementId(),
+                'urlDetails' => [
+                    'notificationUrl' => $this->config->getDmnUrl($order->getIncrementId()),
+                ],
             ]
         );
 

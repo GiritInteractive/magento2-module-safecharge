@@ -125,6 +125,10 @@ class Cc extends AbstractPayment implements RequestInterface
                 'transactionType' => $this->getActionType(),
                 'isRebilling' => 0,
                 'amount' => (float)$order->getGrandTotal(),
+                'merchant_unique_id' => $order->getIncrementId(),
+                'urlDetails' => [
+                    'notificationUrl' => $this->config->getDmnUrl($order->getIncrementId()),
+                ],
             ]
         );
 

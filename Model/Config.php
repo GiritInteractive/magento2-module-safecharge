@@ -2,9 +2,11 @@
 
 namespace Safecharge\Safecharge\Model;
 
+use Magento\Checkout\Model\Session\Proxy as CheckoutSession;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\App\ProductMetadataInterface;
 use Magento\Framework\Module\ModuleListInterface;
+use Magento\Framework\UrlInterface;
 use Magento\Store\Model\ScopeInterface;
 use Magento\Store\Model\StoreManagerInterface;
 
@@ -43,6 +45,16 @@ class Config
     private $moduleList;
 
     /**
+     * @var CheckoutSession
+     */
+    private $checkoutSession;
+
+    /**
+     * @var UrlInterface
+     */
+    private $urlBuilder;
+
+    /**
      * Store id.
      *
      * @var int
@@ -63,17 +75,23 @@ class Config
      * @param StoreManagerInterface $storeManager Store manager object.
      * @param ProductMetadataInterface $productMetadata
      * @param ModuleListInterface $moduleList
+     * @param CheckoutSession $checkoutSession
+     * @param UrlInterface $urlBuilder
      */
     public function __construct(
         ScopeConfigInterface $scopeConfig,
         StoreManagerInterface $storeManager,
         ProductMetadataInterface $productMetadata,
-        ModuleListInterface $moduleList
+        ModuleListInterface $moduleList,
+        CheckoutSession $checkoutSession,
+        UrlInterface $urlBuilder
     ) {
         $this->scopeConfig = $scopeConfig;
         $this->storeManager = $storeManager;
         $this->productMetadata = $productMetadata;
         $this->moduleList = $moduleList;
+        $this->checkoutSession = $checkoutSession;
+        $this->urlBuilder = $urlBuilder;
 
         $this->storeId = $this->getStoreId();
     }
@@ -288,6 +306,76 @@ class Config
     public function getSourcePlatformField()
     {
         return "{$this->productMetadata->getName()} {$this->productMetadata->getEdition()} {$this->productMetadata->getVersion()}, " . self::MODULE_NAME . "-{$this->moduleList->getOne(self::MODULE_NAME)['setup_version']}";
+    }
+
+    /**
+     * Return full endpoint;
+     *
+     * @return string
+     */
+    public function getEndpoint()
+    {
+        $endpoint = AbstractRequest::LIVE_ENDPOINT;
+        if ($this->isTestModeEnabled() === true) {
+            $endpoint = AbstractRequest::TEST_ENDPOINT;
+        }
+
+        return $endpoint . 'purchase.do';
+    }
+
+    /**
+     * @return string
+     */
+    public function getSuccessUrl()
+    {
+        $quoteId = $this->checkoutSession->getQuoteId();
+
+        return $this->urlBuilder->getUrl(
+            'safecharge/payment/redirect_success',
+            ['order' => $quoteId]
+        );
+    }
+
+    /**
+     * @return string
+     */
+    public function getErrorUrl()
+    {
+        $quoteId = $this->checkoutSession->getQuoteId();
+
+        return $this->urlBuilder->getUrl(
+            'safecharge/payment/redirect_error',
+            ['order' => $quoteId]
+        );
+    }
+
+    /**
+     * @return string
+     */
+    public function getBackUrl()
+    {
+        return $this->urlBuilder->getUrl('checkout/cart');
+    }
+
+    /**
+     * @return string
+     */
+    public function getDmnUrl($incrementId = null)
+    {
+        return $this->urlBuilder->getUrl(
+            'safecharge/payment/dmn',
+            ['order' => (is_null($incrementId)) ? $this->getReservedOrderId() : $incrementId]
+        );
+    }
+
+    public function getReservedOrderId()
+    {
+        $reservedOrderId = $this->checkoutSession->getQuote()->getReservedOrderId();
+        if (!$reservedOrderId) {
+            $this->checkoutSession->getQuote()->reserveOrderId()->save();
+            $reservedOrderId = $this->checkoutSession->getQuote()->getReservedOrderId();
+        }
+        return $reservedOrderId;
     }
 
     /**

@@ -3,9 +3,7 @@
 namespace Safecharge\Safecharge\Model\Redirect;
 
 use Magento\Checkout\Model\Session\Proxy as CheckoutSession;
-use Magento\Framework\UrlInterface;
 use Magento\Quote\Model\Quote;
-use Safecharge\Safecharge\Model\AbstractRequest;
 use Safecharge\Safecharge\Model\Config as ModuleConfig;
 use Safecharge\Safecharge\Model\Payment;
 
@@ -28,25 +26,17 @@ class Url
     private $checkoutSession;
 
     /**
-     * @var UrlInterface
-     */
-    private $urlBuilder;
-
-    /**
      * Url constructor.
      *
      * @param ModuleConfig    $moduleConfig
      * @param CheckoutSession $checkoutSession
-     * @param UrlInterface $urlBuilder
      */
     public function __construct(
         ModuleConfig $moduleConfig,
-        CheckoutSession $checkoutSession,
-        UrlInterface $urlBuilder
+        CheckoutSession $checkoutSession
     ) {
         $this->moduleConfig = $moduleConfig;
         $this->checkoutSession = $checkoutSession;
-        $this->urlBuilder = $urlBuilder;
     }
 
     /**
@@ -54,7 +44,7 @@ class Url
      */
     public function getUrl()
     {
-        return $this->getEndpoint() . '?' . http_build_query($this->prepareParams());
+        return $this->moduleConfig->getEndpoint() . '?' . http_build_query($this->prepareParams());
     }
 
     /**
@@ -63,7 +53,7 @@ class Url
     public function getPostData()
     {
         return [
-            "url" => $this->getEndpoint(),
+            "url" => $this->moduleConfig->getEndpoint(),
             "params" => $this->prepareParams(),
         ];
     }
@@ -97,9 +87,11 @@ class Url
             'user_token_id' => $quote->getCustomerId(),
             'time_stamp' => date('YmdHis'),
             'version' => '3.0.0',
-            'success_url' => $this->getSuccessUrl(),
-            'error_url' => $this->getErrorUrl(),
-            'back_url' => $this->getBackUrl(),
+            'success_url' => $this->moduleConfig->getSuccessUrl(),
+            'error_url' => $this->moduleConfig->getErrorUrl(),
+            'back_url' => $this->moduleConfig->getBackUrl(),
+            'notify_url' => $this->moduleConfig->getDmnUrl(),
+            'merchant_unique_id' => $this->moduleConfig->getReservedOrderId(),
             'ipAddress' => $quote->getRemoteIp(),
         ];
 
@@ -158,54 +150,5 @@ class Url
         $queryParams['checksum'] = hash('sha256', $concat);
 
         return $queryParams;
-    }
-
-    /**
-     * Return full endpoint;
-     *
-     * @return string
-     */
-    private function getEndpoint()
-    {
-        $endpoint = AbstractRequest::LIVE_ENDPOINT;
-        if ($this->moduleConfig->isTestModeEnabled() === true) {
-            $endpoint = AbstractRequest::TEST_ENDPOINT;
-        }
-
-        return $endpoint . 'purchase.do';
-    }
-
-    /**
-     * @return string
-     */
-    private function getSuccessUrl()
-    {
-        $quoteId = $this->checkoutSession->getQuoteId();
-
-        return $this->urlBuilder->getUrl(
-            'safecharge/payment/redirect_success',
-            ['order' => $quoteId]
-        );
-    }
-
-    /**
-     * @return string
-     */
-    private function getErrorUrl()
-    {
-        $quoteId = $this->checkoutSession->getQuoteId();
-
-        return $this->urlBuilder->getUrl(
-            'safecharge/payment/redirect_error',
-            ['order' => $quoteId]
-        );
-    }
-
-    /**
-     * @return string
-     */
-    private function getBackUrl()
-    {
-        return $this->urlBuilder->getUrl('checkout/cart');
     }
 }

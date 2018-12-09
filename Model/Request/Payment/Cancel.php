@@ -78,8 +78,9 @@ class Cancel extends AbstractPayment implements RequestInterface
             'relatedTransactionId' => $transaction->getTxnId(),
             'authCode' => $authCode,
             'comment' => '',
+            'merchant_unique_id' => $order->getIncrementId(),
             'urlDetails' => [
-                'notificationUrl' => '',
+                'notificationUrl' => $this->config->getDmnUrl($order->getIncrementId()),
             ],
         ];
 

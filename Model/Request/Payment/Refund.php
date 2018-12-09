@@ -146,8 +146,9 @@ class Refund extends AbstractPayment implements RequestInterface
             'relatedTransactionId' => $transactionId,
             'authCode' => $authCode,
             'comment' => '',
+            'merchant_unique_id' => $order->getIncrementId(),
             'urlDetails' => [
-                'notificationUrl' => '',
+                'notificationUrl' => $this->config->getDmnUrl($order->getIncrementId()),
             ],
         ];
 
