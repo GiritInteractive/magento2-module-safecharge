@@ -138,7 +138,7 @@ class Dmn extends Action
     {
         if ($this->moduleConfig->isActive()) {
             try {
-                $params = $this->getRequest()->getParams();
+                $params = $response = $this->getRequest()->getParams();
                 if ($this->moduleConfig->isDebugEnabled()) {
                     $this->safechargeLogger->debug(
                         'DMN Params: '
@@ -146,18 +146,11 @@ class Dmn extends Action
                     );
                 }
 
-                $result = $this->placeOrder();
-                if ($result->getSuccess() !== true) {
-                    throw new PaymentException(__($result->getErrorMessage()));
-                }
-
                 /** @var Order $order */
-                $order = $this->orderFactory->create()->load($result->getOrderId());
+                $order = $this->orderFactory->create()->loadByIncrementId($params["order"]);
 
                 /** @var OrderPayment $payment */
                 $orderPayment = $order->getPayment();
-
-                $response = $this->getRequest()->getParams();
 
                 if (strtolower($response['Status']) !== 'approved') {
                     throw new PaymentException(__('Your payment failed.'));
