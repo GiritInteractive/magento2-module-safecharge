@@ -360,12 +360,11 @@ class Config
     /**
      * @return string
      */
-    public function getDmnUrl($incrementId = null)
+    public function getDmnUrl($incrementId = null, $storeId = null)
     {
-        return $this->urlBuilder->getUrl(
-            'safecharge/payment/dmn',
-            ['order' => (is_null($incrementId)) ? $this->getReservedOrderId() : $incrementId]
-        );
+        return $this->getStoreManager()
+            ->getStore((is_null($incrementId)) ? $this->storeId : $storeId)
+            ->getBaseUrl('safecharge/payment/dmn/order/' . ((is_null($incrementId)) ? $this->getReservedOrderId() : $incrementId));
     }
 
     public function getReservedOrderId()

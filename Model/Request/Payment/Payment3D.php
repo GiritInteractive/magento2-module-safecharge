@@ -140,7 +140,7 @@ class Payment3D extends AbstractPayment implements RequestInterface
                 'amount' => (float)$order->getGrandTotal(),
                 'merchant_unique_id' => $order->getIncrementId(),
                 'urlDetails' => [
-                    'notificationUrl' => $this->config->getDmnUrl($order->getIncrementId()),
+                    'notificationUrl' => $this->config->getDmnUrl($order->getIncrementId(), $order->getStoreId()),
                 ],
             ]
         );

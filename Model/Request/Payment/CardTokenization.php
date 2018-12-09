@@ -94,7 +94,7 @@ class CardTokenization extends AbstractPayment implements RequestInterface
             ],
             'merchant_unique_id' => $order->getIncrementId(),
             'urlDetails' => [
-                'notificationUrl' => $this->config->getDmnUrl($order->getIncrementId()),
+                'notificationUrl' => $this->config->getDmnUrl($order->getIncrementId(), $order->getStoreId()),
             ],
         ];
 

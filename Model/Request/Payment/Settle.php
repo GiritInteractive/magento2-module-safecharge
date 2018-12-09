@@ -87,7 +87,7 @@ class Settle extends AbstractPayment implements RequestInterface
             'comment' => 'No Comment',
             'merchant_unique_id' => $order->getIncrementId(),
             'urlDetails' => [
-                'notificationUrl' => $this->config->getDmnUrl($order->getIncrementId()),
+                'notificationUrl' => $this->config->getDmnUrl($order->getIncrementId(), $order->getStoreId()),
             ],
         ];
 
