@@ -11,13 +11,11 @@ use Magento\Framework\DataObjectFactory;
 use Magento\Framework\Exception\PaymentException;
 use Magento\Quote\Api\CartManagementInterface;
 use Magento\Sales\Model\Order;
-use Magento\Sales\Model\Order\Invoice;
 use Magento\Sales\Model\Order\Payment as OrderPayment;
 use Magento\Sales\Model\Order\Payment\State\AuthorizeCommand;
 use Magento\Sales\Model\Order\Payment\State\CaptureCommand;
 use Magento\Sales\Model\Order\Payment\Transaction;
 use Magento\Sales\Model\OrderFactory;
-use Safecharge\Safecharge\Model\AbstractRequest;
 use Safecharge\Safecharge\Model\Config as ModuleConfig;
 use Safecharge\Safecharge\Model\Logger as SafechargeLogger;
 use Safecharge\Safecharge\Model\Payment;
@@ -138,7 +136,7 @@ class Dmn extends Action
     {
         if ($this->moduleConfig->isActive()) {
             try {
-                $params = $response = $this->getRequest()->getParams();
+                $params = $this->getRequest()->getParams();
                 if ($this->moduleConfig->isDebugEnabled()) {
                     $this->safechargeLogger->debug(
                         'DMN Params: '
@@ -147,87 +145,38 @@ class Dmn extends Action
                 }
 
                 /** @var Order $order */
-                $order = $this->orderFactory->create()->loadByIncrementId($params["order"]);
+                $order = $this->orderFactory->create()->loadByIncrementId($params["merchant_unique_id"]);
 
                 /** @var OrderPayment $payment */
                 $orderPayment = $order->getPayment();
 
-                if (strtolower($response['Status']) !== 'approved') {
+                if (isset($params['Status']) && strtolower($params['Status']) !== 'approved') {
                     throw new PaymentException(__('Your payment failed.'));
                 }
 
                 $orderPayment->setAdditionalInformation(
                     Payment::TRANSACTION_ID,
-                    $response['TransactionID']
+                    $params['TransactionID']
                 );
                 $orderPayment->setAdditionalInformation(
                     Payment::TRANSACTION_AUTH_CODE_KEY,
-                    $response['AuthCode']
+                    $params['AuthCode']
                 );
                 $orderPayment->setAdditionalInformation(
                     Payment::TRANSACTION_EXTERNAL_PAYMENT_METHOD,
-                    $response['payment_method']
+                    $params['payment_method']
                 );
                 $orderPayment->setTransactionAdditionalInfo(
                     Transaction::RAW_DETAILS,
-                    $response
-                );
-
-                $isSettled = false;
-                if ($this->moduleConfig->getPaymentAction() === Payment::ACTION_AUTHORIZE_CAPTURE) {
-                    $isSettled = true;
-
-                    $request = $this->paymentRequestFactory->create(
-                        AbstractRequest::PAYMENT_SETTLE_METHOD,
-                        $orderPayment,
-                        $order->getBaseGrandTotal()
-                    );
-                    $settleResponse = $request->process();
-                }
-
-                if ($isSettled) {
-                    $message = $this->captureCommand->execute(
-                        $orderPayment,
-                        $order->getBaseGrandTotal(),
-                        $order
-                    );
-                    $transactionType = Transaction::TYPE_CAPTURE;
-                } else {
-                    $message = $this->authorizeCommand->execute(
-                        $orderPayment,
-                        $order->getBaseGrandTotal(),
-                        $order
-                    );
-                    $transactionType = Transaction::TYPE_AUTH;
-                }
-
-                $orderPayment
-                    ->setTransactionId($response['TransactionID'])
-                    ->setIsTransactionPending(false)
-                    ->setIsTransactionClosed($isSettled ? 1 : 0);
-
-                if ($transactionType === Transaction::TYPE_CAPTURE) {
-                    /** @var Invoice $invoice */
-                    foreach ($order->getInvoiceCollection() as $invoice) {
-                        $invoice
-                            ->setTransactionId($settleResponse->getTransactionId())
-                            ->pay()
-                            ->save();
-                    }
-                }
-
-                $transaction = $orderPayment->addTransaction($transactionType);
-
-                $message = $orderPayment->prependMessage($message);
-                $orderPayment->addTransactionCommentsToOrder(
-                    $transaction,
-                    $message
+                    $params
                 );
 
                 $orderPayment->save();
                 $order->save();
-            } catch (PaymentException $e) {
-                $this->messageManager->addErrorMessage($e->getMessage());
+            } catch (\Exception $e) {
+                return $this->jsonResultFactory->create()
+                    ->setHttpResponseCode(500)
+                    ->setData(["error" => 1, "message" => $e->getMessage()]);
             }
         }
 
