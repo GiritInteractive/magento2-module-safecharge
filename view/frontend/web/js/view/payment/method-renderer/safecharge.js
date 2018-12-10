@@ -168,28 +168,22 @@ define(
                         setPaymentMethodAction(this.messageContainer).done(
                             function() {
                                 $('body').trigger('processStart');
-                                console.log("pini" + self.getRedirectUrl());
                                 $.ajax({
                                     dataType: "json",
                                     url: self.getRedirectUrl(),
                                     cache: false
                                 }).done(function(postData) {
-                                    console.log(postData);
                                     if (postData) {
                                         $.redirect(postData.url, postData.params, "POST");
                                     } else {
                                         window.location.reload();
                                     }
                                 }).fail(function(e) {
-                                    console.log(e);
-                                    $('body').trigger('processStop');
-                                    customerData.invalidate(['cart']);
-                                    return;
                                     window.location.reload();
                                 });
 
-                                $('body').trigger('processStop');
-                                customerData.invalidate(['cart']);
+                                //$('body').trigger('processStop');
+                                //customerData.invalidate(['cart']);
                             }.bind(this)
                         );
 

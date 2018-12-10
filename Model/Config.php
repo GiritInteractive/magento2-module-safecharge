@@ -390,7 +390,7 @@ class Config
                 if ($deep) {
                     $var[$key] = $this->utf8_escape($value, $deep);
                 } elseif (!is_array($value) && !is_object($value) && !mb_detect_encoding($value, 'utf-8', true)) {
-                    $var[$key] = htmlspecialchars(utf8_encode($var), ENT_QUOTES, 'UTF-8', false);
+                    $var[$key] = rawurlencode(utf8_encode($var));
                 }
             }
             return $var;
@@ -399,12 +399,12 @@ class Config
                 if ($deep) {
                     $var->$key = $this->utf8_escape($value, $deep);
                 } elseif (!is_array($value) && !is_object($value) && !mb_detect_encoding($value, 'utf-8', true)) {
-                    $var->$key = htmlspecialchars(utf8_encode($var), ENT_QUOTES, 'UTF-8', false);
+                    $var->$key = rawurlencode(utf8_encode($var));
                 }
             }
             return $var;
         } else {
-            return htmlspecialchars(((!mb_detect_encoding($var, 'utf-8', true)) ? utf8_encode($var) : $var), ENT_QUOTES, 'UTF-8', false);
+            return rawurlencode(((!mb_detect_encoding($var, 'utf-8', true)) ? utf8_encode($var) : $var));
         }
     }
 }
