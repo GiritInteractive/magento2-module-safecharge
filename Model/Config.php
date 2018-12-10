@@ -364,7 +364,7 @@ class Config
     {
         return $this->getStoreManager()
             ->getStore((is_null($incrementId)) ? $this->storeId : $storeId)
-            ->getBaseUrl('safecharge/payment/dmn/order/' . ((is_null($incrementId)) ? $this->getReservedOrderId() : $incrementId));
+            ->getBaseUrl() . 'safecharge/payment/dmn/order/' . ((is_null($incrementId)) ? $this->getReservedOrderId() : $incrementId);
     }
 
     public function getReservedOrderId()
