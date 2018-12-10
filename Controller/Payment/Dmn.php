@@ -144,6 +144,11 @@ class Dmn extends Action
                     );
                 }
 
+                $this->validateChecksum($params);
+                echo "<pre>";
+                print_r($params);
+                die;
+
                 /** @var Order $order */
                 $order = $this->orderFactory->create()->loadByIncrementId($params["merchant_unique_id"]);
 
@@ -183,5 +188,39 @@ class Dmn extends Action
         return $this->jsonResultFactory->create()
             ->setHttpResponseCode(\Magento\Framework\Webapi\Response::HTTP_OK)
             ->setData(["error" => 0, "message" => "SUCCESS"]);
+    }
+
+    private function validateChecksum($params)
+    {
+        if (!isset($params["advanceResponseChecksum"])) {
+            throw new \Exception(
+                __('Required key advanceResponseChecksum for checksum calculation is missing.')
+            );
+        }
+        $concat = $this->moduleConfig->getMerchantSecretKey();
+        foreach (['totalAmount', 'requestedCurrency', 'responseTimeStamp', 'PPP_TransactionID', 'Status', 'productId'] as $checksumKey) {
+            if (!isset($params[$checksumKey])) {
+                throw new \Exception(
+                    __('Required key %1 for checksum calculation is missing.', $checksumKey)
+                );
+            }
+
+            if (is_array($params[$checksumKey])) {
+                foreach ($params[$checksumKey] as $subKey => $subVal) {
+                    $concat .= $subVal;
+                }
+            } else {
+                $concat .= $params[$checksumKey];
+            }
+        }
+
+        $checksum = hash('sha256', utf8_encode($concat));
+        if ($params["advanceResponseChecksum"] !== $checksum) {
+            throw new \Exception(
+                __('Checksum validation failed!')
+            );
+        }
+
+        return true;
     }
 }
