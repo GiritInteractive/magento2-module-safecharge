@@ -8,7 +8,6 @@ use Magento\Framework\App\Action\Action;
 use Magento\Framework\App\Action\Context;
 use Magento\Framework\Controller\Result\JsonFactory;
 use Magento\Framework\DataObjectFactory;
-use Magento\Framework\Exception\PaymentException;
 use Magento\Quote\Api\CartManagementInterface;
 use Magento\Sales\Model\Order;
 use Magento\Sales\Model\Order\Payment as OrderPayment;
@@ -145,18 +144,19 @@ class Dmn extends Action
                 }
 
                 $this->validateChecksum($params);
-                echo "<pre>";
-                print_r($params);
-                die;
 
                 /** @var Order $order */
                 $order = $this->orderFactory->create()->loadByIncrementId($params["merchant_unique_id"]);
+
+                if (!($order && $order->getId())) {
+                    throw new \Exception(__('Order #%1 not found!', $params["merchant_unique_id"]));
+                }
 
                 /** @var OrderPayment $payment */
                 $orderPayment = $order->getPayment();
 
                 if (isset($params['Status']) && strtolower($params['Status']) !== 'approved') {
-                    throw new PaymentException(__('Your payment failed.'));
+                    throw new \Exception(__('Payment Failed.'));
                 }
 
                 $orderPayment->setAdditionalInformation(
@@ -179,10 +179,17 @@ class Dmn extends Action
                 $orderPayment->save();
                 $order->save();
             } catch (\Exception $e) {
+                if ($this->moduleConfig->isDebugEnabled()) {
+                    $this->safechargeLogger->debug('DMN Error: ' . $e->getTraceAsString());
+                }
                 return $this->jsonResultFactory->create()
                     ->setHttpResponseCode(500)
                     ->setData(["error" => 1, "message" => $e->getMessage()]);
             }
+        }
+
+        if ($this->moduleConfig->isDebugEnabled()) {
+            $this->safechargeLogger->debug('DMN Success for order #' . $params["merchant_unique_id"]);
         }
 
         return $this->jsonResultFactory->create()
