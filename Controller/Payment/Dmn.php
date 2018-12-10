@@ -135,7 +135,11 @@ class Dmn extends Action
     {
         if ($this->moduleConfig->isActive()) {
             try {
-                $params = $this->getRequest()->getParams();
+                $params = array_merge(
+                    $this->getRequest()->getParams(),
+                    $this->getRequest()->getPostValue()
+                );
+
                 if ($this->moduleConfig->isDebugEnabled()) {
                     $this->safechargeLogger->debug(
                         'DMN Params: '
