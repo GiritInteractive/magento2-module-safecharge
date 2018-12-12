@@ -116,11 +116,20 @@ class Config
     }
 
     /**
+     * Return store manager.
+     * @return StoreManagerInterface
+     */
+    public function getCheckoutSession()
+    {
+        return $this->checkoutSession;
+    }
+
+    /**
      * Return store id.
      *
      * @return int
      */
-    private function getStoreId()
+    public function getStoreId()
     {
         return $this->storeManager->getStore()->getId();
     }
@@ -383,23 +392,23 @@ class Config
     * @param boolean $deep Go deep (recursive) *Default: true
     * @return mixed
     */
-    public function utf8_escape($var, $deep = true)
+    public function utf8_urlencode($var, $deep = true)
     {
         if (is_array($var)) {
             foreach ($var as $key => $value) {
                 if ($deep) {
-                    $var[$key] = $this->utf8_escape($value, $deep);
-                } elseif (!is_array($value) && !is_object($value) && !mb_detect_encoding($value, 'utf-8', true)) {
-                    $var[$key] = rawurlencode(utf8_encode($var));
+                    $var[$key] = $this->utf8_urlencode($value, $deep);
+                } elseif (!is_array($value) && !is_object($value)) {
+                    $var[$key] = rawurlencode(((!mb_detect_encoding($value, 'utf-8', true)) ? utf8_encode($value) : $value));
                 }
             }
             return $var;
         } elseif (is_object($var)) {
             foreach ($var as $key => $value) {
                 if ($deep) {
-                    $var->$key = $this->utf8_escape($value, $deep);
-                } elseif (!is_array($value) && !is_object($value) && !mb_detect_encoding($value, 'utf-8', true)) {
-                    $var->$key = rawurlencode(utf8_encode($var));
+                    $var->$key = $this->utf8_urlencode($value, $deep);
+                } elseif (!is_array($value) && !is_object($value)) {
+                    $var->$key = rawurlencode(((!mb_detect_encoding($value, 'utf-8', true)) ? utf8_encode($value) : $value));
                 }
             }
             return $var;

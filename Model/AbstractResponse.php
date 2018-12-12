@@ -29,6 +29,7 @@ abstract class AbstractResponse extends AbstractApi
     const PAYMENT_REFUND_HANDLER = 'payment_refund';
     const PAYMENT_VOID_HANDLER = 'payment_void';
     const OPEN_ORDER_HANDLER = 'open_order';
+    const GET_MERCHANT_PAYMENT_METHODS_HANDLER = 'get_merchant_payment_methods';
 
     /**
      * Response result const.

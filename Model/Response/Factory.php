@@ -2,12 +2,12 @@
 
 namespace Safecharge\Safecharge\Model\Response;
 
-use Safecharge\Safecharge\Lib\Http\Client\Curl;
-use Safecharge\Safecharge\Model\AbstractResponse;
-use Safecharge\Safecharge\Model\ResponseInterface;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\ObjectManagerInterface;
 use Magento\Sales\Model\Order\Payment as OrderPayment;
+use Safecharge\Safecharge\Lib\Http\Client\Curl;
+use Safecharge\Safecharge\Model\AbstractResponse;
+use Safecharge\Safecharge\Model\ResponseInterface;
 
 /**
  * Safecharge Safecharge response factory model.
@@ -32,10 +32,10 @@ class Factory
         AbstractResponse::PAYMENT_PAYMENT_3D_HANDLER => \Safecharge\Safecharge\Model\Response\Payment\Payment3D::class,
         AbstractResponse::CREATE_USER_HANDLER => \Safecharge\Safecharge\Model\Response\CreateUser::class,
         AbstractResponse::GET_USER_DETAILS_HANDLER => \Safecharge\Safecharge\Model\Response\GetUserDetails::class,
-        AbstractResponse::GET_USER_DETAILS_HANDLER => \Safecharge\Safecharge\Model\Response\GetUserDetails::class,
         AbstractResponse::PAYMENT_REFUND_HANDLER => \Safecharge\Safecharge\Model\Response\Payment\Refund::class,
         AbstractResponse::PAYMENT_VOID_HANDLER => \Safecharge\Safecharge\Model\Response\Payment\Cancel::class,
         AbstractResponse::OPEN_ORDER_HANDLER => \Safecharge\Safecharge\Model\Response\OpenOrder::class,
+        AbstractResponse::GET_MERCHANT_PAYMENT_METHODS_HANDLER => \Safecharge\Safecharge\Model\Response\GetMerchantPaymentMethods::class,
     ];
 
     /**

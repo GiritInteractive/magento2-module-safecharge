@@ -6,12 +6,10 @@
  * @package  Safecharge_Safecharge
  */
 -->
+
 <div class="payment-method" data-bind="css: {'_active': (getCode() == isChecked())}">
     <div class="payment-method-title field choice">
-        <input type="radio"
-               name="payment[method]"
-               class="radio"
-               data-bind="
+        <input type="radio" name="payment[method]" class="radio" data-bind="
                     attr: {
                         'id': getCode()
                     },
@@ -19,7 +17,7 @@
                     checked: isChecked,
                     click: selectPaymentMethod,
                     visible: isRadioButtonVisible()
-                "/>
+                " />
         <label class="label" data-bind="attr: {'for': getCode()}">
             <span data-bind="text: getTitle()"></span>
         </label>
@@ -27,12 +25,14 @@
 
     <div class="payment-method-content">
         <!-- ko foreach: getRegion('messages') -->
-        <!-- ko template: getTemplate() --><!-- /ko -->
+        <!-- ko template: getTemplate() -->
+        <!-- /ko -->
         <!--/ko-->
 
         <div class="payment-method-billing-address">
             <!-- ko foreach: $parent.getRegion(getBillingAddressFormName()) -->
-            <!-- ko template: getTemplate() --><!-- /ko -->
+            <!-- ko template: getTemplate() -->
+            <!-- /ko -->
             <!--/ko-->
         </div>
 
@@ -46,18 +46,21 @@
                 ">
                 <!-- ko if: (isShowLegend())-->
                 <legend class="legend">
-                    <span><!-- ko i18n: 'Credit Card Information'--><!-- /ko --></span>
+                    <span>
+                        <!-- ko i18n: 'Credit Card Information'-->
+                        <!-- /ko --></span>
                 </legend><br />
                 <!-- /ko -->
 
                 <!-- ko if: (useVault() && getCardTokens().length) -->
                 <div class="field">
                     <label data-bind="attr: {for: getCode() + '_cc_token'}" class="label">
-                        <span><!-- ko i18n: 'Saved Cards'--><!-- /ko --></span>
+                        <span>
+                            <!-- ko i18n: 'Saved Cards'-->
+                            <!-- /ko --></span>
                     </label>
                     <div class="control">
-                        <select name="payment[cc_token]" class="select" style="width:225px;"
-                                data-bind="
+                        <select name="payment[cc_token]" class="select" style="width:225px;" data-bind="
                                     attr: {
                                         id: getCode() + '_cc_token',
                                         'data-container': getCode() + '-cc-token'
@@ -85,15 +88,16 @@
                 <div data-bind="visible: isCcFormShown, attr: {class: getCssClass()}">
                     <!-- ko if: (!isCcDetectionEnabled())-->
                     <label data-bind="attr: {for: getCode() + '_cc_type'}" class="label">
-                        <span><!-- ko i18n: 'Credit Card Type'--><!-- /ko --></span>
+                        <span>
+                            <!-- ko i18n: 'Credit Card Type'-->
+                            <!-- /ko --></span>
                     </label>
                     <!-- /ko -->
 
                     <div class="control">
 
                         <!-- ko if: (!isCcDetectionEnabled())-->
-                        <select name="payment[cc_type]" class="select"
-                                data-bind="
+                        <select name="payment[cc_type]" class="select" data-bind="
                                     attr: {
                                         id: getCode() + '_cc_type',
                                         'data-container': getCode() + '-cc-type',
@@ -122,8 +126,7 @@
                         <!-- ko if: (isCcDetectionEnabled())-->
                         <ul class="credit-card-types">
                             <!-- ko foreach: {data: getCcAvailableTypesValues(), as: 'item'} -->
-                            <li class="item"
-                                data-bind="
+                            <li class="item" data-bind="
                                     css: {
                                         _active: $parent.selectedCardType() == item.value,
                                         _inactive: $parent.selectedCardType() != null && $parent.selectedCardType() != item.value
@@ -143,11 +146,7 @@
                             <!--/ko-->
                         </ul>
 
-                        <input type="hidden"
-                               name="payment[cc_type]"
-                               class="input-text"
-                               value=""
-                               data-bind="
+                        <input type="hidden" name="payment[cc_type]" class="input-text" value="" data-bind="
                                     attr: {
                                         id: getCode() + '_cc_type',
                                         'data-container': getCode() + '-cc-type'
@@ -160,15 +159,12 @@
 
                 <div class="field number required" data-bind="visible: isCcFormShown">
                     <label data-bind="attr: {for: getCode() + '_cc_number'}" class="label">
-                        <span><!-- ko i18n: 'Card Number'--><!-- /ko --></span>
+                        <span>
+                            <!-- ko i18n: 'Card Number'-->
+                            <!-- /ko --></span>
                     </label>
                     <div class="control">
-                        <input type="tel"
-                               name="payment[cc_number]"
-                               class="input-text"
-                               value=""
-                               maxlength="19"
-                               data-bind="
+                        <input type="tel" name="payment[cc_number]" class="input-text" value="" maxlength="19" data-bind="
                                     attr: {
                                         autocomplete: on,
                                         id: getCode() + '_cc_number',
@@ -187,26 +183,26 @@
                                     value: creditCardNumber,
                                     valueUpdate: 'keyup',
                                     afterRender: initCcNumberFormatting
-                               "/>
+                               " />
                     </div>
                 </div>
 
-                <div class="field date required"
-                     data-bind="
+                <div class="field date required" data-bind="
                         attr: {
                             id: getCode() + '_cc_type_exp_div'
                         },
                         visible: isCcFormShown
                      ">
                     <label data-bind="attr: {for: getCode() + '_expiration'}" class="label">
-                        <span><!-- ko i18n: 'Expiration Date'--><!-- /ko --></span>
+                        <span>
+                            <!-- ko i18n: 'Expiration Date'-->
+                            <!-- /ko --></span>
                     </label>
                     <div class="control">
                         <div class="fields group group-2">
                             <div class="field no-label month">
                                 <div class="control">
-                                    <select  name="payment[cc_exp_month]" class="select month"
-                                             data-bind="
+                                    <select name="payment[cc_exp_month]" class="select month" data-bind="
                                                 attr: {
                                                     id: getCode() + '_expiration',
                                                     'data-container': getCode() + '-cc-month',
@@ -229,8 +225,7 @@
                             </div>
                             <div class="field no-label year">
                                 <div class="control">
-                                    <select name="payment[cc_exp_year]" class="select year"
-                                            data-bind="
+                                    <select name="payment[cc_exp_year]" class="select year" data-bind="
                                                 attr: {
                                                     id: getCode() + '_expiration_yr',
                                                     'data-container': getCode() + '-cc-year',
@@ -256,11 +251,12 @@
 
                 <div class="field number required" data-bind="visible: isCcFormShown">
                     <label data-bind="attr: {for: getCode() + '_cc_owner'}" class="label">
-                        <span><!-- ko i18n: 'Name On Card'--><!-- /ko --></span>
+                        <span>
+                            <!-- ko i18n: 'Name On Card'-->
+                            <!-- /ko --></span>
                     </label>
                     <div class="control">
-                        <input type="text" name="payment[cc_owner]" class="input-text" value=""
-                               data-bind="
+                        <input type="text" name="payment[cc_owner]" class="input-text" value="" data-bind="
                                     attr: {
                                         autocomplete: on,
                                         id: getCode() + '_cc_owner',
@@ -275,27 +271,23 @@
                                     enable: isActive($parents),
                                     value: creditCardOwner,
                                     valueUpdate: 'keyup'
-                               "/>
+                               " />
                     </div>
                 </div>
 
                 <!-- ko if: (hasVerification())-->
-                <div class="field cvv required"
-                     data-bind="
+                <div class="field cvv required" data-bind="
                         attr: {
                             id: getCode() + '_cc_type_cvv_div'
                         }
                      ">
                     <label data-bind="attr: {for: getCode() + '_cc_cid'}" class="label">
-                        <span><!-- ko i18n: 'Card Verification Number'--><!-- /ko --></span>
+                        <span>
+                            <!-- ko i18n: 'Card Verification Number'-->
+                            <!-- /ko --></span>
                     </label>
                     <div class="control _with-tooltip">
-                        <input type="tel"
-                               class="input-text cvv"
-                               name="payment[cc_cid]"
-                               value=""
-                               maxlength="4"
-                               data-bind="
+                        <input type="tel" class="input-text cvv" name="payment[cc_cid]" value="" maxlength="4" data-bind="
                                     attr: {
                                         id: getCode() + '_cc_cid',
                                         title: $t('Card Verification Number'),
@@ -310,12 +302,9 @@
                                     enable: true,
                                     value: creditCardVerificationNumber,
                                     afterRender: initCcCvvFormatting
-                               "/>
+                               " />
                         <div class="field-tooltip toggle">
-                            <span class="field-tooltip-action action-cvv"
-                                  tabindex="0"
-                                  data-toggle="dropdown"
-                                  data-bind="
+                            <span class="field-tooltip-action action-cvv" tabindex="0" data-toggle="dropdown" data-bind="
                                         attr: {
                                             title: $t('What is this?')
                                         },
@@ -323,11 +312,11 @@
                                             'dropdown':{'activeClass': '_active'}
                                         }
                                   ">
-                                <span><!-- ko i18n: 'What is this?'--><!-- /ko --></span>
+                                <span>
+                                    <!-- ko i18n: 'What is this?'-->
+                                    <!-- /ko --></span>
                             </span>
-                            <div class="field-tooltip-content"
-                                 data-target="dropdown"
-                                 data-bind="html: getCvvImageHtml()"></div>
+                            <div class="field-tooltip-content" data-target="dropdown" data-bind="html: getCvvImageHtml()"></div>
                         </div>
                     </div>
                 </div>
@@ -339,20 +328,17 @@
                         <span></span>
                     </label>
                     <div class="control">
-                        <input type="checkbox"
-                               name="payment[cc_save]"
-                               value="1"
-                               checked="checked"
-                               class="checkbox"
-                               data-bind="
+                        <input type="checkbox" name="payment[cc_save]" value="1" checked="checked" class="checkbox" data-bind="
                                     attr: {
                                         id: getCode() + '_cc_save'
                                     }
                                     enable: true,
                                     checked: creditCardSave
-                               "/>
+                               " />
                         <label class="label" data-bind="attr: {for: getCode() + '_cc_save'}">
-                            <span><!-- ko i18n: 'Save this card for future use'--><!-- /ko --></span>
+                            <span>
+                                <!-- ko i18n: 'Save this card for future use'-->
+                                <!-- /ko --></span>
                         </label>
                     </div>
                 </div>
@@ -361,23 +347,30 @@
         </form>
         <!--/ko-->
 
-        <!-- ko if: (useExternalSolution())-->
-        <span><!-- ko i18n: 'You will be redirected to our secure payment page when you place an order.'--><!-- /ko --></span>
+        <!-- ko if: (useExternalSolution()) -->
+        <span>
+            <!-- ko i18n: 'You will be redirected to our secure payment page when you place an order.'-->
+            <!-- /ko --></span>
         <!-- /ko -->
+
+        <!-- ko foreach: {data: getApmMethods(), as: 'method'} -->
+        <div>
+            <input type="radio" name="apmPaymentMethod" data-bind="value: method.paymentMethod, checked: chosenApmMethod" />
+            <!-- ko i18n: method.paymentMethodDisplayName.message -->
+            <!-- /ko -->
+        </div>
+        <!--/ko-->
 
         <div class="payment-method-content">
             <div class="checkout-agreements-block">
                 <!-- ko foreach: $parent.getRegion('before-place-order') -->
-                <!-- ko template: getTemplate() --><!-- /ko -->
+                <!-- ko template: getTemplate() -->
+                <!-- /ko -->
                 <!--/ko-->
             </div>
             <div class="actions-toolbar">
                 <div class="primary">
-                    <button data-role="review-save"
-                            type="submit"
-                            class="action primary checkout"
-                            disabled
-                            data-bind="
+                    <button data-role="review-save" type="submit" class="action primary checkout" disabled data-bind="
                                 attr: {
                                     title: $t('Place Order')
                                 },

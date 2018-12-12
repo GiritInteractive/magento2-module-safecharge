@@ -12,7 +12,8 @@ define(
         'Magento_Checkout/js/action/redirect-on-success',
         'Magento_Paypal/js/action/set-payment-method',
         'Magento_Customer/js/customer-data',
-        'jquery.redirect'
+        'jquery.redirect',
+        'ko',
     ],
     function(
         $,
@@ -21,7 +22,8 @@ define(
         redirectOnSuccessAction,
         setPaymentMethodAction,
         customerData,
-        jqueryRedirect
+        jqueryRedirect,
+        ko
     ) {
         'use strict';
 
@@ -152,6 +154,13 @@ define(
             getRedirectUrl: function() {
                 return window.checkoutConfig.payment[this.getCode()].redirectUrl;
             },
+
+            getApmMethods: function() {
+                console.log(window.checkoutConfig.payment[this.getCode()].apmMethods);
+                return window.checkoutConfig.payment[this.getCode()].apmMethods;
+            },
+
+            chosenApmMethod: ko.observable(""),
 
             placeOrder: function(data, event) {
                 var self = this;

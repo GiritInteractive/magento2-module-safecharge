@@ -38,6 +38,7 @@ abstract class AbstractRequest extends AbstractApi
     const PAYMENT_REFUND_METHOD = 'refundTransaction';
     const PAYMENT_VOID_METHOD = 'voidTransaction';
     const OPEN_ORDER_METHOD = 'openOrder';
+    const GET_MERCHANT_PAYMENT_METHODS_METHOD = 'getMerchantPaymentMethods';
 
     /**
      * @var Curl
@@ -170,6 +171,7 @@ abstract class AbstractRequest extends AbstractApi
             'clientRequestId' => (string)$this->getRequestId(),
             'timeStamp' => date('YmdHis'),
             'customField1' => $this->config->getSourcePlatformField(),
+            'encoding' => 'UTF-8',
         ];
 
         return $params;
@@ -314,17 +316,17 @@ abstract class AbstractRequest extends AbstractApi
 
         if ($billing !== null) {
             $orderData['billingAddress'] = [
-                'firstName' => $this->config->utf8_escape($billing->getFirstname()),
-                'lastName' => $this->config->utf8_escape($billing->getLastname()),
-                'address' => $this->config->utf8_escape(is_array($billing->getStreet())
+                'firstName' => $this->config->utf8_urlencode($billing->getFirstname()),
+                'lastName' => $this->config->utf8_urlencode($billing->getLastname()),
+                'address' => $this->config->utf8_urlencode(is_array($billing->getStreet())
                     ? implode(' ', $billing->getStreet())
                     : ''),
                 'cell' => '',
-                'phone' => $this->config->utf8_escape($billing->getTelephone()),
-                'zip' => $this->config->utf8_escape($billing->getPostcode()),
-                'city' => $this->config->utf8_escape($billing->getCity()),
-                'country' => $this->config->utf8_escape($billing->getCountryId()),
-                'state' => $this->config->utf8_escape($billing->getRegionCode()),
+                'phone' => $this->config->utf8_urlencode($billing->getTelephone()),
+                'zip' => $this->config->utf8_urlencode($billing->getPostcode()),
+                'city' => $this->config->utf8_urlencode($billing->getCity()),
+                'country' => $this->config->utf8_urlencode($billing->getCountryId()),
+                'state' => $this->config->utf8_urlencode($billing->getRegionCode()),
                 'email' => $billing->getEmail(),
             ];
             $orderData = array_merge($orderData, $orderData['billingAddress']);
@@ -339,7 +341,7 @@ abstract class AbstractRequest extends AbstractApi
             }
 
             $orderData['items'][] = [
-                'name' => $this->config->utf8_escape($orderItem->getName()),
+                'name' => $this->config->utf8_urlencode($orderItem->getName()),
                 'price' => $price,
                 'quantity' => (int)$orderItem->getQtyOrdered(),
             ];

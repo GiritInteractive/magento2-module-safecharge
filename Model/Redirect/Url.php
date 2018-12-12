@@ -44,7 +44,7 @@ class Url
      */
     public function getUrl()
     {
-        return $this->moduleConfig->getEndpoint() . '?' . http_build_query($this->prepareParams());
+        return $this->moduleConfig->getEndpoint() . '?' . http_build_query($this->prepareParams(false));
     }
 
     /**
@@ -54,14 +54,14 @@ class Url
     {
         return [
             "url" => $this->moduleConfig->getEndpoint(),
-            "params" => $this->prepareParams(),
+            "params" => $this->prepareParams()
         ];
     }
 
     /**
      * @return array
      */
-    protected function prepareParams()
+    protected function prepareParams($utf8_urlencode = true)
     {
         if ($this->moduleConfig->getPaymentSolution() === Payment::SOLUTION_INTERNAL) {
             return '';
@@ -93,24 +93,25 @@ class Url
             'notify_url' => $this->moduleConfig->getDmnUrl(),
             'merchant_unique_id' => $this->moduleConfig->getReservedOrderId(),
             'ipAddress' => $quote->getRemoteIp(),
+            'encoding' => 'UTF-8',
         ];
 
         if (($billing = $quote->getBillingAddress()) && $billing !== null) {
-            $queryParams['billingAddress'] = [
-                'firstName' => $this->moduleConfig->utf8_escape($billing->getFirstname()),
-                'lastName' => $this->moduleConfig->utf8_escape($billing->getLastname()),
-                'address' => $this->moduleConfig->utf8_escape(is_array($billing->getStreet())
-                    ? implode(' ', $billing->getStreet())
-                    : ''),
+            $billingAddress = [
+                'first_name' => ($utf8_urlencode) ? $this->moduleConfig->utf8_urlencode($billing->getFirstname()) : $billing->getFirstname(),
+                'last_name' => ($utf8_urlencode) ? $this->moduleConfig->utf8_urlencode($billing->getLastname()) : $billing->getLastname(),
+                'address' => ($utf8_urlencode) ?
+                    $this->moduleConfig->utf8_urlencode(is_array($billing->getStreet()) ? implode(' ', $billing->getStreet()) : '') :
+                    (is_array($billing->getStreet()) ? implode(' ', $billing->getStreet()) : ''),
                 'cell' => '',
-                'phone' => $this->moduleConfig->utf8_escape($billing->getTelephone()),
-                'zip' => $this->moduleConfig->utf8_escape($billing->getPostcode()),
-                'city' => $this->moduleConfig->utf8_escape($billing->getCity()),
-                'country' => $this->moduleConfig->utf8_escape($billing->getCountryId()),
-                'state' => $this->moduleConfig->utf8_escape($billing->getRegionCode()),
+                'phone' => ($utf8_urlencode) ? $this->moduleConfig->utf8_urlencode($billing->getTelephone()) : $billing->getTelephone(),
+                'zip' => ($utf8_urlencode) ? $this->moduleConfig->utf8_urlencode($billing->getPostcode()) : $billing->getPostcode(),
+                'city' => ($utf8_urlencode) ? $this->moduleConfig->utf8_urlencode($billing->getCity()) : $billing->getCity(),
+                'country' => ($utf8_urlencode) ? $this->moduleConfig->utf8_urlencode($billing->getCountryId()) : $billing->getCountryId(),
+                'state' => ($utf8_urlencode) ? $this->moduleConfig->utf8_urlencode($billing->getRegionCode()) : $billing->getRegionCode(),
                 'email' => $billing->getEmail(),
             ];
-            $queryParams = array_merge($queryParams, $queryParams['billingAddress']);
+            $queryParams = array_merge($queryParams, $billingAddress);
         }
 
         $concat = $this->moduleConfig->getMerchantSecretKey()
@@ -128,7 +129,7 @@ class Url
                 continue;
             }
 
-            $queryParams['item_name_' . $i] = $this->moduleConfig->utf8_escape($quoteItem->getName());
+            $queryParams['item_name_' . $i] = ($utf8_urlencode) ? $this->moduleConfig->utf8_urlencode($quoteItem->getName()) : $quoteItem->getName();
             $queryParams['item_amount_' . $i] = round($price, 2);
             $queryParams['item_quantity_' . $i] = (int)$quoteItem->getQty();
 
