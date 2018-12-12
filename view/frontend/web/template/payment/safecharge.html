@@ -351,15 +351,14 @@
         <span>
             <!-- ko i18n: 'You will be redirected to our secure payment page when you place an order.'-->
             <!-- /ko --></span>
-        <!-- /ko -->
 
-        <!-- ko foreach: {data: getApmMethods(), as: 'method'} -->
-        <div>
-            <input type="radio" name="apmPaymentMethod" data-bind="value: method.paymentMethod, checked: chosenApmMethod" />
-            <!-- ko i18n: method.paymentMethodDisplayName.message -->
-            <!-- /ko -->
+        <div data-bind="foreach: apmMethods">
+            <div class="apm-method-container">
+                <input type="radio" name="apm_payment_method" data-bind="checkedValue: $data.paymentMethod, checked: $parent.chosenApmMethod" />
+                <span data-bind="text: $data.paymentMethodDisplayName.message"></span>
+            </div>
         </div>
-        <!--/ko-->
+        <!-- /ko -->
 
         <div class="payment-method-content">
             <div class="checkout-agreements-block">

@@ -33,7 +33,9 @@ define(
                 isCcFormShown: true,
                 creditCardToken: '',
                 creditCardSave: 0,
-                creditCardOwner: ''
+                creditCardOwner: '',
+                apmMethods: [],
+                chosenApmMethod: ''
             },
 
             initObservable: function() {
@@ -42,12 +44,19 @@ define(
                         'creditCardToken',
                         'creditCardSave',
                         'isCcFormShown',
-                        'creditCardOwner'
+                        'creditCardOwner',
+                        'apmMethods',
+                        'chosenApmMethod'
                     ]);
 
                 var savedCards = this.getCardTokens();
                 if (savedCards.length > 0) {
                     this.creditCardToken(savedCards[0]['value']);
+                }
+
+                var apmMethods = this.getApmMethods();
+                if (apmMethods.length > 0) {
+                    this.apmMethods(apmMethods);
                 }
 
                 return this;
@@ -160,8 +169,6 @@ define(
                 return window.checkoutConfig.payment[this.getCode()].apmMethods;
             },
 
-            chosenApmMethod: ko.observable(""),
-
             placeOrder: function(data, event) {
                 var self = this;
 
@@ -173,6 +180,11 @@ define(
                     this.isPlaceOrderActionAllowed(false);
 
                     if (self.useExternalSolution()) {
+                        if (this.chosenApmMethod()) {
+                            alert("Chosen APM Method: " + this.chosenApmMethod() + ". Should Redirect...");
+                            this.isPlaceOrderActionAllowed(true);
+                            return;
+                        }
                         this.selectPaymentMethod();
                         setPaymentMethodAction(this.messageContainer).done(
                             function() {
