@@ -385,35 +385,4 @@ class Config
         }
         return $reservedOrderId;
     }
-
-    /**
-    * UTF-8-encode & Convert special characters to HTML entities
-    * @param mixed $var The variable you want to convert.
-    * @param boolean $deep Go deep (recursive) *Default: true
-    * @return mixed
-    */
-    public function utf8_urlencode($var, $deep = true)
-    {
-        if (is_array($var)) {
-            foreach ($var as $key => $value) {
-                if ($deep) {
-                    $var[$key] = $this->utf8_urlencode($value, $deep);
-                } elseif (!is_array($value) && !is_object($value)) {
-                    $var[$key] = rawurlencode(((!mb_detect_encoding($value, 'utf-8', true)) ? utf8_encode($value) : $value));
-                }
-            }
-            return $var;
-        } elseif (is_object($var)) {
-            foreach ($var as $key => $value) {
-                if ($deep) {
-                    $var->$key = $this->utf8_urlencode($value, $deep);
-                } elseif (!is_array($value) && !is_object($value)) {
-                    $var->$key = rawurlencode(((!mb_detect_encoding($value, 'utf-8', true)) ? utf8_encode($value) : $value));
-                }
-            }
-            return $var;
-        } else {
-            return rawurlencode(((!mb_detect_encoding($var, 'utf-8', true)) ? utf8_encode($var) : $var));
-        }
-    }
 }

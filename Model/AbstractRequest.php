@@ -316,17 +316,17 @@ abstract class AbstractRequest extends AbstractApi
 
         if ($billing !== null) {
             $orderData['billingAddress'] = [
-                'firstName' => $this->config->utf8_urlencode($billing->getFirstname()),
-                'lastName' => $this->config->utf8_urlencode($billing->getLastname()),
-                'address' => $this->config->utf8_urlencode(is_array($billing->getStreet())
+                'firstName' => $billing->getFirstname(),
+                'lastName' => $billing->getLastname(),
+                'address' => is_array($billing->getStreet())
                     ? implode(' ', $billing->getStreet())
-                    : ''),
+                    : '',
                 'cell' => '',
-                'phone' => $this->config->utf8_urlencode($billing->getTelephone()),
-                'zip' => $this->config->utf8_urlencode($billing->getPostcode()),
-                'city' => $this->config->utf8_urlencode($billing->getCity()),
-                'country' => $this->config->utf8_urlencode($billing->getCountryId()),
-                'state' => $this->config->utf8_urlencode($billing->getRegionCode()),
+                'phone' => $billing->getTelephone(),
+                'zip' => $billing->getPostcode(),
+                'city' => $billing->getCity(),
+                'country' => $billing->getCountryId(),
+                'state' => $billing->getRegionCode(),
                 'email' => $billing->getEmail(),
             ];
             $orderData = array_merge($orderData, $orderData['billingAddress']);
@@ -341,7 +341,7 @@ abstract class AbstractRequest extends AbstractApi
             }
 
             $orderData['items'][] = [
-                'name' => $this->config->utf8_urlencode($orderItem->getName()),
+                'name' => $orderItem->getName(),
                 'price' => $price,
                 'quantity' => (int)$orderItem->getQtyOrdered(),
             ];
