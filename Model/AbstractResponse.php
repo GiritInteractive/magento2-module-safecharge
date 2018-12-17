@@ -24,7 +24,6 @@ abstract class AbstractResponse extends AbstractApi
     const PAYMENT_USER_PAYMENT_OPTION_HANDLER = 'payment_user_payment_option';
     const PAYMENT_DYNAMIC_3D_HANDLER = 'payment_dynamic_3d';
     const PAYMENT_PAYMENT_3D_HANDLER = 'payment_payment_3d';
-    const PAYMENT_PAYMENT_APM_HANDLER = 'payment_payment_apm';
     const CREATE_USER_HANDLER = 'create_user';
     const GET_USER_DETAILS_HANDLER = 'get_user_details';
     const PAYMENT_REFUND_HANDLER = 'payment_refund';

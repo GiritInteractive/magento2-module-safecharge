@@ -34,7 +34,6 @@ abstract class AbstractRequest extends AbstractApi
     const PAYMENT_USER_PAYMENT_OPTION_METHOD = 'addUPOCreditCardByTempToken';
     const PAYMENT_DYNAMIC_3D_METHOD = 'dynamic3D';
     const PAYMENT_PAYMENT_3D_METHOD = 'payment3D';
-    const PAYMENT_PAYMENT_APM_METHOD = 'paymentAPM';
     const CREATE_USER_METHOD = 'createUser';
     const GET_USER_DETAILS_METHOD = 'getUserDetails';
     const PAYMENT_REFUND_METHOD = 'refundTransaction';

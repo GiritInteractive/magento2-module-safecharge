@@ -2,12 +2,12 @@
 
 namespace Safecharge\Safecharge\Observer\Sales\Order\Invoice;
 
-use Safecharge\Safecharge\Model\Payment;
-use Magento\Framework\Event\ObserverInterface;
 use Magento\Framework\Event\Observer;
+use Magento\Framework\Event\ObserverInterface;
 use Magento\Sales\Model\Order;
 use Magento\Sales\Model\Order\Invoice;
 use Magento\Sales\Model\Order\Payment as OrderPayment;
+use Safecharge\Safecharge\Model\Payment;
 
 /**
  * Safecharge Safecharge sales order invoice pay observer.

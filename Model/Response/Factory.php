@@ -30,7 +30,6 @@ class Factory
         AbstractResponse::PAYMENT_USER_PAYMENT_OPTION_HANDLER => \Safecharge\Safecharge\Model\Response\Payment\UserPaymentOption::class,
         AbstractResponse::PAYMENT_DYNAMIC_3D_HANDLER => \Safecharge\Safecharge\Model\Response\Payment\Dynamic3D::class,
         AbstractResponse::PAYMENT_PAYMENT_3D_HANDLER => \Safecharge\Safecharge\Model\Response\Payment\Payment3D::class,
-        AbstractResponse::PAYMENT_PAYMENT_APM_HANDLER => \Safecharge\Safecharge\Model\Response\Payment\PaymentApm::class,
         AbstractResponse::CREATE_USER_HANDLER => \Safecharge\Safecharge\Model\Response\CreateUser::class,
         AbstractResponse::GET_USER_DETAILS_HANDLER => \Safecharge\Safecharge\Model\Response\GetUserDetails::class,
         AbstractResponse::PAYMENT_REFUND_HANDLER => \Safecharge\Safecharge\Model\Response\Payment\Refund::class,

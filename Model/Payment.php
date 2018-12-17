@@ -427,25 +427,21 @@ class Payment extends Cc implements TransparentInterface
 
         $authCode = $payment->getAdditionalInformation(self::TRANSACTION_AUTH_CODE_KEY);
 
-        if ($authCode === null && $paymentSolution === self::SOLUTION_EXTERNAL) {
+        if (($authCode === null && $paymentSolution === self::SOLUTION_EXTERNAL) || ($paymentSolution === self::SOLUTION_INTERNAL && $this->moduleConfig->getPaymentAction() === self::ACTION_AUTHORIZE_CAPTURE && ($chosenApmMethod = $payment->getAdditionalInformation(self::KEY_CHOSEN_APM_METHOD)))) {
             $payment->setIsTransactionPending(true);
 
             return $this;
         }
 
-        if ($paymentSolution === self::SOLUTION_INTERNAL && $this->moduleConfig->getPaymentAction() === self::ACTION_AUTHORIZE_CAPTURE && ($chosenApmMethod = $payment->getAdditionalInformation(self::KEY_CHOSEN_APM_METHOD))) {
-            $method = AbstractRequest::PAYMENT_PAYMENT_APM_METHOD;
-        } else {
-            if ($authCode === null) {
-                $secure3d = $this->moduleConfig->is3dSecureEnabled();
-                if ($secure3d === true) {
-                    $method = AbstractRequest::PAYMENT_DYNAMIC_3D_METHOD;
-                } else {
-                    $method = AbstractRequest::PAYMENT_CC_METHOD;
-                }
+        if ($authCode === null) {
+            $secure3d = $this->moduleConfig->is3dSecureEnabled();
+            if ($secure3d === true) {
+                $method = AbstractRequest::PAYMENT_DYNAMIC_3D_METHOD;
             } else {
-                $method = AbstractRequest::PAYMENT_SETTLE_METHOD;
+                $method = AbstractRequest::PAYMENT_CC_METHOD;
             }
+        } else {
+            $method = AbstractRequest::PAYMENT_SETTLE_METHOD;
         }
 
         /** @var RequestInterface $request */
@@ -454,12 +450,9 @@ class Payment extends Cc implements TransparentInterface
             $payment,
             $amount
         );
-        if ($method === AbstractRequest::PAYMENT_PAYMENT_APM_METHOD) {
-            $request->setPaymentMethod($chosenApmMethod);
-        }
         $response = $request->process();
 
-        if (($authCode === null && $paymentSolution === self::SOLUTION_EXTERNAL) || ($method === AbstractRequest::PAYMENT_PAYMENT_APM_METHOD)) {
+        if ($authCode === null && $paymentSolution === self::SOLUTION_EXTERNAL) {
             $this->checkoutSession
                 ->setRedirectUrl($response->getRedirectUrl());
         } elseif ($method === AbstractRequest::PAYMENT_DYNAMIC_3D_METHOD) {
