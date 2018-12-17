@@ -2,11 +2,11 @@
 
 namespace Safecharge\Safecharge\Model\Request\Payment;
 
-use Safecharge\Safecharge\Model\AbstractRequest;
-use Safecharge\Safecharge\Model\RequestInterface;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\ObjectManagerInterface;
 use Magento\Sales\Model\Order\Payment as OrderPayment;
+use Safecharge\Safecharge\Model\AbstractRequest;
+use Safecharge\Safecharge\Model\RequestInterface;
 
 /**
  * Safecharge Safecharge payment request factory model.
@@ -28,6 +28,7 @@ class Factory
         AbstractRequest::PAYMENT_USER_PAYMENT_OPTION_METHOD => \Safecharge\Safecharge\Model\Request\Payment\UserPaymentOption::class,
         AbstractRequest::PAYMENT_DYNAMIC_3D_METHOD => \Safecharge\Safecharge\Model\Request\Payment\Dynamic3D::class,
         AbstractRequest::PAYMENT_PAYMENT_3D_METHOD => \Safecharge\Safecharge\Model\Request\Payment\Payment3D::class,
+        AbstractRequest::PAYMENT_PAYMENT_APM_METHOD => \Safecharge\Safecharge\Model\Request\Payment\PaymentApm::class,
         AbstractRequest::PAYMENT_REFUND_METHOD => \Safecharge\Safecharge\Model\Request\Payment\Refund::class,
         AbstractRequest::PAYMENT_VOID_METHOD => \Safecharge\Safecharge\Model\Request\Payment\Cancel::class,
     ];

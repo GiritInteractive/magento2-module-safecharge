@@ -27,7 +27,10 @@ define(
     ) {
         'use strict';
 
+        var self = null;
+
         return Component.extend({
+
             defaults: {
                 template: 'Safecharge_Safecharge/payment/safecharge',
                 isCcFormShown: true,
@@ -39,7 +42,9 @@ define(
             },
 
             initObservable: function() {
-                this._super()
+                self = this;
+
+                self._super()
                     .observe([
                         'creditCardToken',
                         'creditCardSave',
@@ -49,35 +54,36 @@ define(
                         'chosenApmMethod'
                     ]);
 
-                var savedCards = this.getCardTokens();
+                var savedCards = self.getCardTokens();
                 if (savedCards.length > 0) {
-                    this.creditCardToken(savedCards[0]['value']);
+                    self.creditCardToken(savedCards[0]['value']);
                 }
 
-                var apmMethods = this.getApmMethods();
+                var apmMethods = self.getApmMethods();
                 if (apmMethods.length > 0) {
-                    this.apmMethods(apmMethods);
+                    self.apmMethods(apmMethods);
+                    self.chosenApmMethod(apmMethods[0].paymentMethod);
                 }
 
-                return this;
+                return self;
             },
 
             initCcNumberFormatting: function() {
-                $('#' + this.getCode() + '_form_cc input[name="payment[cc_number]"]')
+                $('#' + self.getCode() + '_form_cc input[name="payment[cc_number]"]')
                     .bind('input', function(e) {
                         e.target.value = e.target.value.replace(/[^\dA-Z]/g, '').replace(/(.{4})/g, '$1 ').trim();
                     });
             },
 
             initCcCvvFormatting: function() {
-                $('#' + this.getCode() + '_form_cc input[name="payment[cc_cid]"]')
+                $('#' + self.getCode() + '_form_cc input[name="payment[cc_cid]"]')
                     .bind('input', function(e) {
                         e.target.value = e.target.value.replace(/[^\dA-Z]/g, '').replace(/(.{4})/g, '$1 ').trim();
                     });
             },
 
             context: function() {
-                return this;
+                return self;
             },
 
             isShowLegend: function() {
@@ -93,27 +99,27 @@ define(
             },
 
             useVault: function() {
-                var useVault = window.checkoutConfig.payment[this.getCode()].useVault;
-                this.creditCardSave(useVault ? 1 : 0);
+                var useVault = window.checkoutConfig.payment[self.getCode()].useVault;
+                self.creditCardSave(useVault ? 1 : 0);
 
                 return useVault;
             },
 
             isCcDetectionEnabled: function() {
-                return window.checkoutConfig.payment[this.getCode()].isCcDetectionEnabled;
+                return window.checkoutConfig.payment[self.getCode()].isCcDetectionEnabled;
             },
 
             getCssClass: function() {
-                return this.isCcDetectionEnabled() ? 'field type detection' : 'field type required';
+                return self.isCcDetectionEnabled() ? 'field type detection' : 'field type required';
             },
 
             canSaveCard: function() {
-                return window.checkoutConfig.payment[this.getCode()].canSaveCard;
+                return window.checkoutConfig.payment[self.getCode()].canSaveCard;
             },
 
             getCardTokens: function() {
                 var savedCards = window.checkoutConfig
-                    .payment[this.getCode()]
+                    .payment[self.getCode()]
                     .savedCards;
 
                 return _.map(savedCards, function(value, key) {
@@ -126,67 +132,93 @@ define(
 
             getData: function() {
                 return {
-                    'method': this.item.method,
+                    'method': self.item.method,
                     'additional_data': {
-                        'cc_token': this.creditCardToken(),
-                        'cc_save': this.creditCardSave(),
-                        'cc_cid': this.creditCardVerificationNumber(),
-                        'cc_type': this.creditCardType(),
-                        'cc_exp_year': this.creditCardExpYear(),
-                        'cc_exp_month': this.creditCardExpMonth(),
-                        'cc_number': this.creditCardNumber(),
-                        'cc_owner': this.creditCardOwner()
+                        'cc_token': self.creditCardToken(),
+                        'cc_save': self.creditCardSave(),
+                        'cc_cid': self.creditCardVerificationNumber(),
+                        'cc_type': self.creditCardType(),
+                        'cc_exp_year': self.creditCardExpYear(),
+                        'cc_exp_month': self.creditCardExpMonth(),
+                        'cc_number': self.creditCardNumber(),
+                        'cc_owner': self.creditCardOwner(),
+                        'chosen_apm_method': self.chosenApmMethod()
                     }
                 };
             },
 
             savedCardSelected: function(token) {
                 if (token === undefined) {
-                    this.isCcFormShown(true);
+                    self.isCcFormShown(true);
                 } else {
-                    this.isCcFormShown(false);
+                    self.isCcFormShown(false);
                 }
             },
 
             is3dSecureEnabled: function() {
-                return window.checkoutConfig.payment[this.getCode()].is3dSecureEnabled;
+                return window.checkoutConfig.payment[self.getCode()].is3dSecureEnabled;
             },
 
             getAuthenticateUrl: function() {
-                return window.checkoutConfig.payment[this.getCode()].authenticateUrl;
+                return window.checkoutConfig.payment[self.getCode()].authenticateUrl;
             },
 
             useExternalSolution: function() {
-                return window.checkoutConfig.payment[this.getCode()].externalSolution;
+                return window.checkoutConfig.payment[self.getCode()].externalSolution;
             },
 
             getRedirectUrl: function() {
-                return window.checkoutConfig.payment[this.getCode()].redirectUrl;
+                return window.checkoutConfig.payment[self.getCode()].redirectUrl;
+            },
+
+            getPaymentApmUrl: function() {
+                return window.checkoutConfig.payment[self.getCode()].paymentApmUrl;
             },
 
             getApmMethods: function() {
-                console.log(window.checkoutConfig.payment[this.getCode()].apmMethods);
-                return window.checkoutConfig.payment[this.getCode()].apmMethods;
+                return window.checkoutConfig.payment[self.getCode()].apmMethods;
             },
 
             placeOrder: function(data, event) {
-                var self = this;
-
                 if (event) {
                     event.preventDefault();
                 }
 
-                if (this.validate() && additionalValidators.validate()) {
-                    this.isPlaceOrderActionAllowed(false);
+                if (self.validate() && additionalValidators.validate()) {
+                    self.isPlaceOrderActionAllowed(false);
+
+                    if (self.chosenApmMethod() !== 'cc_card') {
+                        self.selectPaymentMethod();
+                        setPaymentMethodAction(self.messageContainer).done(
+                            function() {
+                                $('body').trigger('processStart');
+                                $.ajax({
+                                    dataType: "json",
+                                    data: {
+                                        chosen_apm_method: self.chosenApmMethod()
+                                    },
+                                    url: self.getPaymentApmUrl(),
+                                    cache: false
+                                }).done(function(res) {
+                                    if (res && res.error == 0 && res.redirectUrl) {
+                                        window.location.href = res.redirectUrl;
+                                    } else {
+                                        console.error(res);
+                                        window.location.reload();
+                                    }
+                                }).fail(function(e) {
+                                    console.error(e);
+                                    window.location.reload();
+                                });
+                            }.bind(self)
+                        );
+
+                        return;
+                    }
 
                     if (self.useExternalSolution()) {
-                        if (this.chosenApmMethod()) {
-                            alert("Chosen APM Method: " + this.chosenApmMethod() + ". Should Redirect...");
-                            this.isPlaceOrderActionAllowed(true);
-                            return;
-                        }
-                        this.selectPaymentMethod();
-                        setPaymentMethodAction(this.messageContainer).done(
+                        self.selectPaymentMethod();
+                        setPaymentMethodAction(self.messageContainer).done(
                             function() {
                                 $('body').trigger('processStart');
                                 $.ajax({
@@ -205,13 +237,13 @@ define(
 
                                 //$('body').trigger('processStop');
                                 //customerData.invalidate(['cart']);
-                            }.bind(this)
+                            }.bind(self)
                         );
 
                         return true;
                     }
 
-                    this.getPlaceOrderDeferredObject()
+                    self.getPlaceOrderDeferredObject()
                         .fail(
                             function() {
                                 self.isPlaceOrderActionAllowed(true);

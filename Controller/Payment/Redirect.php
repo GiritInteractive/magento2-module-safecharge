@@ -72,7 +72,7 @@ class Redirect extends Action
 
         if (!$this->moduleConfig->isActive()) {
             if ($this->moduleConfig->isDebugEnabled()) {
-                $this->safechargeLogger->debug('Safecharge payments module is not active at the moment!');
+                $this->safechargeLogger->debug('Redirect Controller: Safecharge payments module is not active at the moment!');
             }
             return $result->setData(['error_message' => __('Safecharge payments module is not active at the moment!')]);
         }

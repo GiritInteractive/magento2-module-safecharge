@@ -118,6 +118,7 @@ class ConfigProvider extends CcGenericConfigProvider
                     'authenticateUrl' => $this->urlBuilder->getUrl('safecharge/payment/authenticate'),
                     'externalSolution' => $this->moduleConfig->getPaymentSolution() === Payment::SOLUTION_EXTERNAL,
                     'redirectUrl' => $this->urlBuilder->getUrl('safecharge/payment/redirect'),
+                    'paymentApmUrl' => $this->urlBuilder->getUrl('safecharge/payment/apm'),
                 ],
             ],
         ];

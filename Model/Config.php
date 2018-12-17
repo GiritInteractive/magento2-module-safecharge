@@ -335,26 +335,65 @@ class Config
     /**
      * @return string
      */
-    public function getSuccessUrl()
+    public function getRedirectSuccessUrl()
     {
         $quoteId = $this->checkoutSession->getQuoteId();
 
         return $this->urlBuilder->getUrl(
             'safecharge/payment/redirect_success',
-            ['order' => $quoteId]
+            ['quote' => $quoteId]
         );
     }
 
     /**
      * @return string
      */
-    public function getErrorUrl()
+    public function getRedirectErrorUrl()
     {
         $quoteId = $this->checkoutSession->getQuoteId();
 
         return $this->urlBuilder->getUrl(
             'safecharge/payment/redirect_error',
-            ['order' => $quoteId]
+            ['quote' => $quoteId]
+        );
+    }
+
+    /**
+     * @return string
+     */
+    public function getApmSuccessUrl()
+    {
+        $quoteId = $this->checkoutSession->getQuoteId();
+
+        return $this->urlBuilder->getUrl(
+            'safecharge/payment/apm_success',
+            ['quote' => $quoteId]
+        );
+    }
+
+    /**
+     * @return string
+     */
+    public function getApmPendingUrl()
+    {
+        $quoteId = $this->checkoutSession->getQuoteId();
+
+        return $this->urlBuilder->getUrl(
+            'safecharge/payment/apm_pending',
+            ['quote' => $quoteId]
+        );
+    }
+
+    /**
+     * @return string
+     */
+    public function getApmErrorUrl()
+    {
+        $quoteId = $this->checkoutSession->getQuoteId();
+
+        return $this->urlBuilder->getUrl(
+            'safecharge/payment/apm_error',
+            ['quote' => $quoteId]
         );
     }
 

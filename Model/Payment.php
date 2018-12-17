@@ -57,6 +57,7 @@ class Payment extends Cc implements TransparentInterface
     const KEY_CC_SAVE = 'cc_save';
     const KEY_CC_TOKEN = 'cc_token';
     const KEY_CC_TEMP_TOKEN = 'cc_temp_token';
+    const KEY_CHOSEN_APM_METHOD = 'chosen_apm_method';
 
     /**
      * Transaction keys const.
@@ -86,6 +87,8 @@ class Payment extends Cc implements TransparentInterface
      */
     const SOLUTION_INTERNAL = 'internal';
     const SOLUTION_EXTERNAL = 'external';
+
+    const APM_METHOD_CC = 'cc_card';
 
     /**
      * @var string
@@ -286,6 +289,10 @@ class Payment extends Cc implements TransparentInterface
             ? $additionalData[self::KEY_CC_TOKEN]
             : null;
 
+        $chosenApmMethod = !empty($additionalData[self::KEY_CHOSEN_APM_METHOD])
+            ? $additionalData[self::KEY_CHOSEN_APM_METHOD]
+            : null;
+
         if ($ccToken !== null) {
             $ccSave = false;
         }
@@ -293,6 +300,7 @@ class Payment extends Cc implements TransparentInterface
         $info = $this->getInfoInstance();
         $info->setAdditionalInformation(self::KEY_CC_SAVE, $ccSave);
         $info->setAdditionalInformation(self::KEY_CC_TOKEN, $ccToken);
+        $info->setAdditionalInformation(self::KEY_CHOSEN_APM_METHOD, $chosenApmMethod);
 
         return $this;
     }
@@ -306,11 +314,12 @@ class Payment extends Cc implements TransparentInterface
     public function validate()
     {
         $paymentSolution = $this->moduleConfig->getPaymentSolution();
-        if ($paymentSolution === self::SOLUTION_EXTERNAL) {
+        $info = $this->getInfoInstance();
+
+        if ($paymentSolution === self::SOLUTION_EXTERNAL || ($info->getAdditionalInformation(self::KEY_CHOSEN_APM_METHOD) !== self::APM_METHOD_CC)) {
             return $this;
         }
 
-        $info = $this->getInfoInstance();
         $tokenHash = $info->getAdditionalInformation(self::KEY_CC_TOKEN);
 
         if ($tokenHash === null) {
@@ -424,15 +433,19 @@ class Payment extends Cc implements TransparentInterface
             return $this;
         }
 
-        if ($authCode === null) {
-            $secure3d = $this->moduleConfig->is3dSecureEnabled();
-            if ($secure3d === true) {
-                $method = AbstractRequest::PAYMENT_DYNAMIC_3D_METHOD;
-            } else {
-                $method = AbstractRequest::PAYMENT_CC_METHOD;
-            }
+        if ($paymentSolution === self::SOLUTION_INTERNAL && $this->moduleConfig->getPaymentAction() === self::ACTION_AUTHORIZE_CAPTURE && ($chosenApmMethod = $payment->getAdditionalInformation(self::KEY_CHOSEN_APM_METHOD))) {
+            $method = AbstractRequest::PAYMENT_PAYMENT_APM_METHOD;
         } else {
-            $method = AbstractRequest::PAYMENT_SETTLE_METHOD;
+            if ($authCode === null) {
+                $secure3d = $this->moduleConfig->is3dSecureEnabled();
+                if ($secure3d === true) {
+                    $method = AbstractRequest::PAYMENT_DYNAMIC_3D_METHOD;
+                } else {
+                    $method = AbstractRequest::PAYMENT_CC_METHOD;
+                }
+            } else {
+                $method = AbstractRequest::PAYMENT_SETTLE_METHOD;
+            }
         }
 
         /** @var RequestInterface $request */
@@ -441,9 +454,12 @@ class Payment extends Cc implements TransparentInterface
             $payment,
             $amount
         );
+        if ($method === AbstractRequest::PAYMENT_PAYMENT_APM_METHOD) {
+            $request->setPaymentMethod($chosenApmMethod);
+        }
         $response = $request->process();
 
-        if ($authCode === null && $paymentSolution === self::SOLUTION_EXTERNAL) {
+        if (($authCode === null && $paymentSolution === self::SOLUTION_EXTERNAL) || ($method === AbstractRequest::PAYMENT_PAYMENT_APM_METHOD)) {
             $this->checkoutSession
                 ->setRedirectUrl($response->getRedirectUrl());
         } elseif ($method === AbstractRequest::PAYMENT_DYNAMIC_3D_METHOD) {

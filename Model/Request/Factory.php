@@ -25,7 +25,8 @@ class Factory
         AbstractRequest::CREATE_USER_METHOD => \Safecharge\Safecharge\Model\Request\CreateUser::class,
         AbstractRequest::GET_USER_DETAILS_METHOD => \Safecharge\Safecharge\Model\Request\GetUserDetails::class,
         AbstractRequest::OPEN_ORDER_METHOD => \Safecharge\Safecharge\Model\Request\OpenOrder::class,
-        AbstractRequest::GET_MERCHANT_PAYMENT_METHODS_METHOD => \Safecharge\Safecharge\Model\Request\GetMerchantPaymentMethods::class,
+        AbstractRequest::PAYMENT_APM_METHOD => \Safecharge\Safecharge\Model\Request\PaymentApm::class,
+        AbstractRequest::GET_MERCHANT_PAYMENT_METHODS_METHOD => \Safecharge\Safecharge\Model\Request\GetMerchantPaymentMethods::class
     ];
 
     /**

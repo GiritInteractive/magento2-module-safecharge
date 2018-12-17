@@ -7,6 +7,7 @@ use Safecharge\Safecharge\Lib\Http\Client\Curl;
 use Safecharge\Safecharge\Model\AbstractResponse;
 use Safecharge\Safecharge\Model\Config;
 use Safecharge\Safecharge\Model\Logger as SafechargeLogger;
+use Safecharge\Safecharge\Model\Payment;
 use Safecharge\Safecharge\Model\ResponseInterface;
 
 /**
@@ -67,6 +68,10 @@ class GetMerchantPaymentMethods extends AbstractResponse implements ResponseInte
 
         $langCode = $this->getStoreLocale(true);
         foreach ($this->paymentMethods as $k => &$method) {
+            if ($this->config->getPaymentAction() !== Payment::ACTION_AUTHORIZE_CAPTURE && isset($method["paymentMethod"]) && $method["paymentMethod"] !== 'cc_card') {
+                unset($this->paymentMethods[$k]);
+                continue;
+            }
             if (isset($method["paymentMethodDisplayName"]) && is_array($method["paymentMethodDisplayName"])) {
                 foreach ($method["paymentMethodDisplayName"] as $kk => $dname) {
                     if ($dname["language"] === $langCode) {
@@ -75,10 +80,11 @@ class GetMerchantPaymentMethods extends AbstractResponse implements ResponseInte
                     }
                 }
                 if (!isset($method["paymentMethodDisplayName"]["language"])) {
-                    unset($method);
+                    unset($this->paymentMethods[$k]);
                 }
             }
         }
+        $this->paymentMethods = array_values($this->paymentMethods);
 
         return $this;
     }

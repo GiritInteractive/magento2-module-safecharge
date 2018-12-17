@@ -49,6 +49,7 @@ class GetMerchantPaymentMethods extends AbstractRequest implements RequestInterf
 
         $this->requestFactory = $requestFactory;
     }
+
     /**
      * {@inheritdoc}
      *

@@ -2,11 +2,6 @@
 
 namespace Safecharge\Safecharge\Controller\Payment\Redirect;
 
-use Safecharge\Safecharge\Model\AbstractRequest;
-use Safecharge\Safecharge\Model\Config as ModuleConfig;
-use Safecharge\Safecharge\Model\Logger as SafechargeLogger;
-use Safecharge\Safecharge\Model\Payment;
-use Safecharge\Safecharge\Model\Request\Payment\Factory as PaymentRequestFactory;
 use Magento\Checkout\Model\Session\Proxy as CheckoutSession;
 use Magento\Checkout\Model\Type\Onepage;
 use Magento\Framework\App\Action\Action;
@@ -24,6 +19,11 @@ use Magento\Sales\Model\Order\Payment\State\AuthorizeCommand;
 use Magento\Sales\Model\Order\Payment\State\CaptureCommand;
 use Magento\Sales\Model\Order\Payment\Transaction;
 use Magento\Sales\Model\OrderFactory;
+use Safecharge\Safecharge\Model\AbstractRequest;
+use Safecharge\Safecharge\Model\Config as ModuleConfig;
+use Safecharge\Safecharge\Model\Logger as SafechargeLogger;
+use Safecharge\Safecharge\Model\Payment;
+use Safecharge\Safecharge\Model\Request\Payment\Factory as PaymentRequestFactory;
 
 /**
  * Safecharge Safecharge redirect success controller.
@@ -284,7 +284,7 @@ class Success extends Action
      */
     private function getQuoteId()
     {
-        $quoteId = (int)$this->getRequest()->getParam('order');
+        $quoteId = (int)$this->getRequest()->getParam('quote');
 
         if ((int)$this->checkoutSession->getQuoteId() === $quoteId) {
             return $quoteId;

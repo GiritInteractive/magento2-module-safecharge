@@ -2,12 +2,12 @@
 
 namespace Safecharge\Safecharge\Controller\Payment\Redirect;
 
-use Safecharge\Safecharge\Model\Config as ModuleConfig;
-use Safecharge\Safecharge\Model\Logger as SafechargeLogger;
 use Magento\Framework\App\Action\Action;
 use Magento\Framework\App\Action\Context;
 use Magento\Framework\Controller\ResultFactory;
 use Magento\Framework\Controller\ResultInterface;
+use Safecharge\Safecharge\Model\Config as ModuleConfig;
+use Safecharge\Safecharge\Model\Logger as SafechargeLogger;
 
 /**
  * Safecharge Safecharge payment place controller.

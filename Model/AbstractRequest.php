@@ -3,6 +3,7 @@
 namespace Safecharge\Safecharge\Model;
 
 use Magento\Framework\Exception\PaymentException;
+use Magento\Quote\Model\Quote;
 use Magento\Sales\Api\Data\OrderAddressInterface;
 use Magento\Sales\Model\Order;
 use Safecharge\Safecharge\Lib\Http\Client\Curl;
@@ -33,11 +34,13 @@ abstract class AbstractRequest extends AbstractApi
     const PAYMENT_USER_PAYMENT_OPTION_METHOD = 'addUPOCreditCardByTempToken';
     const PAYMENT_DYNAMIC_3D_METHOD = 'dynamic3D';
     const PAYMENT_PAYMENT_3D_METHOD = 'payment3D';
+    const PAYMENT_PAYMENT_APM_METHOD = 'paymentAPM';
     const CREATE_USER_METHOD = 'createUser';
     const GET_USER_DETAILS_METHOD = 'getUserDetails';
     const PAYMENT_REFUND_METHOD = 'refundTransaction';
     const PAYMENT_VOID_METHOD = 'voidTransaction';
     const OPEN_ORDER_METHOD = 'openOrder';
+    const PAYMENT_APM_METHOD = 'paymentAPM';
     const GET_MERCHANT_PAYMENT_METHODS_METHOD = 'getMerchantPaymentMethods';
 
     /**
@@ -170,7 +173,9 @@ abstract class AbstractRequest extends AbstractApi
             'merchantSiteId' => $this->config->getMerchantSiteId(),
             'clientRequestId' => (string)$this->getRequestId(),
             'timeStamp' => date('YmdHis'),
-            'customField1' => $this->config->getSourcePlatformField(),
+            'merchantDetails' => [
+                'customField1' => $this->config->getSourcePlatformField(),
+            ],
             'encoding' => 'UTF-8',
         ];
 
@@ -348,5 +353,75 @@ abstract class AbstractRequest extends AbstractApi
         }
 
         return $orderData;
+    }
+
+    /**
+     * @param Quote $quote
+     *
+     * @return array
+     */
+    protected function getQuoteData(Quote $quote)
+    {
+        /** @var OrderAddressInterface $billing */
+        $billing = $quote->getBillingAddress();
+
+        $shipping = 0;
+        $shippingAddress = $quote->getShippingAddress();
+        if ($shippingAddress !== null) {
+            $shipping = $shippingAddress->getBaseShippingAmount();
+        }
+
+        $quoteData = [
+            'userTokenId' => $quote->getCustomerId() ?: $quote->getCustomerEmail(),
+            'clientUniqueId' => $quote->getIncrementId(),
+            'currency' => $quote->getBaseCurrencyCode(),
+            'amountDetails' => [
+                'totalShipping' => (float)$shipping,
+                'totalHandling' => (float)0,
+                'totalDiscount' => (float)abs($quote->getBaseDiscountAmount()),
+                'totalTax' => (float)$quote->getBaseTaxAmount(),
+            ],
+            'items' => [],
+            'deviceDetails' => [
+                'deviceType' => 'DESKTOP',
+                'ipAddress' => $quote->getRemoteIp(),
+            ],
+            'ipAddress' => $quote->getRemoteIp(),
+        ];
+
+        if ($billing !== null) {
+            $quoteData['billingAddress'] = [
+                'firstName' => $billing->getFirstname(),
+                'lastName' => $billing->getLastname(),
+                'address' => is_array($billing->getStreet())
+                    ? implode(' ', $billing->getStreet())
+                    : '',
+                'cell' => '',
+                'phone' => $billing->getTelephone(),
+                'zip' => $billing->getPostcode(),
+                'city' => $billing->getCity(),
+                'country' => $billing->getCountryId(),
+                'state' => $billing->getRegionCode(),
+                'email' => $billing->getEmail(),
+            ];
+            $quoteData = array_merge($quoteData, $quoteData['billingAddress']);
+        }
+
+        // Add items details.
+        $quoteItems = $quote->getAllVisibleItems();
+        foreach ($quoteItems as $quoteItem) {
+            $price = (float)$quoteItem->getBasePrice();
+            if (!$price) {
+                continue;
+            }
+
+            $quoteData['items'][] = [
+                'name' => $quoteItem->getName(),
+                'price' => $price,
+                'quantity' => (int)$quoteItem->getQty(),
+            ];
+        }
+
+        return $quoteData;
     }
 }
