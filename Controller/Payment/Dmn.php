@@ -184,7 +184,7 @@ class Dmn extends Action
                 $order->save();
             } catch (\Exception $e) {
                 if ($this->moduleConfig->isDebugEnabled()) {
-                    $this->safechargeLogger->debug('DMN Error: ' . $e->getTraceAsString());
+                    $this->safechargeLogger->debug('DMN Error: ' . $e->getMessage() . "\n" . $e->getTraceAsString());
                 }
                 return $this->jsonResultFactory->create()
                     ->setHttpResponseCode(500)
