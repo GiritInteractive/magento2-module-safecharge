@@ -70,11 +70,15 @@ class Url
         /** @var Quote $quote */
         $quote = $this->checkoutSession->getQuote();
 
+        $quotePayment = $quote->getPayment();
+
         $shipping = 0;
         $shippingAddress = $quote->getShippingAddress();
         if ($shippingAddress !== null) {
             $shipping = $shippingAddress->getBaseShippingAmount();
         }
+
+        $reservedOrderId = $quotePayment->getAdditionalInformation(Payment::TRANSACTION_ORDER_ID);
 
         $queryParams = [
             'merchant_id' => $this->moduleConfig->getMerchantId(),
@@ -90,8 +94,8 @@ class Url
             'success_url' => $this->moduleConfig->getRedirectSuccessUrl(),
             'error_url' => $this->moduleConfig->getRedirectErrorUrl(),
             'back_url' => $this->moduleConfig->getBackUrl(),
-            'notify_url' => $this->moduleConfig->getDmnUrl(),
-            'merchant_unique_id' => $this->moduleConfig->getReservedOrderId(),
+            'notify_url' => $this->moduleConfig->getDmnUrl($reservedOrderId),
+            'merchant_unique_id' => $reservedOrderId,
             'ipAddress' => $quote->getRemoteIp(),
             'encoding' => 'UTF-8',
         ];
