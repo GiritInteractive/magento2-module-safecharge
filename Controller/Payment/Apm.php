@@ -103,6 +103,9 @@ class Apm extends Action
             $redirectUrl = $response->getRedirectUrl();
             $status = $response->getResponseStatus();
         } catch (PaymentException $e) {
+            if ($this->moduleConfig->isDebugEnabled()) {
+                $this->safechargeLogger->debug('Apm Controller - Error: ' . $e->getMessage() . "\n" . $e->getTraceAsString());
+            }
             return $result->setData([
                 "error" => 1,
                 "redirectUrl" => null,

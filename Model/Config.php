@@ -418,7 +418,7 @@ class Config
     /**
      * @return string
      */
-    public function getAmpDmnUrl($incrementId = null, $storeId = null)
+    public function getApmDmnUrl($incrementId = null, $storeId = null)
     {
         return $this->getStoreManager()
             ->getStore((is_null($incrementId)) ? $this->storeId : $storeId)
