@@ -149,11 +149,21 @@ class Dmn extends Action
 
                 $this->validateChecksum($params);
 
+                if (isset($params["merchant_unique_id"]) && $params["merchant_unique_id"]) {
+                    $orderIncrementId = $params["merchant_unique_id"];
+                } elseif (isset($params["order"]) && $params["order"]) {
+                    $orderIncrementId = $params["order"];
+                } elseif (isset($params["orderId"]) && $params["orderId"]) {
+                    $orderIncrementId = $params["orderId"];
+                } else {
+                    $orderIncrementId = null;
+                }
+
                 /** @var Order $order */
-                $order = $this->orderFactory->create()->loadByIncrementId($params["merchant_unique_id"]);
+                $order = $this->orderFactory->create()->loadByIncrementId($orderIncrementId);
 
                 if (!($order && $order->getId())) {
-                    throw new \Exception(__('Order #%1 not found!', $params["merchant_unique_id"]));
+                    throw new \Exception(__('Order #%1 not found!', $orderIncrementId));
                 }
 
                 /** @var OrderPayment $payment */
@@ -193,7 +203,7 @@ class Dmn extends Action
         }
 
         if ($this->moduleConfig->isDebugEnabled()) {
-            $this->safechargeLogger->debug('DMN Success for order #' . $params["merchant_unique_id"]);
+            $this->safechargeLogger->debug('DMN Success for order #' . $orderIncrementId);
         }
 
         return $this->jsonResultFactory->create()
