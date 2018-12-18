@@ -185,7 +185,7 @@ class Dmn extends Action
                     );
                 }
 
-                if (isset($params['payment_method']) && $params['AuthCode']) {
+                if (isset($params['payment_method']) && $params['payment_method']) {
                     $orderPayment->setAdditionalInformation(
                         Payment::TRANSACTION_EXTERNAL_PAYMENT_METHOD,
                         $params['payment_method']
