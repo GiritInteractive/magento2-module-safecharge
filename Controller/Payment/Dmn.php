@@ -209,7 +209,7 @@ class Dmn extends Action
             );
         }
         $concat = $this->moduleConfig->getMerchantSecretKey();
-        foreach (['totalAmount', 'requestedCurrency', 'responseTimeStamp', 'PPP_TransactionID', 'Status', 'productId'] as $checksumKey) {
+        foreach (['totalAmount', 'currency', 'responseTimeStamp', 'PPP_TransactionID', 'Status', 'productId'] as $checksumKey) {
             if (!isset($params[$checksumKey])) {
                 throw new \Exception(
                     __('Required key %1 for checksum calculation is missing.', $checksumKey)
