@@ -1,6 +1,6 @@
 <?php
 
-namespace Safecharge\Safecharge\Controller\Payment;
+namespace Safecharge\Safecharge\Controller\Payment\Apm;
 
 use Magento\Checkout\Model\Session\Proxy as CheckoutSession;
 use Magento\Checkout\Model\Type\Onepage;
@@ -21,7 +21,7 @@ use Safecharge\Safecharge\Model\Payment;
 use Safecharge\Safecharge\Model\Request\Payment\Factory as PaymentRequestFactory;
 
 /**
- * Safecharge Safecharge payment redirect controller.
+ * Safecharge Safecharge APM DMN controller.
  *
  * @category Safecharge
  * @package  Safecharge_Safecharge
@@ -142,7 +142,7 @@ class Dmn extends Action
 
                 if ($this->moduleConfig->isDebugEnabled()) {
                     $this->safechargeLogger->debug(
-                        'DMN Params: '
+                        'APM DMN Params: '
                         . json_encode($params)
                     );
                 }
@@ -197,11 +197,39 @@ class Dmn extends Action
                     $params
                 );
 
+                $message = $this->captureCommand->execute(
+                    $orderPayment,
+                    $order->getBaseGrandTotal(),
+                    $order
+                );
+                $transactionType = Transaction::TYPE_CAPTURE;
+
+                $orderPayment
+                    ->setTransactionId($params['TransactionID'])
+                    ->setIsTransactionPending(false)
+                    ->setIsTransactionClosed(1);
+
+                /** @var Invoice $invoice */
+                foreach ($order->getInvoiceCollection() as $invoice) {
+                    $invoice
+                        ->setTransactionId($params['TransactionID'])
+                        ->pay()
+                        ->save();
+                }
+
+                $transaction = $orderPayment->addTransaction($transactionType);
+
+                $message = $orderPayment->prependMessage($message);
+                $orderPayment->addTransactionCommentsToOrder(
+                    $transaction,
+                    $message
+                );
+
                 $orderPayment->save();
                 $order->save();
             } catch (\Exception $e) {
                 if ($this->moduleConfig->isDebugEnabled()) {
-                    $this->safechargeLogger->debug('DMN Error: ' . $e->getMessage() . "\n" . $e->getTraceAsString());
+                    $this->safechargeLogger->debug('APM DMN Error: ' . $e->getMessage() . "\n" . $e->getTraceAsString());
                 }
                 return $this->jsonResultFactory->create()
                     ->setHttpResponseCode(500)

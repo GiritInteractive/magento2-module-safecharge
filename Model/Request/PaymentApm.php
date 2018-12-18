@@ -142,7 +142,7 @@ class PaymentApm extends AbstractRequest implements RequestInterface
                     'failureUrl' => $this->config->getApmErrorUrl(),
                     'pendingUrl' => $this->config->getApmPendingUrl(),
                     'backUrl' => $this->config->getBackUrl(),
-                    'notificationUrl' => $this->config->getDmnUrl($reservedOrderId),
+                    'notificationUrl' => $this->config->getApmDmnUrl($reservedOrderId),
                 ],
                 'paymentMethod' => $this->getPaymentMethod(),
             ]
