@@ -61,6 +61,7 @@ define(
 
                 var apmMethods = self.getApmMethods();
                 if (apmMethods.length > 0) {
+                    console.log(apmMethods);
                     self.apmMethods(apmMethods);
                     self.chosenApmMethod(apmMethods[0].paymentMethod);
                 }

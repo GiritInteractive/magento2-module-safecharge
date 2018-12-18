@@ -83,6 +83,9 @@ class GetMerchantPaymentMethods extends AbstractResponse implements ResponseInte
                     unset($this->paymentMethods[$k]);
                 }
             }
+            if (isset($method["logoURL"]) && $method["logoURL"]) {
+                $method["logoURL"] = preg_replace('/\.svg\.svg$/', '.svg', $method["logoURL"]);
+            }
         }
         $this->paymentMethods = array_values($this->paymentMethods);
 

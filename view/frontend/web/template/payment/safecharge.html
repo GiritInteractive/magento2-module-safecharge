@@ -41,9 +41,17 @@
         <div data-bind="foreach: apmMethods">
             <div class="safecharge-apm-method-container">
                 <input type="radio" data-bind="checkedValue: $data.paymentMethod, checked: $parent.chosenApmMethod, attr: {'id': $parent.getCode() + '_' + $data.paymentMethod, 'name': $parent.getCode() + '_apm_payment_method'}" />
-                <label class="label" data-bind="attr: {'for': $parent.getCode() + '_' + $data.paymentMethod}">
-                    <span data-bind="text: $data.paymentMethodDisplayName.message"></span>
+                <label class="label safecharge-apm-method-label" data-bind="attr: {'for': $parent.getCode() + '_' + $data.paymentMethod}">
+                    <span class="safecharge-apm-method-icon" data-bind="if: $data.logoURL, style: { backgroundImage: $data.logoURL ? 'url(\'' + $data.logoURL + '\')' : 'none' }"></span>
+                    <span class="label safecharge-apm-method-label-title" data-bind="text: $t($data.paymentMethodDisplayName.message)"></span>
                 </label>
+
+                <!-- ko if: ($parent.chosenApmMethod() === $data.paymentMethod && $data.paymentMethod !== 'cc_card')-->
+                <div class="safecharge-apm-method-note">
+                    <!-- ko i18n: "Please click 'Place Order' in order to proceed to " + $data.paymentMethodDisplayName.message -->
+                    <!-- /ko -->
+                </div>
+                <!--/ko-->
 
                 <!-- ko if: ($data.paymentMethod === 'cc_card' && $parent.chosenApmMethod() === 'cc_card')-->
                 <form class="form" id="co-transparent-form" action="#" method="post">
@@ -56,7 +64,7 @@
                         <!-- ko if: ($parent.isShowLegend())-->
                         <legend class="legend">
                             <span>
-                                <!-- ko i18n: 'Credit Card Information'-->
+                                <!-- ko i18n: 'Credit Card Information' -->
                                 <!-- /ko --></span>
                         </legend><br />
                         <!-- /ko -->
