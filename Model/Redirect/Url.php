@@ -79,11 +79,6 @@ class Url
         }
 
         $reservedOrderId = $quotePayment->getAdditionalInformation(Payment::TRANSACTION_ORDER_ID) ?: $this->moduleConfig->getReservedOrderId();
-        $quotePayment->setAdditionalInformation(
-            Payment::TRANSACTION_ORDER_ID,
-            $reservedOrderId
-        );
-        $quotePayment->save();
 
         $queryParams = [
             'merchant_id' => $this->moduleConfig->getMerchantId(),

@@ -129,11 +129,6 @@ class PaymentApm extends AbstractRequest implements RequestInterface
         );
 
         $reservedOrderId = $quotePayment->getAdditionalInformation(Payment::TRANSACTION_ORDER_ID) ?: $this->config->getReservedOrderId();
-        $quotePayment->setAdditionalInformation(
-            Payment::TRANSACTION_ORDER_ID,
-            $reservedOrderId
-        );
-        $quotePayment->save();
 
         $params = array_merge_recursive(
             $this->getQuoteData($quote),
