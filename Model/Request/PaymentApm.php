@@ -133,7 +133,6 @@ class PaymentApm extends AbstractRequest implements RequestInterface
         $params = array_merge_recursive(
             $this->getQuoteData($quote),
             [
-                'orderId' => $reservedOrderId,
                 'sessionToken' => $tokenResponse->getToken(),
                 'amount' => (float)$quote->getGrandTotal(),
                 'merchant_unique_id' => $reservedOrderId,
