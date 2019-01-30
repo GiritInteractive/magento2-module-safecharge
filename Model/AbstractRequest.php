@@ -372,7 +372,7 @@ abstract class AbstractRequest extends AbstractApi
 
         $quoteData = [
             'userTokenId' => $quote->getCustomerId() ?: $quote->getCustomerEmail(),
-            'clientUniqueId' => $quote->getIncrementId(),
+            'clientUniqueId' => $quote->getReservedOrderId() ?: $this->config->getReservedOrderId(),
             'currency' => $quote->getBaseCurrencyCode(),
             'amountDetails' => [
                 'totalShipping' => (float)$shipping,
