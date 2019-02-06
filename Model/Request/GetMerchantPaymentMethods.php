@@ -81,14 +81,10 @@ class GetMerchantPaymentMethods extends AbstractRequest implements RequestInterf
             ->create(AbstractRequest::GET_SESSION_TOKEN_METHOD);
         $tokenResponse = $tokenRequest->process();
 
-        $quote = $this->config->getCheckoutSession()->getQuote();
-        $billing = ($quote) ? $quote->getBillingAddress() : null;
-        $countryCode = ($billing) ? $billing->getCountryId() : null;
-
         $params = [
             'sessionToken' => $tokenResponse->getToken(),
-            "currencyCode" => $quote->getBaseCurrencyCode(),
-            "countryCode" => $countryCode,
+            "currencyCode" => $this->config->getQuoteBaseCurrency(),
+            "countryCode" => $this->config->getQuoteCountryCode(),
             "languageCode", "eng",
         ];
 

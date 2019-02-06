@@ -113,12 +113,14 @@ class ConfigProvider extends CcGenericConfigProvider
                     'useccv' => $this->moduleConfig->getUseCcv(),
                     'savedCards' => $savedCards,
                     'canSaveCard' => $canSaveCard,
+                    'countryId' => $this->moduleConfig->getQuoteCountryCode(),
                     'apmMethods' => $apmMethods,
                     'is3dSecureEnabled' => $this->moduleConfig->is3dSecureEnabled(),
                     'authenticateUrl' => $this->urlBuilder->getUrl('safecharge/payment/authenticate'),
                     'externalSolution' => $this->moduleConfig->getPaymentSolution() === Payment::SOLUTION_EXTERNAL,
                     'redirectUrl' => $this->urlBuilder->getUrl('safecharge/payment/redirect'),
                     'paymentApmUrl' => $this->urlBuilder->getUrl('safecharge/payment/apm'),
+                    'getMerchantPaymentMethodsUrl' => $this->urlBuilder->getUrl('safecharge/payment/GetMerchantPaymentMethods'),
                 ],
             ],
         ];
@@ -179,6 +181,9 @@ class ConfigProvider extends CcGenericConfigProvider
      */
     private function getApmMethods()
     {
+        if (!$this->moduleConfig->getQuoteCountryCode()) {
+            return [];
+        }
         $request = $this->requestFactory->create(AbstractRequest::GET_MERCHANT_PAYMENT_METHODS_METHOD);
 
         try {

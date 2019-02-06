@@ -14,6 +14,7 @@ define(
         'Magento_Customer/js/customer-data',
         'jquery.redirect',
         'ko',
+        'Magento_Checkout/js/model/quote'
     ],
     function(
         $,
@@ -23,7 +24,8 @@ define(
         setPaymentMethodAction,
         customerData,
         jqueryRedirect,
-        ko
+        ko,
+        quote
     ) {
         'use strict';
 
@@ -38,7 +40,8 @@ define(
                 creditCardSave: 0,
                 creditCardOwner: '',
                 apmMethods: [],
-                chosenApmMethod: ''
+                chosenApmMethod: '',
+                countryId: null
             },
 
             initObservable: function() {
@@ -51,7 +54,8 @@ define(
                         'isCcFormShown',
                         'creditCardOwner',
                         'apmMethods',
-                        'chosenApmMethod'
+                        'chosenApmMethod',
+                        'countryId'
                     ]);
 
                 var savedCards = self.getCardTokens();
@@ -61,10 +65,11 @@ define(
 
                 var apmMethods = self.getApmMethods();
                 if (apmMethods.length > 0) {
-                    console.log(apmMethods);
                     self.apmMethods(apmMethods);
                     self.chosenApmMethod(apmMethods[0].paymentMethod);
                 }
+
+                quote.billingAddress.subscribe(self.reloadApmMethods, this, 'change');
 
                 return self;
             },
@@ -178,6 +183,38 @@ define(
 
             getApmMethods: function() {
                 return window.checkoutConfig.payment[self.getCode()].apmMethods;
+            },
+
+            getMerchantPaymentMethodsUrl: function() {
+                return window.checkoutConfig.payment[self.getCode()].getMerchantPaymentMethodsUrl;
+            },
+
+            reloadApmMethods: function() {
+                console.log("reloadApmMethods");
+                if (self.countryId() !== quote.billingAddress().countryId) {
+                    self.countryId(quote.billingAddress().countryId);
+                } else {
+                    return;
+                }
+                //$('body').trigger('processStart');
+                $.ajax({
+                    dataType: "json",
+                    url: self.getMerchantPaymentMethodsUrl(),
+                    cache: false,
+                    showLoader: true
+                }).done(function(res) {
+                    if (res && res.error == 0) {
+                        console.log(res.apmMethods);
+                        self.apmMethods(res.apmMethods);
+                        console.log(self.apmMethods());
+                    } else {
+                        console.error(res);
+                    }
+                    //$('body').trigger('processStop');
+                }).fail(function(e) {
+                    //$('body').trigger('processStop');
+                    console.error(e);
+                });
             },
 
             placeOrder: function(data, event) {

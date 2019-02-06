@@ -434,4 +434,25 @@ class Config
         }
         return $reservedOrderId;
     }
+
+    /**
+     * Get default country code.
+     * @return string
+     */
+    public function getDefaultCountry()
+    {
+        return $this->scopeConfig->getValue('general/country/default', ScopeInterface::SCOPE_STORE, $this->storeId);
+    }
+
+    public function getQuoteCountryCode()
+    {
+        $quote = $this->checkoutSession->getQuote();
+        $billing = ($quote) ? $quote->getBillingAddress() : null;
+        return ($billing) ? $billing->getCountryId() : null;
+    }
+
+    public function getQuoteBaseCurrency()
+    {
+        $quote = $this->checkoutSession->getQuote()->getBaseCurrencyCode();
+    }
 }

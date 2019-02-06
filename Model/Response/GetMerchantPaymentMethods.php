@@ -64,6 +64,11 @@ class GetMerchantPaymentMethods extends AbstractResponse implements ResponseInte
         parent::process();
 
         $body = $this->getBody();
+
+        if (!$this->config->getQuoteCountryCode()) {
+            $this->paymentMethods = [];
+        }
+
         $this->paymentMethods = (array) $body['paymentMethods'];
 
         $langCode = $this->getStoreLocale(true);

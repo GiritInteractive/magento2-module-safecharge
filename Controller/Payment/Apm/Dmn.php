@@ -169,8 +169,26 @@ class Dmn extends Action
                 /** @var OrderPayment $payment */
                 $orderPayment = $order->getPayment();
 
-                if (isset($params['Status']) && strtolower($params['Status']) !== 'approved') {
-                    throw new \Exception(__('Payment Failed.'));
+                $params['Status'] = $params['Status'] ?: null;
+                switch (strtolower($params['Status'])) {
+                    case 'approved':
+                    case 'success':
+                        //Do nothing - continue...
+                        break;
+
+                    case 'pending':
+                        $order->setState(Order::STATE_PENDING_PAYMENT)->setStatus(Order::STATE_PENDING_PAYMENT)->save();
+                        return $this->jsonResultFactory->create()
+                            ->setHttpResponseCode(\Magento\Framework\Webapi\Response::HTTP_OK)
+                            ->setData(["error" => 0, "message" => "Pending Payment"]);
+                        break;
+
+                    case 'declined':
+                    case 'error':
+                    default:
+                        $order->setState(Order::STATE_PAYMENT_REVIEW)->setStatus(Order::STATE_PAYMENT_REVIEW)->save();
+                        throw new \Exception(__('Payment Failed/Declined/Error.'));
+                        break;
                 }
 
                 $orderPayment->setAdditionalInformation(
@@ -232,7 +250,7 @@ class Dmn extends Action
                     $this->safechargeLogger->debug('APM DMN Error: ' . $e->getMessage() . "\n" . $e->getTraceAsString());
                 }
                 return $this->jsonResultFactory->create()
-                    ->setHttpResponseCode(500)
+                    ->setHttpResponseCode(\Magento\Framework\Webapi\Response::HTTP_OK)
                     ->setData(["error" => 1, "message" => $e->getMessage()]);
             }
         }
