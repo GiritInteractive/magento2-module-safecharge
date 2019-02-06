@@ -182,7 +182,10 @@ class Pending extends Action
             );
 
             if (strtolower($response['Status']) === 'pending') {
-                $order->setState(Order::STATE_PENDING_PAYMENT)->setStatus(Order::STATE_PENDING_PAYMENT)->save();
+                $orderPayment
+                    //->setIsTransactionPending(true)
+                    //->setIsTransactionClosed(0)
+                    ->setTransactionId($response['TransactionID']);
             } elseif (in_array(strtolower($response['Status']), ['approved', 'success'])) {
                 $isSettled = false;
                 if ($this->moduleConfig->getPaymentAction() === Payment::ACTION_AUTHORIZE_CAPTURE) {
