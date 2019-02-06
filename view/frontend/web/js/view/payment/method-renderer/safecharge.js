@@ -222,7 +222,7 @@ define(
                 if (self.validate() && additionalValidators.validate()) {
                     self.isPlaceOrderActionAllowed(false);
 
-                    if (self.chosenApmMethod() !== 'cc_card') {
+                    if (!self.useExternalSolution() && self.chosenApmMethod() !== 'cc_card') {
                         self.selectPaymentMethod();
                         setPaymentMethodAction(self.messageContainer).done(
                             function() {
