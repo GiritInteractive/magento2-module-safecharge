@@ -182,6 +182,7 @@ class Dmn extends Action
                             //->setIsTransactionClosed(0)
                             ->setTransactionId($response['TransactionID'])
                             ->save();
+                        $order->setState(Order::STATE_PENDING_PAYMENT)->setStatus(Order::STATE_PENDING_PAYMENT)->save();
                         return $this->jsonResultFactory->create()
                             ->setHttpResponseCode(\Magento\Framework\Webapi\Response::HTTP_OK)
                             ->setData(["error" => 0, "message" => "Pending Payment"]);
