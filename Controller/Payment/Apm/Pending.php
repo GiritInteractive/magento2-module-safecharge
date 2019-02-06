@@ -150,17 +150,15 @@ class Pending extends Action
             /** @var OrderPayment $payment */
             $orderPayment = $order->getPayment();
 
-            /** @var Order $order */
-            $order = $this->orderFactory->create()->load($result->getOrderId());
-
-            /** @var OrderPayment $payment */
-            $orderPayment = $order->getPayment();
-
             if (isset($response['TransactionID']) && $response['TransactionID']) {
                 $orderPayment->setAdditionalInformation(
                     Payment::TRANSACTION_ID,
                     $response['TransactionID']
                 );
+                $orderPayment
+                    ->setIsTransactionPending(true)
+                    ->setIsTransactionClosed(0)
+                    ->setTransactionId($response['TransactionID']);
             }
 
             if (isset($response['AuthCode']) && $response['AuthCode']) {
@@ -181,14 +179,7 @@ class Pending extends Action
                 $response
             );
 
-            $orderPayment
-                ->setIsTransactionPending(true)
-                ->setIsTransactionClosed(0)
-                ->setTransactionId($response['TransactionID']);
-
-            $order
-                ->setState(Order::STATE_PENDING_PAYMENT)
-                ->setStatus(Order::STATE_PENDING_PAYMENT);
+            $order->setState(Order::STATE_PENDING_PAYMENT)->setStatus(Order::STATE_PENDING_PAYMENT);
 
             $orderPayment->save();
             $order->save();
