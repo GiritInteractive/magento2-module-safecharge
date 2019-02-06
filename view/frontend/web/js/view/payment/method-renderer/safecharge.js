@@ -195,6 +195,9 @@ define(
                 } else {
                     return;
                 }
+                if (!self.useExternalSolution()) {
+                    return;
+                }
                 $.ajax({
                     dataType: "json",
                     url: self.getMerchantPaymentMethodsUrl(),
