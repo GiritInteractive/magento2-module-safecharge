@@ -70,6 +70,9 @@ define(
                 }
 
                 quote.billingAddress.subscribe(self.reloadApmMethods, this, 'change');
+                if (self.countryId() !== quote.billingAddress().countryId) {
+                    self.countryId(quote.billingAddress().countryId);
+                }
 
                 return self;
             },
