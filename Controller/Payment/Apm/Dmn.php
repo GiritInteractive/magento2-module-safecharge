@@ -169,7 +169,7 @@ class Dmn extends Action
                 /** @var OrderPayment $payment */
                 $orderPayment = $order->getPayment();
 
-                $params['Status'] = $params['Status'] ?: null;
+                $params['Status'] = (isset($params['Status'])) ? $params['Status'] : null;
                 switch (strtolower($params['Status'])) {
                     case 'approved':
                     case 'success':

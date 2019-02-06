@@ -190,13 +190,11 @@ define(
             },
 
             reloadApmMethods: function() {
-                console.log("reloadApmMethods");
                 if (self.countryId() !== quote.billingAddress().countryId) {
                     self.countryId(quote.billingAddress().countryId);
                 } else {
                     return;
                 }
-                //$('body').trigger('processStart');
                 $.ajax({
                     dataType: "json",
                     url: self.getMerchantPaymentMethodsUrl(),
@@ -204,15 +202,11 @@ define(
                     showLoader: true
                 }).done(function(res) {
                     if (res && res.error == 0) {
-                        console.log(res.apmMethods);
                         self.apmMethods(res.apmMethods);
-                        console.log(self.apmMethods());
                     } else {
                         console.error(res);
                     }
-                    //$('body').trigger('processStop');
                 }).fail(function(e) {
-                    //$('body').trigger('processStop');
                     console.error(e);
                 });
             },

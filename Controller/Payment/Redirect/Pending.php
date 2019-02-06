@@ -26,12 +26,12 @@ use Safecharge\Safecharge\Model\Payment;
 use Safecharge\Safecharge\Model\Request\Payment\Factory as PaymentRequestFactory;
 
 /**
- * Safecharge Safecharge redirect success controller.
+ * Safecharge Safecharge redirect pending controller.
  *
  * @category Safecharge
  * @package  Safecharge_Safecharge
  */
-class Success extends Action
+class Pending extends Action
 {
     /**
      * @var OrderFactory
@@ -134,12 +134,19 @@ class Success extends Action
     {
         if ($this->moduleConfig->isDebugEnabled() === true) {
             $this->safechargeLogger->debug(
-                'Redirect Success Response: '
+                'Redirect Pending Response: '
                 . json_encode($this->getRequest()->getParams())
             );
         }
 
         try {
+            $response = $this->getRequest()->getParams();
+
+            if (!isset($response['Status']) || in_array(strtolower($response['Status']), ['declined', 'error'])) {
+                $order->setState(Order::STATE_PAYMENT_REVIEW)->setStatus(Order::STATE_PAYMENT_REVIEW)->save();
+                throw new \Exception(__('Your payment failed.'));
+            }
+
             $result = $this->placeOrder();
             if ($result->getSuccess() !== true) {
                 throw new PaymentException(__($result->getErrorMessage()));
@@ -150,12 +157,6 @@ class Success extends Action
 
             /** @var OrderPayment $payment */
             $orderPayment = $order->getPayment();
-
-            $response = $this->getRequest()->getParams();
-
-            if (!in_array(strtolower($response['Status']), ['approved', 'success'])) {
-                throw new PaymentException(__('Your payment failed.'));
-            }
 
             $orderPayment->setAdditionalInformation(
                 Payment::TRANSACTION_ID,
@@ -174,61 +175,67 @@ class Success extends Action
                 $response
             );
 
-            $isSettled = false;
-            if ($this->moduleConfig->getPaymentAction() === Payment::ACTION_AUTHORIZE_CAPTURE) {
-                $isSettled = true;
+            if (strtolower($response['Status']) === 'pending') {
+                $order->setState(Order::STATE_PENDING_PAYMENT)->setStatus(Order::STATE_PENDING_PAYMENT)->save();
+            } elseif (in_array(strtolower($response['Status']), ['approved', 'success'])) {
+                $isSettled = false;
+                if ($this->moduleConfig->getPaymentAction() === Payment::ACTION_AUTHORIZE_CAPTURE) {
+                    $isSettled = true;
 
-                $request = $this->paymentRequestFactory->create(
+                    $request = $this->paymentRequestFactory->create(
                     AbstractRequest::PAYMENT_SETTLE_METHOD,
                     $orderPayment,
                     $order->getBaseGrandTotal()
                 );
-                $settleResponse = $request->process();
-            }
+                    $settleResponse = $request->process();
+                }
 
-            if ($isSettled) {
-                $message = $this->captureCommand->execute(
+                if ($isSettled) {
+                    $message = $this->captureCommand->execute(
                     $orderPayment,
                     $order->getBaseGrandTotal(),
                     $order
                 );
-                $transactionType = Transaction::TYPE_CAPTURE;
-            } else {
-                $message = $this->authorizeCommand->execute(
+                    $transactionType = Transaction::TYPE_CAPTURE;
+                } else {
+                    $message = $this->authorizeCommand->execute(
                     $orderPayment,
                     $order->getBaseGrandTotal(),
                     $order
                 );
-                $transactionType = Transaction::TYPE_AUTH;
-            }
+                    $transactionType = Transaction::TYPE_AUTH;
+                }
 
-            $orderPayment
+                $orderPayment
                 ->setTransactionId($response['TransactionID'])
                 ->setIsTransactionPending(false)
                 ->setIsTransactionClosed($isSettled ? 1 : 0);
 
-            if ($transactionType === Transaction::TYPE_CAPTURE) {
-                /** @var Invoice $invoice */
-                foreach ($order->getInvoiceCollection() as $invoice) {
-                    $invoice
+                if ($transactionType === Transaction::TYPE_CAPTURE) {
+                    /** @var Invoice $invoice */
+                    foreach ($order->getInvoiceCollection() as $invoice) {
+                        $invoice
                         ->setTransactionId($settleResponse->getTransactionId())
                         ->pay()
                         ->save();
+                    }
                 }
+
+                $transaction = $orderPayment->addTransaction($transactionType);
+
+                $message = $orderPayment->prependMessage($message);
+                $orderPayment->addTransactionCommentsToOrder(
+                    $transaction,
+                    $message
+                );
             }
-
-            $transaction = $orderPayment->addTransaction($transactionType);
-
-            $message = $orderPayment->prependMessage($message);
-            $orderPayment->addTransactionCommentsToOrder(
-                $transaction,
-                $message
-            );
 
             $orderPayment->save();
             $order->save();
         } catch (PaymentException $e) {
             $this->messageManager->addErrorMessage($e->getMessage());
+            $resultRedirect = $this->resultFactory->create(ResultFactory::TYPE_REDIRECT);
+            $resultRedirect->setUrl($this->_url->getUrl('checkout/cart'));
         }
 
         $resultRedirect = $this->resultFactory->create(ResultFactory::TYPE_REDIRECT);

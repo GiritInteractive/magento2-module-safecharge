@@ -92,6 +92,7 @@ class Url
             'time_stamp' => date('YmdHis'),
             'version' => '3.0.0',
             'success_url' => $this->moduleConfig->getRedirectSuccessUrl(),
+            'pending_url' => $this->moduleConfig->getRedirectPendingUrl(),
             'error_url' => $this->moduleConfig->getRedirectErrorUrl(),
             'back_url' => $this->moduleConfig->getBackUrl(),
             'notify_url' => $this->moduleConfig->getDmnUrl($reservedOrderId),

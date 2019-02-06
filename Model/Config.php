@@ -348,6 +348,19 @@ class Config
     /**
      * @return string
      */
+    public function getRedirectPendingUrl()
+    {
+        $quoteId = $this->checkoutSession->getQuoteId();
+
+        return $this->urlBuilder->getUrl(
+            'safecharge/payment/redirect_pending',
+            ['quote' => $quoteId]
+        );
+    }
+
+    /**
+     * @return string
+     */
     public function getRedirectErrorUrl()
     {
         $quoteId = $this->checkoutSession->getQuoteId();

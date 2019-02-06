@@ -153,7 +153,7 @@ class Success extends Action
 
             $response = $this->getRequest()->getParams();
 
-            if (strtolower($response['Status']) !== 'approved') {
+            if (!in_array(strtolower($response['Status']), ['approved', 'success'])) {
                 throw new PaymentException(__('Your payment failed.'));
             }
 
