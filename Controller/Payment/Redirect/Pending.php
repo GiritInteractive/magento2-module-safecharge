@@ -162,14 +162,20 @@ class Pending extends Action
                 Payment::TRANSACTION_ID,
                 $response['TransactionID']
             );
-            $orderPayment->setAdditionalInformation(
-                Payment::TRANSACTION_AUTH_CODE_KEY,
-                $response['AuthCode']
-            );
-            $orderPayment->setAdditionalInformation(
-                Payment::TRANSACTION_EXTERNAL_PAYMENT_METHOD,
-                $response['payment_method']
-            );
+
+            if (isset($response['AuthCode']) && $response['AuthCode']) {
+                $orderPayment->setAdditionalInformation(
+                    Payment::TRANSACTION_AUTH_CODE_KEY,
+                    $response['AuthCode']
+                );
+            }
+
+            if (isset($response['payment_method']) && $response['payment_method']) {
+                $orderPayment->setAdditionalInformation(
+                    Payment::TRANSACTION_EXTERNAL_PAYMENT_METHOD,
+                    $response['payment_method']
+                );
+            }
             $orderPayment->setTransactionAdditionalInfo(
                 Transaction::RAW_DETAILS,
                 $response
