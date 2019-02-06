@@ -183,9 +183,10 @@ class Pending extends Action
 
             if (strtolower($response['Status']) === 'pending') {
                 $orderPayment
-                    //->setIsTransactionPending(true)
-                    //->setIsTransactionClosed(0)
+                    ->setIsTransactionPending(true)
+                    ->setIsTransactionClosed(0)
                     ->setTransactionId($response['TransactionID']);
+                $order->setState(Order::STATE_PENDING_PAYMENT)->setStatus(Order::STATE_PENDING_PAYMENT);
             } elseif (in_array(strtolower($response['Status']), ['approved', 'success'])) {
                 $isSettled = false;
                 if ($this->moduleConfig->getPaymentAction() === Payment::ACTION_AUTHORIZE_CAPTURE) {
@@ -216,17 +217,17 @@ class Pending extends Action
                 }
 
                 $orderPayment
-                ->setTransactionId($response['TransactionID'])
-                ->setIsTransactionPending(false)
-                ->setIsTransactionClosed($isSettled ? 1 : 0);
+                    ->setTransactionId($response['TransactionID'])
+                    ->setIsTransactionPending(false)
+                    ->setIsTransactionClosed($isSettled ? 1 : 0);
 
                 if ($transactionType === Transaction::TYPE_CAPTURE) {
                     /** @var Invoice $invoice */
                     foreach ($order->getInvoiceCollection() as $invoice) {
                         $invoice
-                        ->setTransactionId($settleResponse->getTransactionId())
-                        ->pay()
-                        ->save();
+                            ->setTransactionId($settleResponse->getTransactionId())
+                            ->pay()
+                            ->save();
                     }
                 }
 
