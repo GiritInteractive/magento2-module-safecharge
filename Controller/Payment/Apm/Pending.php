@@ -129,10 +129,12 @@ class Pending extends Action
      */
     public function execute()
     {
+        $response = $this->getRequest()->getParams();
+
         if ($this->moduleConfig->isDebugEnabled() === true) {
             $this->safechargeLogger->debug(
                 'APM Pending Response: '
-                . json_encode($this->getRequest()->getParams())
+                . json_encode($response)
             );
         }
 
@@ -148,7 +150,45 @@ class Pending extends Action
             /** @var OrderPayment $payment */
             $orderPayment = $order->getPayment();
 
-            $response = $this->getRequest()->getParams();
+            /** @var Order $order */
+            $order = $this->orderFactory->create()->load($result->getOrderId());
+
+            /** @var OrderPayment $payment */
+            $orderPayment = $order->getPayment();
+
+            if (isset($response['TransactionID']) && $response['TransactionID']) {
+                $orderPayment->setAdditionalInformation(
+                    Payment::TRANSACTION_ID,
+                    $response['TransactionID']
+                );
+            }
+
+            if (isset($response['AuthCode']) && $response['AuthCode']) {
+                $orderPayment->setAdditionalInformation(
+                    Payment::TRANSACTION_AUTH_CODE_KEY,
+                    $response['AuthCode']
+                );
+            }
+
+            if (isset($response['payment_method']) && $response['payment_method']) {
+                $orderPayment->setAdditionalInformation(
+                    Payment::TRANSACTION_EXTERNAL_PAYMENT_METHOD,
+                    $response['payment_method']
+                );
+            }
+            $orderPayment->setTransactionAdditionalInfo(
+                Transaction::RAW_DETAILS,
+                $response
+            );
+
+            $orderPayment
+                ->setIsTransactionPending(true)
+                ->setIsTransactionClosed(0)
+                ->setTransactionId($response['TransactionID']);
+
+            $order
+                ->setState(Order::STATE_PENDING_PAYMENT)
+                ->setStatus(Order::STATE_PENDING_PAYMENT);
 
             $orderPayment->save();
             $order->save();
