@@ -191,7 +191,7 @@ define(
             },
 
             reloadApmMethods: function() {
-                if (!quote.billingAddress() || self.countryId() === quote.billingAddress().countryId) {
+                if (quote.billingAddress() && self.countryId() === quote.billingAddress().countryId) {
                     return;
                 } else if (quote.billingAddress()) {
                     self.countryId(quote.billingAddress().countryId);
