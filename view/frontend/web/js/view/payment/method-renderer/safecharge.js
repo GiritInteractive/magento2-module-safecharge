@@ -69,10 +69,8 @@ define(
                     self.chosenApmMethod(apmMethods[0].paymentMethod);
                 }
 
+                self.reloadApmMethods();
                 quote.billingAddress.subscribe(self.reloadApmMethods, this, 'change');
-                if (self.countryId() !== quote.billingAddress().countryId) {
-                    self.countryId(quote.billingAddress().countryId);
-                }
 
                 return self;
             },
@@ -192,21 +190,17 @@ define(
                 return window.checkoutConfig.payment[self.getCode()].getMerchantPaymentMethodsUrl;
             },
 
-            updateCounrtyIdFromBilling: function() {
-                if (self.countryId() !== quote.billingAddress().countryId) {
-                    self.countryId(quote.billingAddress().countryId);
-                } else {
-                    return;
-                }
-            },
-
             reloadApmMethods: function() {
-                if (self.countryId() !== quote.billingAddress().countryId) {
+                if (!quote.billingAddress() || self.countryId() === quote.billingAddress().countryId) {
+                    return;
+                } else if (quote.billingAddress()) {
                     self.countryId(quote.billingAddress().countryId);
                 } else {
-                    return;
+                    //self.countryId(null)
+                    //self.apmMethods([]);
+                    //return;
                 }
-                if (!self.useExternalSolution()) {
+                if (self.useExternalSolution()) {
                     return;
                 }
                 $.ajax({
