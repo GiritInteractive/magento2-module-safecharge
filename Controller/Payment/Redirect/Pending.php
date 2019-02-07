@@ -13,13 +13,11 @@ use Magento\Framework\DataObjectFactory;
 use Magento\Framework\Exception\PaymentException;
 use Magento\Quote\Api\CartManagementInterface;
 use Magento\Sales\Model\Order;
-use Magento\Sales\Model\Order\Invoice;
 use Magento\Sales\Model\Order\Payment as OrderPayment;
 use Magento\Sales\Model\Order\Payment\State\AuthorizeCommand;
 use Magento\Sales\Model\Order\Payment\State\CaptureCommand;
 use Magento\Sales\Model\Order\Payment\Transaction;
 use Magento\Sales\Model\OrderFactory;
-use Safecharge\Safecharge\Model\AbstractRequest;
 use Safecharge\Safecharge\Model\Config as ModuleConfig;
 use Safecharge\Safecharge\Model\Logger as SafechargeLogger;
 use Safecharge\Safecharge\Model\Payment;
@@ -157,6 +155,8 @@ class Pending extends Action
             /** @var OrderPayment $payment */
             $orderPayment = $order->getPayment();
 
+            //$orderPayment->setTransactionId($response['TransactionID']);
+
             $orderPayment->setAdditionalInformation(
                 Payment::TRANSACTION_ID,
                 $response['TransactionID']
@@ -180,67 +180,13 @@ class Pending extends Action
                 $response
             );
 
-            if (strtolower($response['Status']) === 'pending') {
-                $orderPayment
-                    //->setIsTransactionPending(true)
-                    //->setIsTransactionClosed(0)
-                    ->setTransactionId($response['TransactionID']);
-                $order
-                    //->setState(Order::STATE_PAYMENT_REVIEW)
-                    //->setStatus(Order::STATE_PAYMENT_REVIEW)
-                    ->addStatusHistoryComment("Payment returned a '" . $response['Status'] . "' status.")
-                    ->save();
-            } elseif (in_array(strtolower($response['Status']), ['approved', 'success'])) {
-                $isSettled = false;
-                if ($this->moduleConfig->getPaymentAction() === Payment::ACTION_AUTHORIZE_CAPTURE) {
-                    $isSettled = true;
-
-                    $request = $this->paymentRequestFactory->create(
-                    AbstractRequest::PAYMENT_SETTLE_METHOD,
-                    $orderPayment,
-                    $order->getBaseGrandTotal()
-                );
-                    $settleResponse = $request->process();
-                }
-
-                if ($isSettled) {
-                    $message = $this->captureCommand->execute(
-                    $orderPayment,
-                    $order->getBaseGrandTotal(),
-                    $order
-                );
-                    $transactionType = Transaction::TYPE_CAPTURE;
-                } else {
-                    $message = $this->authorizeCommand->execute(
-                    $orderPayment,
-                    $order->getBaseGrandTotal(),
-                    $order
-                );
-                    $transactionType = Transaction::TYPE_AUTH;
-                }
-
-                $orderPayment
-                    ->setTransactionId($response['TransactionID'])
-                    ->setIsTransactionPending(false)
-                    ->setIsTransactionClosed($isSettled ? 1 : 0);
-
-                if ($transactionType === Transaction::TYPE_CAPTURE) {
-                    /** @var Invoice $invoice */
-                    foreach ($order->getInvoiceCollection() as $invoice) {
-                        $invoice
-                            ->setTransactionId($settleResponse->getTransactionId())
-                            ->pay()
-                            ->save();
-                    }
-                }
-
-                $transaction = $orderPayment->addTransaction($transactionType);
-
-                $message = $orderPayment->prependMessage($message);
-                $orderPayment->addTransactionCommentsToOrder(
-                    $transaction,
-                    $message
-                );
+            $response['Status'] = (isset($response['Status'])) ? $response['Status'] : null;
+            if (!$response['Status'] || in_array(strtolower($response['Status']), ['declined', 'error'])) {
+                $response['ErrCode'] = (isset($response['ErrCode'])) ? $response['ErrCode'] : "Unknown";
+                $response['ExErrCode'] = (isset($response['ExErrCode'])) ? $response['ExErrCode'] : "Unknown";
+                $order->addStatusHistoryComment("Payment returned a '{$response['Status']}' status (Code: {$response['ErrCode']}, Reason: {$response['ExErrCode']}).");
+            } else {
+                $order->addStatusHistoryComment("Payment returned a '" . $response['Status'] . "' status");
             }
 
             $orderPayment->save();

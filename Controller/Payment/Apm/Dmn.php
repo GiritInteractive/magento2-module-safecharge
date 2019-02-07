@@ -169,53 +169,12 @@ class Dmn extends Action
                 /** @var OrderPayment $payment */
                 $orderPayment = $order->getPayment();
 
-                $params['Status'] = (isset($params['Status'])) ? $params['Status'] : null;
-                $params['TransactionID'] = (isset($params['TransactionID'])) ? $params['TransactionID'] : null;
-
-                switch (strtolower($params['Status'])) {
-                    case 'approved':
-                    case 'success':
-                        //Do nothing - continue...
-                        break;
-
-                    case 'pending':
-                        $orderPayment
-                            //->setIsTransactionPending(true)
-                            //->setIsTransactionClosed(0)
-                            ->setTransactionId($params['TransactionID'])
-                            ->save();
-                        $order
-                            //->setState(Order::STATE_PAYMENT_REVIEW)
-                            //->setStatus(Order::STATE_PAYMENT_REVIEW)
-                            ->addStatusHistoryComment("Payment returned a '" . $params['Status'] . "' status")
-                            ->save();
-                        return $this->jsonResultFactory->create()
-                            ->setHttpResponseCode(\Magento\Framework\Webapi\Response::HTTP_OK)
-                            ->setData(["error" => 0, "message" => "Pending Payment"]);
-                        break;
-
-                    case 'declined':
-                    case 'error':
-                    default:
-                        $message = (isset($params['ErrCode']) && $params['ErrCode']) ? "Code: {$params['ErrCode']}, Reason: {$params['ExErrCode']}" : "";
-                        $orderPayment
-                            //->setIsTransactionPending(true)
-                            //->setIsTransactionClosed(0)
-                            ->setTransactionId($params['TransactionID'])
-                            ->save();
-                        $order
-                            //->setState(Order::STATE_PAYMENT_REVIEW)
-                            //->setStatus(Order::STATE_PAYMENT_REVIEW)
-                            ->addStatusHistoryComment("Payment returned a '{$params['Status']}' status ({$message}).")
-                            ->save();
-                        throw new \Exception(__('Payment Failed/Declined/Error.'));
-                        break;
+                if (isset($params['TransactionID']) && $params['TransactionID']) {
+                    $orderPayment->setAdditionalInformation(
+                        Payment::TRANSACTION_ID,
+                        $params['TransactionID']
+                    );
                 }
-
-                $orderPayment->setAdditionalInformation(
-                    Payment::TRANSACTION_ID,
-                    $params['TransactionID']
-                );
 
                 if (isset($params['AuthCode']) && $params['AuthCode']) {
                     $orderPayment->setAdditionalInformation(
@@ -236,33 +195,44 @@ class Dmn extends Action
                     $params
                 );
 
-                $message = $this->captureCommand->execute(
-                    $orderPayment,
-                    $order->getBaseGrandTotal(),
-                    $order
-                );
-                $transactionType = Transaction::TYPE_CAPTURE;
-
-                $orderPayment
-                    ->setTransactionId($params['TransactionID'])
-                    ->setIsTransactionPending(false)
-                    ->setIsTransactionClosed(1);
-
-                /** @var Invoice $invoice */
-                foreach ($order->getInvoiceCollection() as $invoice) {
-                    $invoice
-                        ->setTransactionId($params['TransactionID'])
-                        ->pay()
-                        ->save();
+                $params['Status'] = $params['Status'] ?: null;
+                if (!$params['Status'] || in_array(strtolower($params['Status']), ['declined', 'error'])) {
+                    $params['ErrCode'] = (isset($params['ErrCode'])) ? $params['ErrCode'] : "Unknown";
+                    $params['ExErrCode'] = (isset($params['ExErrCode'])) ? $params['ExErrCode'] : "Unknown";
+                    $order->addStatusHistoryComment("Payment returned a '{$params['Status']}' status (Code: {$params['ErrCode']}, Reason: {$params['ExErrCode']}).");
+                } else {
+                    $order->addStatusHistoryComment("Payment returned a '" . $params['Status'] . "' status");
                 }
 
-                $transaction = $orderPayment->addTransaction($transactionType);
+                if (!$params['Status'] || in_array(strtolower($params['Status']), ['approved', 'success'])) {
+                    $message = $this->captureCommand->execute(
+                        $orderPayment,
+                        $order->getBaseGrandTotal(),
+                        $order
+                    );
+                    $transactionType = Transaction::TYPE_CAPTURE;
 
-                $message = $orderPayment->prependMessage($message);
-                $orderPayment->addTransactionCommentsToOrder(
-                    $transaction,
-                    $message
-                );
+                    $orderPayment
+                        ->setTransactionId($params['TransactionID'])
+                        ->setIsTransactionPending(false)
+                        ->setIsTransactionClosed(1);
+
+                    /** @var Invoice $invoice */
+                    foreach ($order->getInvoiceCollection() as $invoice) {
+                        $invoice
+                            ->setTransactionId($params['TransactionID'])
+                            ->pay()
+                            ->save();
+                    }
+
+                    $transaction = $orderPayment->addTransaction($transactionType);
+
+                    $message = $orderPayment->prependMessage($message);
+                    $orderPayment->addTransactionCommentsToOrder(
+                        $transaction,
+                        $message
+                    );
+                }
 
                 $orderPayment->save();
                 $order->save();

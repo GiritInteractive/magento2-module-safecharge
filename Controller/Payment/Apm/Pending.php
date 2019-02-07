@@ -156,10 +156,6 @@ class Pending extends Action
                     Payment::TRANSACTION_ID,
                     $response['TransactionID']
                 );
-                $orderPayment
-                    //->setIsTransactionPending(true)
-                    //->setIsTransactionClosed(0)
-                    ->setTransactionId($response['TransactionID']);
             }
 
             if (isset($response['AuthCode']) && $response['AuthCode']) {
@@ -180,11 +176,14 @@ class Pending extends Action
                 $response
             );
 
-            $order
-                //->setState(Order::STATE_PAYMENT_REVIEW)
-                //->setStatus(Order::STATE_PAYMENT_REVIEW)
-                ->addStatusHistoryComment("Payment returned a '" . $response['Status'] . "' status.")
-                ->save();
+            $response['Status'] = (isset($response['Status'])) ? $response['Status'] : null;
+            if (!$response['Status'] || in_array(strtolower($response['Status']), ['declined', 'error'])) {
+                $response['ErrCode'] = (isset($response['ErrCode'])) ? $response['ErrCode'] : "Unknown";
+                $response['ExErrCode'] = (isset($response['ExErrCode'])) ? $response['ExErrCode'] : "Unknown";
+                $order->addStatusHistoryComment("Payment returned a '{$response['Status']}' status (Code: {$response['ErrCode']}, Reason: {$response['ExErrCode']}).");
+            } else {
+                $order->addStatusHistoryComment("Payment returned a '" . $response['Status'] . "' status");
+            }
 
             $orderPayment->save();
             $order->save();
