@@ -211,6 +211,9 @@ define(
                 }).done(function(res) {
                     if (res && res.error == 0) {
                         self.apmMethods(res.apmMethods);
+                        if (res.apmMethods.length > 0) {
+                            self.chosenApmMethod(res.apmMethods[0].paymentMethod);
+                        }
                     } else {
                         console.error(res);
                     }
