@@ -143,7 +143,6 @@ class Pending extends Action
             $response = $this->getRequest()->getParams();
 
             if (!isset($response['Status']) || in_array(strtolower($response['Status']), ['declined', 'error'])) {
-                $order->setState(Order::STATE_PAYMENT_REVIEW)->setStatus(Order::STATE_PAYMENT_REVIEW)->save();
                 throw new \Exception(__('Your payment failed.'));
             }
 
@@ -186,7 +185,11 @@ class Pending extends Action
                     ->setIsTransactionPending(true)
                     ->setIsTransactionClosed(0)
                     ->setTransactionId($response['TransactionID']);
-                $order->setState(Order::STATE_PENDING_PAYMENT)->setStatus(Order::STATE_PENDING_PAYMENT);
+                $order
+                    ->setState(Order::STATE_PAYMENT_REVIEW)
+                    ->setStatus(Order::STATE_PAYMENT_REVIEW)
+                    ->addStatusHistoryComment("Payment returned a '" . $response['Status'] . "' status.")
+                    ->save();
             } elseif (in_array(strtolower($response['Status']), ['approved', 'success'])) {
                 $isSettled = false;
                 if ($this->moduleConfig->getPaymentAction() === Payment::ACTION_AUTHORIZE_CAPTURE) {

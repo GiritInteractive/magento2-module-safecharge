@@ -180,7 +180,11 @@ class Pending extends Action
                 $response
             );
 
-            $order->setState(Order::STATE_PENDING_PAYMENT)->setStatus(Order::STATE_PENDING_PAYMENT);
+            $order
+                ->setState(Order::STATE_PAYMENT_REVIEW)
+                ->setStatus(Order::STATE_PAYMENT_REVIEW)
+                ->addStatusHistoryComment("Payment returned a '" . $response['Status'] . "' status.")
+                ->save();
 
             $orderPayment->save();
             $order->save();

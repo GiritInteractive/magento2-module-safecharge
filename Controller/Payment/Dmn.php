@@ -180,11 +180,12 @@ class Dmn extends Action
                         $orderPayment
                             ->setIsTransactionPending(true)
                             ->setIsTransactionClosed(0)
-                            ->setTransactionId($response['TransactionID'])
+                            ->setTransactionId($params['TransactionID'])
                             ->save();
                         $order
-                            ->setState(Order::STATE_PENDING_PAYMENT)
-                            ->setStatus(Order::STATE_PENDING_PAYMENT)
+                            ->setState(Order::STATE_PAYMENT_REVIEW)
+                            ->setStatus(Order::STATE_PAYMENT_REVIEW)
+                            ->addStatusHistoryComment("Payment returned a '" . $params['Status'] . "' status")
                             ->save();
                         return $this->jsonResultFactory->create()
                             ->setHttpResponseCode(\Magento\Framework\Webapi\Response::HTTP_OK)
@@ -194,7 +195,17 @@ class Dmn extends Action
                     case 'declined':
                     case 'error':
                     default:
-                        $order->setState(Order::STATE_PAYMENT_REVIEW)->setStatus(Order::STATE_PAYMENT_REVIEW)->save();
+                        $message = (isset($params['ErrCode']) && $params['ErrCode']) ? "Code: {$params['ErrCode']}, Reason: {$params['ExErrCode']}" : "";
+                        $orderPayment
+                            ->setIsTransactionPending(true)
+                            ->setIsTransactionClosed(0)
+                            ->setTransactionId($params['TransactionID'])
+                            ->save();
+                        $order
+                            ->setState(Order::STATE_PAYMENT_REVIEW)
+                            ->setStatus(Order::STATE_PAYMENT_REVIEW)
+                            ->addStatusHistoryComment("Payment returned a '{$params['Status']}' status ({$message}).")
+                            ->save();
                         throw new \Exception(__('Payment Failed/Declined/Error.'));
                         break;
                 }
