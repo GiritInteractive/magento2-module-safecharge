@@ -87,7 +87,7 @@ class GetMerchantPaymentMethods extends Action
         }
 
         try {
-            $apmMethods = $this->getApmMethods();
+            $apmMethods = $this->getApmMethods($this->getRequest()->getParam('countryCode'));
         } catch (PaymentException $e) {
             if ($this->moduleConfig->isDebugEnabled()) {
                 $this->safechargeLogger->debug('GetMerchantPaymentMethods Controller - Error: ' . $e->getMessage() . "\n" . $e->getTraceAsString());
@@ -111,12 +111,12 @@ class GetMerchantPaymentMethods extends Action
      *
      * @return array
      */
-    private function getApmMethods()
+    private function getApmMethods($countryCode = null)
     {
         $request = $this->requestFactory->create(AbstractRequest::GET_MERCHANT_PAYMENT_METHODS_METHOD);
 
         try {
-            $apmMethods = $request->process();
+            $apmMethods = $request->setCountryCode($countryCode)->process();
         } catch (PaymentException $e) {
             return [];
         }

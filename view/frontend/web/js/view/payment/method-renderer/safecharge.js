@@ -14,7 +14,8 @@ define(
         'Magento_Customer/js/customer-data',
         'jquery.redirect',
         'ko',
-        'Magento_Checkout/js/model/quote'
+        'Magento_Checkout/js/model/quote',
+        'Magento_Checkout/js/action/create-billing-address'
     ],
     function(
         $,
@@ -25,7 +26,8 @@ define(
         customerData,
         jqueryRedirect,
         ko,
-        quote
+        quote,
+        billingAddress
     ) {
         'use strict';
 
@@ -195,10 +197,16 @@ define(
                     return;
                 } else if (quote.billingAddress()) {
                     self.countryId(quote.billingAddress().countryId);
+                } else if ($('input[name="billing-address-same-as-shipping"]:checked').length && quote.shippingAddress()) {
+                    if (self.countryId() === quote.shippingAddress().countryId) {
+                        return;
+                    } else {
+                        self.countryId(quote.shippingAddress().countryId);
+                    }
                 } else {
                     //self.countryId(null)
                     //self.apmMethods([]);
-                    //return;
+                    return;
                 }
                 if (self.useExternalSolution()) {
                     return;
@@ -206,6 +214,9 @@ define(
                 $.ajax({
                     dataType: "json",
                     url: self.getMerchantPaymentMethodsUrl(),
+                    data: {
+                        countryCode: self.countryId()
+                    },
                     cache: false,
                     showLoader: true
                 }).done(function(res) {

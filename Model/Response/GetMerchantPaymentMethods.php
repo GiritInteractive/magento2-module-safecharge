@@ -59,7 +59,7 @@ class GetMerchantPaymentMethods extends AbstractResponse implements ResponseInte
      * @return AbstractResponse
      * @throws \Magento\Framework\Exception\LocalizedException
      */
-    public function process()
+    public function process($countryCode = null)
     {
         parent::process();
 
@@ -68,9 +68,9 @@ class GetMerchantPaymentMethods extends AbstractResponse implements ResponseInte
         $this->paymentMethods = (array) $body['paymentMethods'];
 
         $langCode = $this->getStoreLocale(true);
-        $quoteCountryCode = $this->config->getQuoteCountryCode();
+        $countryCode = $countryCode ?: $this->config->getQuoteCountryCode();
         foreach ($this->paymentMethods as $k => &$method) {
-            if ((!$quoteCountryCode || $this->config->getPaymentAction() !== Payment::ACTION_AUTHORIZE_CAPTURE) && isset($method["paymentMethod"]) && $method["paymentMethod"] !== 'cc_card') {
+            if ((!$countryCode || $this->config->getPaymentAction() !== Payment::ACTION_AUTHORIZE_CAPTURE) && isset($method["paymentMethod"]) && $method["paymentMethod"] !== 'cc_card') {
                 unset($this->paymentMethods[$k]);
                 continue;
             }

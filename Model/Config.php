@@ -461,7 +461,12 @@ class Config
     {
         $quote = $this->checkoutSession->getQuote();
         $billing = ($quote) ? $quote->getBillingAddress() : null;
-        return ($billing) ? $billing->getCountryId() : null;
+        $countryCode =  ($billing) ? $billing->getCountryId() : null;
+        if (!$countryCode) {
+            $shipping = ($quote) ? $quote->getShippingAddress() : null;
+            $countryCode =  ($shipping && $shipping->getSameAsBilling()) ? $shipping->getCountryId() : null;
+        }
+        return $countryCode;
     }
 
     public function getQuoteBaseCurrency()

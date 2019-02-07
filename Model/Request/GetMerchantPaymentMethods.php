@@ -25,6 +25,11 @@ class GetMerchantPaymentMethods extends AbstractRequest implements RequestInterf
     protected $requestFactory;
 
     /**
+     * @var string
+     */
+    protected $countryCode;
+
+    /**
      * OpenOrder constructor.
      *
      * @param SafechargeLogger $safechargeLogger
@@ -71,6 +76,38 @@ class GetMerchantPaymentMethods extends AbstractRequest implements RequestInterf
     }
 
     /**
+     * @param  string|null $countryCode
+     * @return $this
+     */
+    public function setCountryCode($countryCode = null)
+    {
+        $this->countryCode = (string)$countryCode;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCountryCode()
+    {
+        return $this->countryCode;
+    }
+
+    /**
+     * @return AbstractResponse
+     * @throws \Magento\Framework\Exception\LocalizedException
+     * @throws PaymentException
+     */
+    public function process()
+    {
+        $this->sendRequest();
+
+        return $this
+            ->getResponseHandler()
+            ->process($this->getCountryCode());
+    }
+
+    /**
      * {@inheritdoc}
      *
      * @return array
@@ -84,7 +121,7 @@ class GetMerchantPaymentMethods extends AbstractRequest implements RequestInterf
         $params = [
             'sessionToken' => $tokenResponse->getToken(),
             "currencyCode" => $this->config->getQuoteBaseCurrency(),
-            "countryCode" => $this->config->getQuoteCountryCode(),
+            "countryCode" => $this->getCountryCode() ?: $this->config->getQuoteCountryCode(),
             "languageCode", "eng",
         ];
 
