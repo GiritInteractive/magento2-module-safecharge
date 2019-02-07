@@ -181,7 +181,7 @@ class ConfigProvider extends CcGenericConfigProvider
      */
     private function getApmMethods()
     {
-        if (!$this->moduleConfig->getQuoteCountryCode() || $this->moduleConfig->getPaymentSolution() === Payment::SOLUTION_EXTERNAL) {
+        if ($this->moduleConfig->getPaymentSolution() === Payment::SOLUTION_EXTERNAL) {
             return [];
         }
         $request = $this->requestFactory->create(AbstractRequest::GET_MERCHANT_PAYMENT_METHODS_METHOD);
