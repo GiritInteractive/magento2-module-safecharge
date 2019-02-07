@@ -157,8 +157,8 @@ class Pending extends Action
                     $response['TransactionID']
                 );
                 $orderPayment
-                    ->setIsTransactionPending(true)
-                    ->setIsTransactionClosed(0)
+                    //->setIsTransactionPending(true)
+                    //->setIsTransactionClosed(0)
                     ->setTransactionId($response['TransactionID']);
             }
 
@@ -181,8 +181,8 @@ class Pending extends Action
             );
 
             $order
-                ->setState(Order::STATE_PAYMENT_REVIEW)
-                ->setStatus(Order::STATE_PAYMENT_REVIEW)
+                //->setState(Order::STATE_PAYMENT_REVIEW)
+                //->setStatus(Order::STATE_PAYMENT_REVIEW)
                 ->addStatusHistoryComment("Payment returned a '" . $response['Status'] . "' status.")
                 ->save();
 

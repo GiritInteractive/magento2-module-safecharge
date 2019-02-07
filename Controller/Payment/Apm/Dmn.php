@@ -180,13 +180,13 @@ class Dmn extends Action
 
                     case 'pending':
                         $orderPayment
-                            ->setIsTransactionPending(true)
-                            ->setIsTransactionClosed(0)
+                            //->setIsTransactionPending(true)
+                            //->setIsTransactionClosed(0)
                             ->setTransactionId($params['TransactionID'])
                             ->save();
                         $order
-                            ->setState(Order::STATE_PAYMENT_REVIEW)
-                            ->setStatus(Order::STATE_PAYMENT_REVIEW)
+                            //->setState(Order::STATE_PAYMENT_REVIEW)
+                            //->setStatus(Order::STATE_PAYMENT_REVIEW)
                             ->addStatusHistoryComment("Payment returned a '" . $params['Status'] . "' status")
                             ->save();
                         return $this->jsonResultFactory->create()
@@ -199,13 +199,13 @@ class Dmn extends Action
                     default:
                         $message = (isset($params['ErrCode']) && $params['ErrCode']) ? "Code: {$params['ErrCode']}, Reason: {$params['ExErrCode']}" : "";
                         $orderPayment
-                            ->setIsTransactionPending(true)
-                            ->setIsTransactionClosed(0)
+                            //->setIsTransactionPending(true)
+                            //->setIsTransactionClosed(0)
                             ->setTransactionId($params['TransactionID'])
                             ->save();
                         $order
-                            ->setState(Order::STATE_PAYMENT_REVIEW)
-                            ->setStatus(Order::STATE_PAYMENT_REVIEW)
+                            //->setState(Order::STATE_PAYMENT_REVIEW)
+                            //->setStatus(Order::STATE_PAYMENT_REVIEW)
                             ->addStatusHistoryComment("Payment returned a '{$params['Status']}' status ({$message}).")
                             ->save();
                         throw new \Exception(__('Payment Failed/Declined/Error.'));
