@@ -159,8 +159,21 @@ class Dmn extends Action
                     $orderIncrementId = null;
                 }
 
-                /** @var Order $order */
-                $order = $this->orderFactory->create()->loadByIncrementId($orderIncrementId);
+                $tryouts = 0;
+                do {
+                    $tryouts++;
+
+                    /** @var Order $order */
+                    $order = $this->orderFactory->create()->loadByIncrementId($orderIncrementId);
+
+                    if (!($order && $order->getId())) {
+                        sleep(3);
+                    }
+                } while ($tryouts <=10 && !($order && $order->getId()));
+
+                if (!($order && $order->getId())) {
+                    throw new \Exception(__('Order #%1 not found!', $orderIncrementId));
+                }
 
                 if (!($order && $order->getId())) {
                     throw new \Exception(__('Order #%1 not found!', $orderIncrementId));
@@ -241,7 +254,7 @@ class Dmn extends Action
                     $this->safechargeLogger->debug('APM DMN Error: ' . $e->getMessage() . "\n" . $e->getTraceAsString());
                 }
                 return $this->jsonResultFactory->create()
-                    ->setHttpResponseCode(\Magento\Framework\Webapi\Response::HTTP_OK)
+                    ->setHttpResponseCode(500)
                     ->setData(["error" => 1, "message" => $e->getMessage()]);
             }
         }

@@ -438,6 +438,11 @@ class Config
             ->getBaseUrl(\Magento\Framework\UrlInterface::URL_TYPE_WEB) . 'safecharge/payment/apm_dmn/order/' . ((is_null($incrementId)) ? $this->getReservedOrderId() : $incrementId);
     }
 
+    public function getQuoteId()
+    {
+        return (($quote = $this->checkoutSession->getQuote())) ? $quote->getId() : null;
+    }
+
     public function getReservedOrderId()
     {
         $reservedOrderId = $this->checkoutSession->getQuote()->getReservedOrderId();
