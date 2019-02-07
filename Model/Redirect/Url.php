@@ -117,41 +117,24 @@ class Url
             $queryParams = array_merge($queryParams, $billingAddress);
         }
 
-        $concat = $this->moduleConfig->getMerchantSecretKey()
-            . $queryParams['merchant_id']
-            . $queryParams['currency']
-            . $queryParams['total_amount'];
-
         $numberOfItems = 0;
         $i = 1;
 
         $quoteItems = $quote->getAllVisibleItems();
         foreach ($quoteItems as $quoteItem) {
-            $price = $quoteItem->getBasePrice();
-            if (!$price) {
+            if (!($price = $quoteItem->getBasePrice())) {
                 continue;
             }
-
             $queryParams['item_name_' . $i] = $quoteItem->getName();
             $queryParams['item_amount_' . $i] = round($price, 2);
             $queryParams['item_quantity_' . $i] = (int)$quoteItem->getQty();
-
             $numberOfItems++;
-
-            $concat .= $queryParams['item_name_' . $i]
-                . $queryParams['item_amount_' . $i]
-                . $queryParams['item_quantity_' . $i];
-
             $i++;
         }
 
         $queryParams['numberofitems'] = $numberOfItems;
 
-        $concat .= $queryParams['user_token_id']
-            . $queryParams['time_stamp'];
-
-        $concat = utf8_encode($concat);
-        $queryParams['checksum'] = hash('sha256', $concat);
+        $queryParams['checksum'] = hash('sha256', utf8_encode($this->moduleConfig->getMerchantSecretKey() . implode("", $queryParams)));
 
         return $queryParams;
     }
