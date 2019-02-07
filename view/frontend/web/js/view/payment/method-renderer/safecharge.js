@@ -192,6 +192,14 @@ define(
                 return window.checkoutConfig.payment[self.getCode()].getMerchantPaymentMethodsUrl;
             },
 
+            updateCounrtyIdFromBilling: function() {
+                if (self.countryId() !== quote.billingAddress().countryId) {
+                    self.countryId(quote.billingAddress().countryId);
+                } else {
+                    return;
+                }
+            },
+
             reloadApmMethods: function() {
                 if (self.countryId() !== quote.billingAddress().countryId) {
                     self.countryId(quote.billingAddress().countryId);
