@@ -205,7 +205,7 @@ class Dmn extends Action
                     $order->addStatusHistoryComment("Payment returned a '" . $params['Status'] . "' status");
                 }
 
-                if (in_array(strtolower($response['Status']), ['approved', 'success'])) {
+                if (in_array(strtolower($params['Status']), ['approved', 'success'])) {
                     $isSettled = false;
                     if ($this->moduleConfig->getPaymentAction() === Payment::ACTION_AUTHORIZE_CAPTURE) {
                         $isSettled = true;
@@ -235,7 +235,7 @@ class Dmn extends Action
                     }
 
                     $orderPayment
-                        ->setTransactionId($response['TransactionID'])
+                        ->setTransactionId($params['TransactionID'])
                         ->setIsTransactionPending(false)
                         ->setIsTransactionClosed($isSettled ? 1 : 0);
 
