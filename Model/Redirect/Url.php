@@ -90,7 +90,7 @@ class Url
             'currency' => $quote->getBaseCurrencyCode(),
             'user_token_id' => $quote->getCustomerId(),
             'time_stamp' => date('YmdHis'),
-            'version' => '3.0.0',
+            'version' => '4.0.0',
             'success_url' => $this->moduleConfig->getRedirectSuccessUrl(),
             'pending_url' => $this->moduleConfig->getRedirectPendingUrl(),
             'error_url' => $this->moduleConfig->getRedirectErrorUrl(),
