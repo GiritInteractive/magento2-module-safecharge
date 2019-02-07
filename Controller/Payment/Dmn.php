@@ -197,15 +197,15 @@ class Dmn extends Action
                 );
 
                 $params['Status'] = $params['Status'] ?: null;
-                if (!$params['Status'] || in_array(strtolower($params['Status']), ['declined', 'error'])) {
+                if (in_array(strtolower($params['Status']), ['declined', 'error'])) {
                     $params['ErrCode'] = (isset($params['ErrCode'])) ? $params['ErrCode'] : "Unknown";
                     $params['ExErrCode'] = (isset($params['ExErrCode'])) ? $params['ExErrCode'] : "Unknown";
                     $order->addStatusHistoryComment("Payment returned a '{$params['Status']}' status (Code: {$params['ErrCode']}, Reason: {$params['ExErrCode']}).");
-                } else {
+                } elseif ($params['Status']) {
                     $order->addStatusHistoryComment("Payment returned a '" . $params['Status'] . "' status");
                 }
 
-                if (!$response['Status'] || in_array(strtolower($response['Status']), ['approved', 'success'])) {
+                if (in_array(strtolower($response['Status']), ['approved', 'success'])) {
                     $isSettled = false;
                     if ($this->moduleConfig->getPaymentAction() === Payment::ACTION_AUTHORIZE_CAPTURE) {
                         $isSettled = true;

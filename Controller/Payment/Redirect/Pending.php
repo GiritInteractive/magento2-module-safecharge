@@ -181,11 +181,11 @@ class Pending extends Action
             );
 
             $response['Status'] = (isset($response['Status'])) ? $response['Status'] : null;
-            if (!$response['Status'] || in_array(strtolower($response['Status']), ['declined', 'error'])) {
+            if (in_array(strtolower($response['Status']), ['declined', 'error'])) {
                 $response['ErrCode'] = (isset($response['ErrCode'])) ? $response['ErrCode'] : "Unknown";
                 $response['ExErrCode'] = (isset($response['ExErrCode'])) ? $response['ExErrCode'] : "Unknown";
                 $order->addStatusHistoryComment("Payment returned a '{$response['Status']}' status (Code: {$response['ErrCode']}, Reason: {$response['ExErrCode']}).");
-            } else {
+            } elseif ($response['Status']) {
                 $order->addStatusHistoryComment("Payment returned a '" . $response['Status'] . "' status");
             }
 
