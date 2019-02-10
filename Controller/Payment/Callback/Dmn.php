@@ -223,8 +223,10 @@ class Dmn extends Action
                             $order->getBaseGrandTotal()
                         );
                         $settleResponse = $request->process();
+                        $transactionId = $settleResponse->getTransactionId();
                     } else {
                         $isSettled = true;
+                        $transactionId = $params['TransactionID'];
                     }
 
                     if ($isSettled) {
