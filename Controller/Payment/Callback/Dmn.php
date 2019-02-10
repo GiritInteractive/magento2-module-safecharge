@@ -180,9 +180,10 @@ class Dmn extends Action
                 /** @var OrderPayment $payment */
                 $orderPayment = $order->getPayment();
 
+                $transactionId = $params['TransactionID'];
                 $orderPayment->setAdditionalInformation(
                     Payment::TRANSACTION_ID,
-                    $params['TransactionID']
+                    $transactionId
                 );
 
                 if (isset($params['AuthCode']) && $params['AuthCode']) {
@@ -223,10 +224,9 @@ class Dmn extends Action
                             $order->getBaseGrandTotal()
                         );
                         $settleResponse = $request->process();
-                        $transactionId = $settleResponse->getTransactionId();
+                        $transactionId = $settleResponse->getTransactionId() ?: $transactionId;
                     } else {
                         $isSettled = true;
-                        $transactionId = $params['TransactionID'];
                     }
 
                     if ($isSettled) {
@@ -254,7 +254,7 @@ class Dmn extends Action
                         /** @var Invoice $invoice */
                         foreach ($order->getInvoiceCollection() as $invoice) {
                             $invoice
-                                ->setTransactionId($settleResponse->getTransactionId())
+                                ->setTransactionId($transactionId)
                                 ->pay()
                                 ->save();
                         }
