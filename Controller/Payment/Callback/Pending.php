@@ -185,6 +185,10 @@ class Pending extends Action
                 $order->addStatusHistoryComment("Payment returned a '" . $params['Status'] . "' status");
             }
 
+            if (strtolower($params['Status']) === "pending") {
+                $order->setState(Order::STATE_PENDING_PAYMENT)->setStatus(Order::STATE_PENDING_PAYMENT);
+            }
+
             $orderPayment->save();
             $order->save();
         } catch (PaymentException $e) {
