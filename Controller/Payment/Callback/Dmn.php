@@ -214,9 +214,9 @@ class Dmn extends Action
                     $order->addStatusHistoryComment("Payment returned a '" . $params['Status'] . "' status");
                 }
 
-                /*if (strtolower($params['Status']) === "pending") {
-                    $order->setState(Order::STATE_PENDING_PAYMENT)->setStatus(Order::STATE_PENDING_PAYMENT);
-                }*/
+                if (strtolower($params['Status']) === "pending") {
+                    $order->setState(Order::STATE_NEW)->setStatus('pending');
+                }
 
                 if (in_array(strtolower($params['Status']), ['approved', 'success'])) {
                     $isSettled = false;
