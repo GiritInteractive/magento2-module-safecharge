@@ -1,6 +1,6 @@
 <?php
 
-namespace Safecharge\Safecharge\Controller\Payment\Apm;
+namespace Safecharge\Safecharge\Controller\Payment;
 
 use Magento\Checkout\Model\Session\Proxy as CheckoutSession;
 use Magento\Checkout\Model\Type\Onepage;
@@ -10,18 +10,20 @@ use Magento\Framework\Controller\Result\JsonFactory;
 use Magento\Framework\DataObjectFactory;
 use Magento\Quote\Api\CartManagementInterface;
 use Magento\Sales\Model\Order;
+use Magento\Sales\Model\Order\Invoice;
 use Magento\Sales\Model\Order\Payment as OrderPayment;
 use Magento\Sales\Model\Order\Payment\State\AuthorizeCommand;
 use Magento\Sales\Model\Order\Payment\State\CaptureCommand;
 use Magento\Sales\Model\Order\Payment\Transaction;
 use Magento\Sales\Model\OrderFactory;
+use Safecharge\Safecharge\Model\AbstractRequest;
 use Safecharge\Safecharge\Model\Config as ModuleConfig;
 use Safecharge\Safecharge\Model\Logger as SafechargeLogger;
 use Safecharge\Safecharge\Model\Payment;
 use Safecharge\Safecharge\Model\Request\Payment\Factory as PaymentRequestFactory;
 
 /**
- * Safecharge Safecharge APM DMN controller.
+ * Safecharge Safecharge payment redirect controller.
  *
  * @category Safecharge
  * @package  Safecharge_Safecharge
@@ -142,7 +144,7 @@ class Dmn extends Action
 
                 if ($this->moduleConfig->isDebugEnabled()) {
                     $this->safechargeLogger->debug(
-                        'APM DMN Params: '
+                        'DMN Params: '
                         . json_encode($params)
                     );
                 }
@@ -175,19 +177,13 @@ class Dmn extends Action
                     throw new \Exception(__('Order #%1 not found!', $orderIncrementId));
                 }
 
-                if (!($order && $order->getId())) {
-                    throw new \Exception(__('Order #%1 not found!', $orderIncrementId));
-                }
-
                 /** @var OrderPayment $payment */
                 $orderPayment = $order->getPayment();
 
-                if (isset($params['TransactionID']) && $params['TransactionID']) {
-                    $orderPayment->setAdditionalInformation(
-                        Payment::TRANSACTION_ID,
-                        $params['TransactionID']
-                    );
-                }
+                $orderPayment->setAdditionalInformation(
+                    Payment::TRANSACTION_ID,
+                    $params['TransactionID']
+                );
 
                 if (isset($params['AuthCode']) && $params['AuthCode']) {
                     $orderPayment->setAdditionalInformation(
@@ -196,7 +192,7 @@ class Dmn extends Action
                     );
                 }
 
-                if (isset($params['payment_method']) && $params['payment_method']) {
+                if (isset($params['payment_method']) && $params['AuthCode']) {
                     $orderPayment->setAdditionalInformation(
                         Payment::TRANSACTION_EXTERNAL_PAYMENT_METHOD,
                         $params['payment_method']
@@ -218,24 +214,48 @@ class Dmn extends Action
                 }
 
                 if (in_array(strtolower($params['Status']), ['approved', 'success'])) {
-                    $message = $this->captureCommand->execute(
-                        $orderPayment,
-                        $order->getBaseGrandTotal(),
-                        $order
-                    );
-                    $transactionType = Transaction::TYPE_CAPTURE;
+                    $isSettled = false;
+                    if ((isset($params['transactionType']) && strtolower($params['transactionType']) !== "sale") && $this->moduleConfig->getPaymentAction() === Payment::ACTION_AUTHORIZE_CAPTURE) {
+                        $isSettled = true;
+                        $request = $this->paymentRequestFactory->create(
+                            AbstractRequest::PAYMENT_SETTLE_METHOD,
+                            $orderPayment,
+                            $order->getBaseGrandTotal()
+                        );
+                        $settleResponse = $request->process();
+                    } else {
+                        $isSettled = true;
+                    }
+
+                    if ($isSettled) {
+                        $message = $this->captureCommand->execute(
+                            $orderPayment,
+                            $order->getBaseGrandTotal(),
+                            $order
+                        );
+                        $transactionType = Transaction::TYPE_CAPTURE;
+                    } else {
+                        $message = $this->authorizeCommand->execute(
+                            $orderPayment,
+                            $order->getBaseGrandTotal(),
+                            $order
+                        );
+                        $transactionType = Transaction::TYPE_AUTH;
+                    }
 
                     $orderPayment
                         ->setTransactionId($params['TransactionID'])
                         ->setIsTransactionPending(false)
-                        ->setIsTransactionClosed(1);
+                        ->setIsTransactionClosed($isSettled ? 1 : 0);
 
-                    /** @var Invoice $invoice */
-                    foreach ($order->getInvoiceCollection() as $invoice) {
-                        $invoice
-                            ->setTransactionId($params['TransactionID'])
-                            ->pay()
-                            ->save();
+                    if ($transactionType === Transaction::TYPE_CAPTURE) {
+                        /** @var Invoice $invoice */
+                        foreach ($order->getInvoiceCollection() as $invoice) {
+                            $invoice
+                                ->setTransactionId($settleResponse->getTransactionId())
+                                ->pay()
+                                ->save();
+                        }
                     }
 
                     $transaction = $orderPayment->addTransaction($transactionType);
@@ -251,7 +271,7 @@ class Dmn extends Action
                 $order->save();
             } catch (\Exception $e) {
                 if ($this->moduleConfig->isDebugEnabled()) {
-                    $this->safechargeLogger->debug('APM DMN Error: ' . $e->getMessage() . "\n" . $e->getTraceAsString());
+                    $this->safechargeLogger->debug('DMN Error: ' . $e->getMessage() . "\n" . $e->getTraceAsString());
                 }
                 return $this->jsonResultFactory->create()
                     ->setHttpResponseCode(500)

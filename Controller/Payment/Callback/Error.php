@@ -1,6 +1,6 @@
 <?php
 
-namespace Safecharge\Safecharge\Controller\Payment\Apm;
+namespace Safecharge\Safecharge\Controller\Payment\Callback;
 
 use Magento\Framework\App\Action\Action;
 use Magento\Framework\App\Action\Context;
@@ -52,10 +52,12 @@ class Error extends Action
      */
     public function execute()
     {
+        $params = $this->getRequest()->getParams();
+
         if ($this->moduleConfig->isDebugEnabled() === true) {
             $this->safechargeLogger->debug(
-                'APM Error Response: '
-                . var_export($this->getRequest()->getParams(), true)
+                'Error Callback Response: '
+                . var_export($params, true)
             );
         }
 

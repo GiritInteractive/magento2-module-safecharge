@@ -1,6 +1,6 @@
 <?php
 
-namespace Safecharge\Safecharge\Controller\Payment\Apm;
+namespace Safecharge\Safecharge\Controller\Payment\Callback;
 
 use Magento\Checkout\Model\Session\Proxy as CheckoutSession;
 use Magento\Checkout\Model\Type\Onepage;
@@ -29,7 +29,7 @@ use Safecharge\Safecharge\Model\Request\Payment\Factory as PaymentRequestFactory
  * @category Safecharge
  * @package  Safecharge_Safecharge
  */
-class Pending extends Action
+class Success extends Action
 {
     /**
      * @var OrderFactory
@@ -130,12 +130,12 @@ class Pending extends Action
      */
     public function execute()
     {
-        $response = $this->getRequest()->getParams();
+        $params = $this->getRequest()->getParams();
 
         if ($this->moduleConfig->isDebugEnabled() === true) {
             $this->safechargeLogger->debug(
-                'APM Pending Response: '
-                . json_encode($response)
+                'Success Callback Response: '
+                . json_encode($params)
             );
         }
 
@@ -151,46 +151,33 @@ class Pending extends Action
             /** @var OrderPayment $payment */
             $orderPayment = $order->getPayment();
 
-            if (isset($response['TransactionID']) && $response['TransactionID']) {
-                $orderPayment->setAdditionalInformation(
-                    Payment::TRANSACTION_ID,
-                    $response['TransactionID']
-                );
+            if (!in_array(strtolower($params['Status']), ['approved', 'success'])) {
+                throw new PaymentException(__('Your payment failed.'));
             }
 
-            if (isset($response['AuthCode']) && $response['AuthCode']) {
-                $orderPayment->setAdditionalInformation(
-                    Payment::TRANSACTION_AUTH_CODE_KEY,
-                    $response['AuthCode']
-                );
-            }
-
-            if (isset($response['payment_method']) && $response['payment_method']) {
-                $orderPayment->setAdditionalInformation(
-                    Payment::TRANSACTION_EXTERNAL_PAYMENT_METHOD,
-                    $response['payment_method']
-                );
-            }
+            $orderPayment->setAdditionalInformation(
+                Payment::TRANSACTION_ID,
+                $params['TransactionID']
+            );
+            $orderPayment->setAdditionalInformation(
+                Payment::TRANSACTION_AUTH_CODE_KEY,
+                $params['AuthCode']
+            );
+            $orderPayment->setAdditionalInformation(
+                Payment::TRANSACTION_EXTERNAL_PAYMENT_METHOD,
+                $params['payment_method']
+            );
             $orderPayment->setTransactionAdditionalInfo(
                 Transaction::RAW_DETAILS,
-                $response
+                $params
             );
-
-            $response['Status'] = (isset($response['Status'])) ? $response['Status'] : null;
-            if (in_array(strtolower($response['Status']), ['declined', 'error'])) {
-                $response['ErrCode'] = (isset($response['ErrCode'])) ? $response['ErrCode'] : "Unknown";
-                $response['ExErrCode'] = (isset($response['ExErrCode'])) ? $response['ExErrCode'] : "Unknown";
-                $order->addStatusHistoryComment("Payment returned a '{$response['Status']}' status (Code: {$response['ErrCode']}, Reason: {$response['ExErrCode']}).");
-            } elseif ($response['Status']) {
-                $order->addStatusHistoryComment("Payment returned a '" . $response['Status'] . "' status");
-            }
 
             $orderPayment->save();
             $order->save();
         } catch (PaymentException $e) {
             if ($this->moduleConfig->isDebugEnabled() === true) {
                 $this->safechargeLogger->debug(
-                    'APM Pending Process Error: '
+                    'Success Callback Process Error: '
                     . json_encode($this->getRequest()->getParams())
                 );
             }

@@ -137,11 +137,11 @@ class PaymentApm extends AbstractRequest implements RequestInterface
                 'amount' => (float)$quote->getGrandTotal(),
                 'merchant_unique_id' => $reservedOrderId,
                 'urlDetails' => [
-                    'successUrl' => $this->config->getApmSuccessUrl(),
-                    'failureUrl' => $this->config->getApmErrorUrl(),
-                    'pendingUrl' => $this->config->getApmPendingUrl(),
+                    'successUrl' => $this->config->getCallbackSuccessUrl(),
+                    'failureUrl' => $this->config->getCallbackErrorUrl(),
+                    'pendingUrl' => $this->config->getCallbackPendingUrl(),
                     'backUrl' => $this->config->getBackUrl(),
-                    'notificationUrl' => $this->config->getApmDmnUrl($reservedOrderId),
+                    'notificationUrl' => $this->config->getCallbackDmnUrl($reservedOrderId),
                 ],
                 'paymentMethod' => $this->getPaymentMethod(),
             ]

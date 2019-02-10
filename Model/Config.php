@@ -335,12 +335,12 @@ class Config
     /**
      * @return string
      */
-    public function getRedirectSuccessUrl()
+    public function getCallbackSuccessUrl()
     {
         $quoteId = $this->checkoutSession->getQuoteId();
 
         return $this->urlBuilder->getUrl(
-            'safecharge/payment/redirect_success',
+            'safecharge/payment/callback_success',
             ['quote' => $quoteId]
         );
     }
@@ -348,12 +348,12 @@ class Config
     /**
      * @return string
      */
-    public function getRedirectPendingUrl()
+    public function getCallbackPendingUrl()
     {
         $quoteId = $this->checkoutSession->getQuoteId();
 
         return $this->urlBuilder->getUrl(
-            'safecharge/payment/redirect_pending',
+            'safecharge/payment/callback_pending',
             ['quote' => $quoteId]
         );
     }
@@ -361,12 +361,12 @@ class Config
     /**
      * @return string
      */
-    public function getRedirectErrorUrl()
+    public function getCallbackErrorUrl()
     {
         $quoteId = $this->checkoutSession->getQuoteId();
 
         return $this->urlBuilder->getUrl(
-            'safecharge/payment/redirect_error',
+            'safecharge/payment/callback_error',
             ['quote' => $quoteId]
         );
     }
@@ -374,40 +374,11 @@ class Config
     /**
      * @return string
      */
-    public function getApmSuccessUrl()
+    public function getCallbackDmnUrl($incrementId = null, $storeId = null)
     {
-        $quoteId = $this->checkoutSession->getQuoteId();
-
-        return $this->urlBuilder->getUrl(
-            'safecharge/payment/apm_success',
-            ['quote' => $quoteId]
-        );
-    }
-
-    /**
-     * @return string
-     */
-    public function getApmPendingUrl()
-    {
-        $quoteId = $this->checkoutSession->getQuoteId();
-
-        return $this->urlBuilder->getUrl(
-            'safecharge/payment/apm_pending',
-            ['quote' => $quoteId]
-        );
-    }
-
-    /**
-     * @return string
-     */
-    public function getApmErrorUrl()
-    {
-        $quoteId = $this->checkoutSession->getQuoteId();
-
-        return $this->urlBuilder->getUrl(
-            'safecharge/payment/apm_error',
-            ['quote' => $quoteId]
-        );
+        return $this->getStoreManager()
+            ->getStore((is_null($incrementId)) ? $this->storeId : $storeId)
+            ->getBaseUrl(\Magento\Framework\UrlInterface::URL_TYPE_WEB) . 'safecharge/payment/callback_dmn/order/' . ((is_null($incrementId)) ? $this->getReservedOrderId() : $incrementId);
     }
 
     /**
@@ -416,26 +387,6 @@ class Config
     public function getBackUrl()
     {
         return $this->urlBuilder->getUrl('checkout/cart');
-    }
-
-    /**
-     * @return string
-     */
-    public function getDmnUrl($incrementId = null, $storeId = null)
-    {
-        return $this->getStoreManager()
-            ->getStore((is_null($incrementId)) ? $this->storeId : $storeId)
-            ->getBaseUrl(\Magento\Framework\UrlInterface::URL_TYPE_WEB) . 'safecharge/payment/dmn/order/' . ((is_null($incrementId)) ? $this->getReservedOrderId() : $incrementId);
-    }
-
-    /**
-     * @return string
-     */
-    public function getApmDmnUrl($incrementId = null, $storeId = null)
-    {
-        return $this->getStoreManager()
-            ->getStore((is_null($incrementId)) ? $this->storeId : $storeId)
-            ->getBaseUrl(\Magento\Framework\UrlInterface::URL_TYPE_WEB) . 'safecharge/payment/apm_dmn/order/' . ((is_null($incrementId)) ? $this->getReservedOrderId() : $incrementId);
     }
 
     public function getQuoteId()
