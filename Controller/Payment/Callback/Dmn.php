@@ -1,6 +1,6 @@
 <?php
 
-namespace Safecharge\Safecharge\Controller\Payment;
+namespace Safecharge\Safecharge\Controller\Payment\Callback;
 
 use Magento\Checkout\Model\Session\Proxy as CheckoutSession;
 use Magento\Checkout\Model\Type\Onepage;
