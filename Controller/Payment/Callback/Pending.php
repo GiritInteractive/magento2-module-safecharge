@@ -151,12 +151,12 @@ class Pending extends Action
             /** @var OrderPayment $payment */
             $orderPayment = $order->getPayment();
 
-            //if (isset($params['TransactionID']) && $params['TransactionID']) {
-            $orderPayment->setAdditionalInformation(
-                Payment::TRANSACTION_ID,
-                $params['TransactionID']
-            );
-            //}
+            if (isset($params['TransactionID']) && $params['TransactionID']) {
+                $orderPayment->setAdditionalInformation(
+                    Payment::TRANSACTION_ID,
+                    $params['TransactionID']
+                );
+            }
 
             if (isset($params['AuthCode']) && $params['AuthCode']) {
                 $orderPayment->setAdditionalInformation(
