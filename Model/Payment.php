@@ -316,7 +316,7 @@ class Payment extends Cc implements TransparentInterface
         $paymentSolution = $this->moduleConfig->getPaymentSolution();
         $info = $this->getInfoInstance();
 
-        if ($paymentSolution === self::SOLUTION_EXTERNAL || ($info->getAdditionalInformation(self::KEY_CHOSEN_APM_METHOD) !== self::APM_METHOD_CC)) {
+        if ($paymentSolution === self::SOLUTION_EXTERNAL || $info->getAdditionalInformation(self::KEY_CHOSEN_APM_METHOD) !== self::APM_METHOD_CC) {
             return $this;
         }
 
@@ -427,7 +427,7 @@ class Payment extends Cc implements TransparentInterface
 
         $authCode = $payment->getAdditionalInformation(self::TRANSACTION_AUTH_CODE_KEY);
 
-        if (($authCode === null && $paymentSolution === self::SOLUTION_EXTERNAL) || ($paymentSolution === self::SOLUTION_INTERNAL && $this->moduleConfig->getPaymentAction() === self::ACTION_AUTHORIZE_CAPTURE && ($chosenApmMethod = $payment->getAdditionalInformation(self::KEY_CHOSEN_APM_METHOD)) && $chosenApmMethod !== self::APM_METHOD_CC)) {
+        if (($authCode === null && $paymentSolution === self::SOLUTION_EXTERNAL) || ($paymentSolution === self::SOLUTION_INTERNAL && $payment->getAdditionalInformation(self::KEY_CHOSEN_APM_METHOD) !== self::APM_METHOD_CC)) {
             $payment->setIsTransactionPending(true);
             return $this;
         }

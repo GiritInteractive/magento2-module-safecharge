@@ -70,7 +70,7 @@ class GetMerchantPaymentMethods extends AbstractResponse implements ResponseInte
         $langCode = $this->getStoreLocale(true);
         $countryCode = $countryCode ?: $this->config->getQuoteCountryCode();
         foreach ($this->paymentMethods as $k => &$method) {
-            if ((!$countryCode || $this->config->getPaymentAction() !== Payment::ACTION_AUTHORIZE_CAPTURE) && isset($method["paymentMethod"]) && $method["paymentMethod"] !== 'cc_card') {
+            if (!$countryCode && isset($method["paymentMethod"]) && $method["paymentMethod"] !== 'cc_card') {
                 unset($this->paymentMethods[$k]);
                 continue;
             }
