@@ -365,6 +365,7 @@ abstract class AbstractRequest extends AbstractApi
         $billing = $quote->getBillingAddress();
 
         $shipping = 0;
+        $totalTax = 0;
         $shippingAddress = $quote->getShippingAddress();
         if ($shippingAddress !== null) {
             $shipping = $shippingAddress->getBaseShippingAmount();
