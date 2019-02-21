@@ -87,9 +87,9 @@ class Url
             'merchant_site_id' => $this->moduleConfig->getMerchantSiteId(),
             'customField1' => $this->moduleConfig->getSourcePlatformField(),
             'total_amount' => number_format((float)$quote->getBaseGrandTotal(), 2, '.', ''),
-            'discount' => number_format((float)abs($quote->getBaseSubtotal() - $quote->getBaseSubtotalWithDiscount()), 2, '.', ''),
-            'shipping' => number_format((float)$shipping, 2, '.', ''),
-            'total_tax' => number_format((($totalTax && $quote->getBaseSubtotalWithDiscount()) ? (float)round(($totalTax / $quote->getBaseSubtotalWithDiscount()), 4) : (float)$totalTax), 2, '.', ''),
+            'discount' => 0,
+            'shipping' => 0,
+            'total_tax' => 0,
             'currency' => $quote->getBaseCurrencyCode(),
             'user_token_id' => $quote->getCustomerId(),
             'time_stamp' => date('YmdHis'),
@@ -120,7 +120,12 @@ class Url
             $queryParams = array_merge($queryParams, $billingAddress);
         }
 
-        $numberOfItems = 0;
+        $queryParams['item_name_1'] = 'product1';
+        $queryParams['item_amount_1'] = $queryParams['total_amount'];
+        $queryParams['item_quantity_1'] = 1;
+        $queryParams['numberofitems'] = 1;
+
+        /*$numberOfItems = 0;
         $i = 1;
 
         $quoteItems = $quote->getAllVisibleItems();
@@ -135,7 +140,7 @@ class Url
             $i++;
         }
 
-        $queryParams['numberofitems'] = $numberOfItems;
+        $queryParams['numberofitems'] = $numberOfItems;*/
 
         $queryParams['checksum'] = hash('sha256', utf8_encode($this->moduleConfig->getMerchantSecretKey() . implode("", $queryParams)));
 
