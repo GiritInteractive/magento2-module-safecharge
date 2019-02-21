@@ -73,9 +73,11 @@ class Url
         $quotePayment = $quote->getPayment();
 
         $shipping = 0;
+        $totalTax = 0;
         $shippingAddress = $quote->getShippingAddress();
         if ($shippingAddress !== null) {
             $shipping = $shippingAddress->getBaseShippingAmount();
+            $totalTax = $shippingAddress->getBaseTaxAmount();
         }
 
         $reservedOrderId = $quotePayment->getAdditionalInformation(Payment::TRANSACTION_ORDER_ID) ?: $this->moduleConfig->getReservedOrderId();
@@ -84,10 +86,10 @@ class Url
             'merchant_id' => $this->moduleConfig->getMerchantId(),
             'merchant_site_id' => $this->moduleConfig->getMerchantSiteId(),
             'customField1' => $this->moduleConfig->getSourcePlatformField(),
-            'total_amount' => round($quote->getBaseGrandTotal(), 2),
-            'discount' => round($quote->getBaseSubtotal() - $quote->getBaseSubtotalWithDiscount(), 2),
-            'shipping' => round($shipping, 2),
-            'total_tax' => (float)$quote->getBaseTaxAmount(),
+            'total_amount' => (float)$quote->getBaseGrandTotal(),
+            'discount' => (float)abs($quote->getBaseSubtotal() - $quote->getBaseSubtotalWithDiscount()),
+            'shipping' => (float)$shipping,
+            'total_tax' => (float)$totalTax,
             'currency' => $quote->getBaseCurrencyCode(),
             'user_token_id' => $quote->getCustomerId(),
             'time_stamp' => date('YmdHis'),

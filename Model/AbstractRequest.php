@@ -368,6 +368,7 @@ abstract class AbstractRequest extends AbstractApi
         $shippingAddress = $quote->getShippingAddress();
         if ($shippingAddress !== null) {
             $shipping = $shippingAddress->getBaseShippingAmount();
+            $totalTax = $shippingAddress->getBaseTaxAmount();
         }
 
         $quoteData = [
@@ -377,7 +378,7 @@ abstract class AbstractRequest extends AbstractApi
             'amountDetails' => [
                 'totalShipping' => (float)$shipping,
                 'totalHandling' => (float)0,
-                'totalDiscount' => (float)abs($quote->getBaseDiscountAmount()),
+                'totalDiscount' => (float)abs($quote->getBaseSubtotal() - $quote->getBaseSubtotalWithDiscount()),
                 'totalTax' => (float)$quote->getBaseTaxAmount(),
             ],
             'items' => [],
