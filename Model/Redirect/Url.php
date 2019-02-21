@@ -87,6 +87,7 @@ class Url
             'total_amount' => round($quote->getBaseGrandTotal(), 2),
             'discount' => round($quote->getBaseSubtotal() - $quote->getBaseSubtotalWithDiscount(), 2),
             'shipping' => round($shipping, 2),
+            'total_tax' => (float)$order->getBaseTaxAmount(),
             'currency' => $quote->getBaseCurrencyCode(),
             'user_token_id' => $quote->getCustomerId(),
             'time_stamp' => date('YmdHis'),
