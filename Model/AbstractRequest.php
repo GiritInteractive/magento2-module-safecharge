@@ -380,7 +380,7 @@ abstract class AbstractRequest extends AbstractApi
                 'totalShipping' => (float)$shipping,
                 'totalHandling' => (float)0,
                 'totalDiscount' => (float)abs($quote->getBaseSubtotal() - $quote->getBaseSubtotalWithDiscount()),
-                'totalTax' => ($totalTax && $quote->getBaseSubtotalWithDiscount()) ? (float)($totalTax / $quote->getBaseSubtotalWithDiscount()) : (float)$totalTax,
+                'totalTax' => ($totalTax && $quote->getBaseSubtotalWithDiscount()) ? (float)round(($totalTax / $quote->getBaseSubtotalWithDiscount()), 4) : (float)$totalTax,
             ],
             'items' => [],
             'deviceDetails' => [

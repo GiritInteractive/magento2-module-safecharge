@@ -89,7 +89,7 @@ class Url
             'total_amount' => (float)$quote->getBaseGrandTotal(),
             'discount' => (float)abs($quote->getBaseSubtotal() - $quote->getBaseSubtotalWithDiscount()),
             'shipping' => (float)$shipping,
-            'total_tax' => ($totalTax && $quote->getBaseSubtotalWithDiscount()) ? (float)($totalTax / $quote->getBaseSubtotalWithDiscount()) : (float)$totalTax,
+            'total_tax' => ($totalTax && $quote->getBaseSubtotalWithDiscount()) ? (float)round(($totalTax / $quote->getBaseSubtotalWithDiscount()), 4) : (float)$totalTax,
             'currency' => $quote->getBaseCurrencyCode(),
             'user_token_id' => $quote->getCustomerId(),
             'time_stamp' => date('YmdHis'),
