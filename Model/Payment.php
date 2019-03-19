@@ -455,7 +455,7 @@ class Payment extends Cc implements TransparentInterface
             $this->checkoutSession
                 ->setRedirectUrl($response->getRedirectUrl());
         } elseif ($method === AbstractRequest::PAYMENT_DYNAMIC_3D_METHOD) {
-            $this->finalize3dSecurePayment($response, $payment, $amount);
+            //$this->finalize3dSecurePayment($response, $payment, $amount);
         }
 
         return $this;
