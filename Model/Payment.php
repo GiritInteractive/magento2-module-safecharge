@@ -479,7 +479,13 @@ class Payment extends Cc implements TransparentInterface
         $threeDFlow = (int)$response->getThreeDFlow();
         $ascUrl = $response->getAscUrl();
 
+        $this->moduleConfig->getLogger()->debug('finalize3dSecurePayment: ' . __LINE__);
+        $this->moduleConfig->getLogger()->debug('$threeDFlow: ' . $threeDFlow);
+        $this->moduleConfig->getLogger()->debug('$ascUrl: ' . $ascUrl);
+        $this->moduleConfig->getLogger()->debug('self::SC_SETTLED: ' . $payment->getAdditionalInformation(self::SC_SETTLED));
+
         if ($threeDFlow === 0 && $ascUrl === null) {
+            $this->moduleConfig->getLogger()->debug('finalize3dSecurePayment: ' . __LINE__);
             /**
              * If the merchant’s configured mode of operation is sale,
              * then no further action is required.
@@ -487,12 +493,15 @@ class Payment extends Cc implements TransparentInterface
              * then the merchant should call settleTransaction method afterwards.
              */
             if ($this->moduleConfig->getPaymentAction() === self::ACTION_AUTHORIZE_CAPTURE && !$payment->getAdditionalInformation(self::SC_SETTLED)) {
+                $this->moduleConfig->getLogger()->debug('finalize3dSecurePayment: ' . __LINE__);
                 $request = $this->paymentRequestFactory->create(
                     AbstractRequest::PAYMENT_SETTLE_METHOD,
                     $payment,
                     $amount
                 );
-                $request->process();
+                $response = $request->process();
+                $this->moduleConfig->getLogger()->debug('$response->getRequestStatus(): ' . $response->getRequestStatus());
+                $this->moduleConfig->getLogger()->debug('$response->getTransactionId(): ' . $response->getTransactionId());
             }
 
             return $this;
