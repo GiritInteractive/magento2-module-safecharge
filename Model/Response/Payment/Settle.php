@@ -89,6 +89,10 @@ class Settle extends AbstractPayment implements ResponseInterface
                 Payment::TRANSACTION_ID,
                 $this->getTransactionId()
             );
+            $this->orderPayment->setAdditionalInformation(
+                Payment::SC_SETTLED,
+                true
+            );
         }
 
         $this->orderPayment

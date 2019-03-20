@@ -2,12 +2,12 @@
 
 namespace Safecharge\Safecharge\Observer\Sales\Order\Invoice;
 
-use Safecharge\Safecharge\Model\Payment;
-use Magento\Framework\Event\ObserverInterface;
 use Magento\Framework\Event\Observer;
+use Magento\Framework\Event\ObserverInterface;
 use Magento\Sales\Model\Order;
 use Magento\Sales\Model\Order\Invoice;
 use Magento\Sales\Model\Order\Payment as OrderPayment;
+use Safecharge\Safecharge\Model\Payment;
 
 /**
  * Safecharge Safecharge sales order invoice register observer.
@@ -41,14 +41,12 @@ class Register implements ObserverInterface
             return $this;
         }
 
-        $status = Payment::SC_SETTLED;
-
         $totalDue = $order->getBaseTotalDue();
         if ((float)$totalDue > 0.0) {
-            $status = Payment::SC_PARTIALLY_SETTLED;
+            $order->setStatus(Payment::SC_PARTIALLY_SETTLED);
+        } elseif ($payment->getAdditionalInformation(self::SC_SETTLED)) {
+            $order->setStatus(Payment::SC_SETTLED);
         }
-
-        $order->setStatus($status);
 
         return $this;
     }

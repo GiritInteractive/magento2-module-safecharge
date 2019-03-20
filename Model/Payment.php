@@ -486,7 +486,7 @@ class Payment extends Cc implements TransparentInterface
              * If the merchant’s configured mode of operation is auth-settle,
              * then the merchant should call settleTransaction method afterwards.
              */
-            if ($this->moduleConfig->getPaymentAction() === self::ACTION_AUTHORIZE_CAPTURE) {
+            if ($this->moduleConfig->getPaymentAction() === self::ACTION_AUTHORIZE_CAPTURE && !$payment->getAdditionalInformation(self::SC_SETTLED)) {
                 $request = $this->paymentRequestFactory->create(
                     AbstractRequest::PAYMENT_SETTLE_METHOD,
                     $payment,

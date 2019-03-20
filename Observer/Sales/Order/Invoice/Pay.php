@@ -41,14 +41,12 @@ class Pay implements ObserverInterface
             return $this;
         }
 
-        $status = Payment::SC_SETTLED;
-
         $totalDue = $order->getBaseTotalDue();
         if ((float)$totalDue > 0.0) {
-            $status = Payment::SC_PARTIALLY_SETTLED;
+            $order->setStatus(Payment::SC_PARTIALLY_SETTLED);
+        } elseif ($payment->getAdditionalInformation(self::SC_SETTLED)) {
+            $order->setStatus(Payment::SC_SETTLED);
         }
-
-        $order->setStatus($status);
 
         return $this;
     }
