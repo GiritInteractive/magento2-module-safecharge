@@ -16,7 +16,6 @@ use Magento\Sales\Model\Order\Payment\State\AuthorizeCommand;
 use Magento\Sales\Model\Order\Payment\State\CaptureCommand;
 use Magento\Sales\Model\Order\Payment\Transaction;
 use Magento\Sales\Model\OrderFactory;
-use Safecharge\Safecharge\Model\AbstractRequest;
 use Safecharge\Safecharge\Model\Config as ModuleConfig;
 use Safecharge\Safecharge\Model\Logger as SafechargeLogger;
 use Safecharge\Safecharge\Model\Payment;
@@ -219,20 +218,7 @@ class Dmn extends Action
                 }
 
                 if (in_array(strtolower($params['Status']), ['approved', 'success'])) {
-                    $isSettled = false;
-                    if ((isset($params['transactionType']) && strtolower($params['transactionType']) !== "sale") && $this->moduleConfig->getPaymentAction() === Payment::ACTION_AUTHORIZE_CAPTURE) {
-                        $isSettled = true;
-                        $request = $this->paymentRequestFactory->create(
-                            AbstractRequest::PAYMENT_SETTLE_METHOD,
-                            $orderPayment,
-                            $order->getBaseGrandTotal()
-                        );
-                        $settleResponse = $request->process();
-                        $transactionId = $settleResponse->getTransactionId() ?: $transactionId;
-                    } else {
-                        $isSettled = true;
-                    }
-
+                    $isSettled = (isset($params['transactionType']) && strtolower($params['transactionType']) === "sale" && $this->moduleConfig->getPaymentAction() === Payment::ACTION_AUTHORIZE_CAPTURE) ? true : false;
                     if ($isSettled) {
                         $message = $this->captureCommand->execute(
                             $orderPayment,
