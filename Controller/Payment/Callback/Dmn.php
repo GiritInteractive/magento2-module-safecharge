@@ -220,11 +220,11 @@ class Dmn extends Action
 
                 if (in_array(strtolower($params['Status']), ['approved', 'success'])) {
                     $isSettled = false;
-                    $this->safechargeLogger->debug('Payment::KEY_CHOSEN_APM_METHOD: ' . $payment->getAdditionalInformation(Payment::KEY_CHOSEN_APM_METHOD));
+                    $this->safechargeLogger->debug('Payment::KEY_CHOSEN_APM_METHOD: ' . $orderPayment->getAdditionalInformation(Payment::KEY_CHOSEN_APM_METHOD));
                     $this->safechargeLogger->debug('Payment::SC_SETTLED: ' . $orderPayment->getAdditionalInformation(Payment::SC_SETTLED));
                     if (
                         (isset($params['transactionType']) && strtolower($params['transactionType']) === "sale") &&
-                        ($this->moduleConfig->getPaymentSolution() === Payment::SOLUTION_EXTERNAL || $payment->getAdditionalInformation(Payment::KEY_CHOSEN_APM_METHOD) === Payment::APM_METHOD_CC) &&
+                        ($this->moduleConfig->getPaymentSolution() === Payment::SOLUTION_EXTERNAL || $orderPayment->getAdditionalInformation(Payment::KEY_CHOSEN_APM_METHOD) === Payment::APM_METHOD_CC) &&
                         $this->moduleConfig->getPaymentAction() === Payment::ACTION_AUTHORIZE_CAPTURE &&
                         !$orderPayment->getAdditionalInformation(Payment::SC_SETTLED)
                     ) {
