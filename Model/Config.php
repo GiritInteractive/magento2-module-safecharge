@@ -9,7 +9,6 @@ use Magento\Framework\Module\ModuleListInterface;
 use Magento\Framework\UrlInterface;
 use Magento\Store\Model\ScopeInterface;
 use Magento\Store\Model\StoreManagerInterface;
-use Safecharge\Safecharge\Model\Logger as SafechargeLogger;
 
 /**
  * Safecharge Safecharge config model.
@@ -56,11 +55,6 @@ class Config
     private $urlBuilder;
 
     /**
-     * @var SafechargeLogger
-     */
-    private $safechargeLogger;
-
-    /**
      * Store id.
      *
      * @var int
@@ -83,7 +77,6 @@ class Config
      * @param ModuleListInterface $moduleList
      * @param CheckoutSession $checkoutSession
      * @param UrlInterface $urlBuilder
-     * @param SafechargeLogger $safechargeLogger
      */
     public function __construct(
         ScopeConfigInterface $scopeConfig,
@@ -91,8 +84,7 @@ class Config
         ProductMetadataInterface $productMetadata,
         ModuleListInterface $moduleList,
         CheckoutSession $checkoutSession,
-        UrlInterface $urlBuilder,
-        SafechargeLogger $safechargeLogger
+        UrlInterface $urlBuilder
     ) {
         $this->scopeConfig = $scopeConfig;
         $this->storeManager = $storeManager;
@@ -100,7 +92,6 @@ class Config
         $this->moduleList = $moduleList;
         $this->checkoutSession = $checkoutSession;
         $this->urlBuilder = $urlBuilder;
-        $this->safechargeLogger = $safechargeLogger;
 
         $this->storeId = $this->getStoreId();
     }
@@ -131,15 +122,6 @@ class Config
     public function getCheckoutSession()
     {
         return $this->checkoutSession;
-    }
-
-    /**
-     * Return Safecharge logger.
-     * @return SafechargeLogger
-     */
-    public function getLogger()
-    {
-        return $this->safechargeLogger;
     }
 
     /**
