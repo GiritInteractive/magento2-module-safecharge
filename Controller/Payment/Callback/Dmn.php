@@ -220,12 +220,15 @@ class Dmn extends Action
 
                 if (in_array(strtolower($params['Status']), ['approved', 'success'])) {
                     $isSettled = false;
+                    $this->safechargeLogger->debug('Payment::KEY_CHOSEN_APM_METHOD: ' . $payment->getAdditionalInformation(Payment::KEY_CHOSEN_APM_METHOD));
+                    $this->safechargeLogger->debug('Payment::SC_SETTLED: ' . $orderPayment->getAdditionalInformation(Payment::SC_SETTLED));
                     if (
                         (isset($params['transactionType']) && strtolower($params['transactionType']) === "sale") &&
                         ($this->moduleConfig->getPaymentSolution() === Payment::SOLUTION_EXTERNAL || $payment->getAdditionalInformation(Payment::KEY_CHOSEN_APM_METHOD) === Payment::APM_METHOD_CC) &&
                         $this->moduleConfig->getPaymentAction() === Payment::ACTION_AUTHORIZE_CAPTURE &&
                         !$orderPayment->getAdditionalInformation(Payment::SC_SETTLED)
                     ) {
+                        $this->safechargeLogger->debug('Settle: ' . __LINE__);
                         $isSettled = true;
                         $request = $this->paymentRequestFactory->create(
                             AbstractRequest::PAYMENT_SETTLE_METHOD,
@@ -233,6 +236,7 @@ class Dmn extends Action
                             $order->getBaseGrandTotal()
                         );
                         $settleResponse = $request->process();
+                        $this->safechargeLogger->debug('$settleResponse: ' . json_encode($settleResponse));
                         $transactionId = $settleResponse->getTransactionId() ?: $transactionId;
                     } elseif ($this->moduleConfig->getPaymentAction() === Payment::ACTION_AUTHORIZE_CAPTURE) {
                         $order->setStatus(Payment::SC_SETTLED);
