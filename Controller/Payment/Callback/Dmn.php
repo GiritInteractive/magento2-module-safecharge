@@ -221,10 +221,8 @@ class Dmn extends Action
                 if (in_array(strtolower($params['Status']), ['approved', 'success'])) {
                     $isSettled = false;
                     if (
-                        (
-                            (isset($params['transactionType']) && strtolower($params['transactionType']) !== "sale") ||
-                            (isset($params['transactionType']) && strtolower($params['transactionType']) === "sale" && 0)
-                        ) &&
+                        (isset($params['transactionType']) && strtolower($params['transactionType']) === "sale") &&
+                        ($this->moduleConfig->getPaymentSolution() === Payment::SOLUTION_EXTERNAL || $payment->getAdditionalInformation(Payment::KEY_CHOSEN_APM_METHOD) === Payment::APM_METHOD_CC) &&
                         $this->moduleConfig->getPaymentAction() === Payment::ACTION_AUTHORIZE_CAPTURE &&
                         !$orderPayment->getAdditionalInformation(Payment::SC_SETTLED)
                     ) {
@@ -236,7 +234,8 @@ class Dmn extends Action
                         );
                         $settleResponse = $request->process();
                         $transactionId = $settleResponse->getTransactionId() ?: $transactionId;
-                    } else {
+                    } elseif ($this->moduleConfig->getPaymentAction() === Payment::ACTION_AUTHORIZE_CAPTURE) {
+                        $order->setStatus(Payment::SC_SETTLED);
                         $isSettled = true;
                     }
 
