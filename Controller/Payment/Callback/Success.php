@@ -18,6 +18,7 @@ use Magento\Sales\Model\Order\Payment\State\AuthorizeCommand;
 use Magento\Sales\Model\Order\Payment\State\CaptureCommand;
 use Magento\Sales\Model\Order\Payment\Transaction;
 use Magento\Sales\Model\OrderFactory;
+use Safecharge\Safecharge\Model\AbstractRequest;
 use Safecharge\Safecharge\Model\Config as ModuleConfig;
 use Safecharge\Safecharge\Model\Logger as SafechargeLogger;
 use Safecharge\Safecharge\Model\Payment;
@@ -155,9 +156,10 @@ class Success extends Action
                 throw new PaymentException(__('Your payment failed.'));
             }
 
+            $transactionId = $params['TransactionID'];
             $orderPayment->setAdditionalInformation(
                 Payment::TRANSACTION_ID,
-                $params['TransactionID']
+                $transactionId
             );
             $orderPayment->setAdditionalInformation(
                 Payment::TRANSACTION_AUTH_CODE_KEY,
@@ -173,8 +175,14 @@ class Success extends Action
             );
 
             if ($this->moduleConfig->getPaymentSolution() === Payment::SOLUTION_EXTERNAL) {
-                $isSettled = ( /*isset($params['transactionType']) && strtolower($params['transactionType']) === "sale" &&*/ $this->moduleConfig->getPaymentAction() === Payment::ACTION_AUTHORIZE_CAPTURE) ? true : false;
+                $isSettled = ($this->moduleConfig->getPaymentAction() === Payment::ACTION_AUTHORIZE_CAPTURE) ? true : false;
                 if ($isSettled) {
+                    $request = $this->paymentRequestFactory->create(
+                        AbstractRequest::PAYMENT_SETTLE_METHOD,
+                        $orderPayment,
+                        $order->getBaseGrandTotal()
+                    );
+                    $settleResponse = $request->process();
                     $message = $this->captureCommand->execute(
                         $orderPayment,
                         $order->getBaseGrandTotal(),
@@ -191,7 +199,7 @@ class Success extends Action
                 }
 
                 $orderPayment
-                    ->setTransactionId($params['TransactionID'])
+                    ->setTransactionId($transactionId)
                     ->setIsTransactionPending(false)
                     ->setIsTransactionClosed($isSettled ? 1 : 0);
 
@@ -199,7 +207,7 @@ class Success extends Action
                     /** @var Invoice $invoice */
                     foreach ($order->getInvoiceCollection() as $invoice) {
                         $invoice
-                            ->setTransactionId($transactionId)
+                            ->setTransactionId($settleResponse->getTransactionId())
                             ->pay()
                             ->save();
                     }

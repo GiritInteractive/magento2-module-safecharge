@@ -217,9 +217,15 @@ class Dmn extends Action
                     $order->setState(Order::STATE_NEW)->setStatus('pending');
                 }
 
-                if (in_array(strtolower($params['Status']), ['approved', 'success']) && !($orderPayment->getAdditionalInformation(Payment::KEY_CHOSEN_APM_METHOD) === Payment::APM_METHOD_CC || $this->moduleConfig->getPaymentSolution() === Payment::SOLUTION_EXTERNAL)) {
+                if (in_array(strtolower($params['Status']), ['approved', 'success']) && $this->moduleConfig->getPaymentSolution() !== Payment::SOLUTION_EXTERNAL && $orderPayment->getAdditionalInformation(Payment::KEY_CHOSEN_APM_METHOD) !== Payment::APM_METHOD_CC) {
                     $isSettled = (isset($params['transactionType']) && strtolower($params['transactionType']) === "sale" && $this->moduleConfig->getPaymentAction() === Payment::ACTION_AUTHORIZE_CAPTURE) ? true : false;
                     if ($isSettled) {
+                        $request = $this->paymentRequestFactory->create(
+                            AbstractRequest::PAYMENT_SETTLE_METHOD,
+                            $orderPayment,
+                            $order->getBaseGrandTotal()
+                        );
+                        $settleResponse = $request->process();
                         $message = $this->captureCommand->execute(
                             $orderPayment,
                             $order->getBaseGrandTotal(),
@@ -236,7 +242,7 @@ class Dmn extends Action
                     }
 
                     $orderPayment
-                        ->setTransactionId($params['TransactionID'])
+                        ->setTransactionId($transactionId)
                         ->setIsTransactionPending(false)
                         ->setIsTransactionClosed($isSettled ? 1 : 0);
 
@@ -244,7 +250,7 @@ class Dmn extends Action
                         /** @var Invoice $invoice */
                         foreach ($order->getInvoiceCollection() as $invoice) {
                             $invoice
-                                ->setTransactionId($transactionId)
+                                ->setTransactionId($settleResponse->getTransactionId())
                                 ->pay()
                                 ->save();
                         }
