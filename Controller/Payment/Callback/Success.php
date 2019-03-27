@@ -173,7 +173,7 @@ class Success extends Action
             );
 
             if ($this->moduleConfig->getPaymentSolution() === Payment::SOLUTION_EXTERNAL) {
-                $isSettled = (isset($params['transactionType']) && strtolower($params['transactionType']) === "sale" && $this->moduleConfig->getPaymentAction() === Payment::ACTION_AUTHORIZE_CAPTURE) ? true : false;
+                $isSettled = ( /*isset($params['transactionType']) && strtolower($params['transactionType']) === "sale" &&*/ $this->moduleConfig->getPaymentAction() === Payment::ACTION_AUTHORIZE_CAPTURE) ? true : false;
                 if ($isSettled) {
                     $message = $this->captureCommand->execute(
                         $orderPayment,
