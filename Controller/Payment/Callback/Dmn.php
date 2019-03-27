@@ -16,6 +16,7 @@ use Magento\Sales\Model\Order\Payment\State\AuthorizeCommand;
 use Magento\Sales\Model\Order\Payment\State\CaptureCommand;
 use Magento\Sales\Model\Order\Payment\Transaction;
 use Magento\Sales\Model\OrderFactory;
+use Safecharge\Safecharge\Model\AbstractRequest;
 use Safecharge\Safecharge\Model\Config as ModuleConfig;
 use Safecharge\Safecharge\Model\Logger as SafechargeLogger;
 use Safecharge\Safecharge\Model\Payment;
@@ -217,22 +218,36 @@ class Dmn extends Action
                     $order->setState(Order::STATE_NEW)->setStatus('pending');
                 }
 
-                if (in_array(strtolower($params['Status']), ['approved', 'success']) && $this->moduleConfig->getPaymentSolution() !== Payment::SOLUTION_EXTERNAL && $orderPayment->getAdditionalInformation(Payment::KEY_CHOSEN_APM_METHOD) !== Payment::APM_METHOD_CC) {
-                    $isSettled = (isset($params['transactionType']) && strtolower($params['transactionType']) === "sale" && $this->moduleConfig->getPaymentAction() === Payment::ACTION_AUTHORIZE_CAPTURE) ? true : false;
-                    if ($isSettled) {
-                        $message = $this->captureCommand->execute(
-                            $orderPayment,
-                            $order->getBaseGrandTotal(),
-                            $order
-                        );
-                        $transactionType = Transaction::TYPE_CAPTURE;
-                    } else {
-                        $message = $this->authorizeCommand->execute(
-                            $orderPayment,
-                            $order->getBaseGrandTotal(),
-                            $order
-                        );
-                        $transactionType = Transaction::TYPE_AUTH;
+                if (in_array(strtolower($params['Status']), ['approved', 'success']) && $orderPayment->getAdditionalInformation(Payment::KEY_CHOSEN_APM_METHOD) !== Payment::APM_METHOD_CC) {
+                    $params['transactionType'] = isset($params['transactionType']) ? $params['transactionType'] : null;
+                    $invoiceTransactionId = $transactionId;
+                    $transactionType = Transaction::TYPE_AUTH;
+                    $isSettled = false;
+
+                    switch (strtolower($params['transactionType'])) {
+                        case 'auth':
+                            if ($this->moduleConfig->getPaymentAction() === Payment::ACTION_AUTHORIZE_CAPTURE) {
+                                $request = $this->paymentRequestFactory->create(
+                                    AbstractRequest::PAYMENT_SETTLE_METHOD,
+                                    $orderPayment,
+                                    $order->getBaseGrandTotal()
+                                );
+                                $settleResponse = $request->process();
+                                $invoiceTransactionId = $settleResponse->getTransactionId();
+                                $message = $this->captureCommand->execute($orderPayment, $order->getBaseGrandTotal(), $order);
+                                $transactionType = Transaction::TYPE_CAPTURE;
+                                $isSettled = true;
+                            } else {
+                                $message = $this->authorizeCommand->execute($orderPayment, $order->getBaseGrandTotal(), $order);
+                            }
+                            break;
+                        case 'sale':
+                            if ($this->moduleConfig->getPaymentAction() === Payment::ACTION_AUTHORIZE_CAPTURE) {
+                                $message = $this->captureCommand->execute($orderPayment, $order->getBaseGrandTotal(), $order);
+                                $transactionType = Transaction::TYPE_CAPTURE;
+                                $isSettled = true;
+                            }
+                            break;
                     }
 
                     $orderPayment
@@ -244,7 +259,7 @@ class Dmn extends Action
                         /** @var Invoice $invoice */
                         foreach ($order->getInvoiceCollection() as $invoice) {
                             $invoice
-                                ->setTransactionId($transactionId)
+                                ->setTransactionId($invoiceTransactionId)
                                 ->pay()
                                 ->save();
                         }

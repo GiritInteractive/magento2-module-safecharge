@@ -18,7 +18,6 @@ use Magento\Sales\Model\Order\Payment\State\AuthorizeCommand;
 use Magento\Sales\Model\Order\Payment\State\CaptureCommand;
 use Magento\Sales\Model\Order\Payment\Transaction;
 use Magento\Sales\Model\OrderFactory;
-use Safecharge\Safecharge\Model\AbstractRequest;
 use Safecharge\Safecharge\Model\Config as ModuleConfig;
 use Safecharge\Safecharge\Model\Logger as SafechargeLogger;
 use Safecharge\Safecharge\Model\Payment;
@@ -173,54 +172,6 @@ class Success extends Action
                 Transaction::RAW_DETAILS,
                 $params
             );
-
-            if ($this->moduleConfig->getPaymentSolution() === Payment::SOLUTION_EXTERNAL) {
-                $isSettled = ($this->moduleConfig->getPaymentAction() === Payment::ACTION_AUTHORIZE_CAPTURE) ? true : false;
-                if ($isSettled) {
-                    $request = $this->paymentRequestFactory->create(
-                        AbstractRequest::PAYMENT_SETTLE_METHOD,
-                        $orderPayment,
-                        $order->getBaseGrandTotal()
-                    );
-                    $settleResponse = $request->process();
-                    $message = $this->captureCommand->execute(
-                        $orderPayment,
-                        $order->getBaseGrandTotal(),
-                        $order
-                    );
-                    $transactionType = Transaction::TYPE_CAPTURE;
-                } else {
-                    $message = $this->authorizeCommand->execute(
-                        $orderPayment,
-                        $order->getBaseGrandTotal(),
-                        $order
-                    );
-                    $transactionType = Transaction::TYPE_AUTH;
-                }
-
-                $orderPayment
-                    ->setTransactionId($transactionId)
-                    ->setIsTransactionPending(false)
-                    ->setIsTransactionClosed($isSettled ? 1 : 0);
-
-                if ($transactionType === Transaction::TYPE_CAPTURE) {
-                    /** @var Invoice $invoice */
-                    foreach ($order->getInvoiceCollection() as $invoice) {
-                        $invoice
-                            ->setTransactionId($settleResponse->getTransactionId())
-                            ->pay()
-                            ->save();
-                    }
-                }
-
-                $transaction = $orderPayment->addTransaction($transactionType);
-
-                $message = $orderPayment->prependMessage($message);
-                $orderPayment->addTransactionCommentsToOrder(
-                    $transaction,
-                    $message
-                );
-            }
 
             $orderPayment->save();
             $order->save();
