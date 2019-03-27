@@ -172,6 +172,48 @@ class Success extends Action
                 $params
             );
 
+            if ($this->moduleConfig->getPaymentSolution() === Payment::SOLUTION_EXTERNAL) {
+                $isSettled = (isset($params['transactionType']) && strtolower($params['transactionType']) === "sale" && $this->moduleConfig->getPaymentAction() === Payment::ACTION_AUTHORIZE_CAPTURE) ? true : false;
+                if ($isSettled) {
+                    $message = $this->captureCommand->execute(
+                        $orderPayment,
+                        $order->getBaseGrandTotal(),
+                        $order
+                    );
+                    $transactionType = Transaction::TYPE_CAPTURE;
+                } else {
+                    $message = $this->authorizeCommand->execute(
+                        $orderPayment,
+                        $order->getBaseGrandTotal(),
+                        $order
+                    );
+                    $transactionType = Transaction::TYPE_AUTH;
+                }
+
+                $orderPayment
+                    ->setTransactionId($params['TransactionID'])
+                    ->setIsTransactionPending(false)
+                    ->setIsTransactionClosed($isSettled ? 1 : 0);
+
+                if ($transactionType === Transaction::TYPE_CAPTURE) {
+                    /** @var Invoice $invoice */
+                    foreach ($order->getInvoiceCollection() as $invoice) {
+                        $invoice
+                            ->setTransactionId($transactionId)
+                            ->pay()
+                            ->save();
+                    }
+                }
+
+                $transaction = $orderPayment->addTransaction($transactionType);
+
+                $message = $orderPayment->prependMessage($message);
+                $orderPayment->addTransactionCommentsToOrder(
+                    $transaction,
+                    $message
+                );
+            }
+
             $orderPayment->save();
             $order->save();
         } catch (PaymentException $e) {

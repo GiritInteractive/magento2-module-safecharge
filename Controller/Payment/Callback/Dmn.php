@@ -217,7 +217,7 @@ class Dmn extends Action
                     $order->setState(Order::STATE_NEW)->setStatus('pending');
                 }
 
-                if (in_array(strtolower($params['Status']), ['approved', 'success']) && $orderPayment->getAdditionalInformation(Payment::KEY_CHOSEN_APM_METHOD) !== Payment::APM_METHOD_CC) {
+                if (in_array(strtolower($params['Status']), ['approved', 'success']) && !($orderPayment->getAdditionalInformation(Payment::KEY_CHOSEN_APM_METHOD) === Payment::APM_METHOD_CC || $this->moduleConfig->getPaymentSolution() === Payment::SOLUTION_EXTERNAL)) {
                     $isSettled = (isset($params['transactionType']) && strtolower($params['transactionType']) === "sale" && $this->moduleConfig->getPaymentAction() === Payment::ACTION_AUTHORIZE_CAPTURE) ? true : false;
                     if ($isSettled) {
                         $message = $this->captureCommand->execute(
