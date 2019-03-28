@@ -1,12 +1,7 @@
 <?php
 
-namespace Safecharge\Safecharge\Controller\Payment\Redirect;
+namespace Safecharge\Safecharge\Controller\Payment\Callback;
 
-use Safecharge\Safecharge\Model\AbstractRequest;
-use Safecharge\Safecharge\Model\Config as ModuleConfig;
-use Safecharge\Safecharge\Model\Logger as SafechargeLogger;
-use Safecharge\Safecharge\Model\Payment;
-use Safecharge\Safecharge\Model\Request\Payment\Factory as PaymentRequestFactory;
 use Magento\Checkout\Model\Session\Proxy as CheckoutSession;
 use Magento\Checkout\Model\Type\Onepage;
 use Magento\Framework\App\Action\Action;
@@ -18,12 +13,15 @@ use Magento\Framework\DataObjectFactory;
 use Magento\Framework\Exception\PaymentException;
 use Magento\Quote\Api\CartManagementInterface;
 use Magento\Sales\Model\Order;
-use Magento\Sales\Model\Order\Invoice;
 use Magento\Sales\Model\Order\Payment as OrderPayment;
 use Magento\Sales\Model\Order\Payment\State\AuthorizeCommand;
 use Magento\Sales\Model\Order\Payment\State\CaptureCommand;
 use Magento\Sales\Model\Order\Payment\Transaction;
 use Magento\Sales\Model\OrderFactory;
+use Safecharge\Safecharge\Model\Config as ModuleConfig;
+use Safecharge\Safecharge\Model\Logger as SafechargeLogger;
+use Safecharge\Safecharge\Model\Payment;
+use Safecharge\Safecharge\Model\Request\Payment\Factory as PaymentRequestFactory;
 
 /**
  * Safecharge Safecharge redirect success controller.
@@ -132,10 +130,12 @@ class Success extends Action
      */
     public function execute()
     {
+        $params = $this->getRequest()->getParams();
+
         if ($this->moduleConfig->isDebugEnabled() === true) {
             $this->safechargeLogger->debug(
-                'Redirect Success Response: '
-                . json_encode($this->getRequest()->getParams())
+                'Success Callback Response: '
+                . json_encode($params)
             );
         }
 
@@ -151,83 +151,37 @@ class Success extends Action
             /** @var OrderPayment $payment */
             $orderPayment = $order->getPayment();
 
-            $response = $this->getRequest()->getParams();
-
-            if (strtolower($response['Status']) !== 'approved') {
+            if (!in_array(strtolower($params['Status']), ['approved', 'success'])) {
                 throw new PaymentException(__('Your payment failed.'));
             }
 
+            $transactionId = $params['TransactionID'];
             $orderPayment->setAdditionalInformation(
                 Payment::TRANSACTION_ID,
-                $response['TransactionID']
+                $transactionId
             );
             $orderPayment->setAdditionalInformation(
                 Payment::TRANSACTION_AUTH_CODE_KEY,
-                $response['AuthCode']
+                $params['AuthCode']
             );
             $orderPayment->setAdditionalInformation(
                 Payment::TRANSACTION_EXTERNAL_PAYMENT_METHOD,
-                $response['payment_method']
+                $params['payment_method']
             );
             $orderPayment->setTransactionAdditionalInfo(
                 Transaction::RAW_DETAILS,
-                $response
-            );
-
-            $isSettled = false;
-            if ($this->moduleConfig->getPaymentAction() === Payment::ACTION_AUTHORIZE_CAPTURE) {
-                $isSettled = true;
-
-                $request = $this->paymentRequestFactory->create(
-                    AbstractRequest::PAYMENT_SETTLE_METHOD,
-                    $orderPayment,
-                    $order->getBaseGrandTotal()
-                );
-                $settleResponse = $request->process();
-            }
-
-            if ($isSettled) {
-                $message = $this->captureCommand->execute(
-                    $orderPayment,
-                    $order->getBaseGrandTotal(),
-                    $order
-                );
-                $transactionType = Transaction::TYPE_CAPTURE;
-            } else {
-                $message = $this->authorizeCommand->execute(
-                    $orderPayment,
-                    $order->getBaseGrandTotal(),
-                    $order
-                );
-                $transactionType = Transaction::TYPE_AUTH;
-            }
-
-            $orderPayment
-                ->setTransactionId($response['TransactionID'])
-                ->setIsTransactionPending(false)
-                ->setIsTransactionClosed($isSettled ? 1 : 0);
-
-            if ($transactionType === Transaction::TYPE_CAPTURE) {
-                /** @var Invoice $invoice */
-                foreach ($order->getInvoiceCollection() as $invoice) {
-                    $invoice
-                        ->setTransactionId($settleResponse->getTransactionId())
-                        ->pay()
-                        ->save();
-                }
-            }
-
-            $transaction = $orderPayment->addTransaction($transactionType);
-
-            $message = $orderPayment->prependMessage($message);
-            $orderPayment->addTransactionCommentsToOrder(
-                $transaction,
-                $message
+                $params
             );
 
             $orderPayment->save();
             $order->save();
         } catch (PaymentException $e) {
+            if ($this->moduleConfig->isDebugEnabled() === true) {
+                $this->safechargeLogger->debug(
+                    'Success Callback Process Error: '
+                    . json_encode($this->getRequest()->getParams())
+                );
+            }
             $this->messageManager->addErrorMessage($e->getMessage());
         }
 
@@ -284,7 +238,7 @@ class Success extends Action
      */
     private function getQuoteId()
     {
-        $quoteId = (int)$this->getRequest()->getParam('order');
+        $quoteId = (int)$this->getRequest()->getParam('quote');
 
         if ((int)$this->checkoutSession->getQuoteId() === $quoteId) {
             return $quoteId;

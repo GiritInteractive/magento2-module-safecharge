@@ -2,14 +2,16 @@
 
 namespace Safecharge\Safecharge\Model;
 
-use Safecharge\Safecharge\Model\Config as ModuleConfig;
 use Magento\Customer\Model\Session\Proxy as CustomerSession;
+use Magento\Framework\Exception\PaymentException;
 use Magento\Framework\UrlInterface;
 use Magento\Payment\Helper\Data as PaymentHelper;
 use Magento\Payment\Model\CcConfig;
 use Magento\Payment\Model\CcGenericConfigProvider;
 use Magento\Vault\Api\PaymentTokenManagementInterface;
 use Magento\Vault\Model\CreditCardTokenFactory;
+use Safecharge\Safecharge\Model\Config as ModuleConfig;
+use Safecharge\Safecharge\Model\Request\Factory as RequestFactory;
 
 /**
  * Safecharge Safecharge config provider model.
@@ -40,6 +42,11 @@ class ConfigProvider extends CcGenericConfigProvider
     private $urlBuilder;
 
     /**
+     * @var RequestFactory
+     */
+    private $requestFactory;
+
+    /**
      * ConfigProvider constructor.
      *
      * @param CcConfig                        $ccConfig
@@ -48,6 +55,7 @@ class ConfigProvider extends CcGenericConfigProvider
      * @param CustomerSession                 $customerSession
      * @param PaymentTokenManagementInterface $paymentTokenManagement
      * @param UrlInterface                    $urlBuilder
+     * @param RequestFactory                  $requestFactory
      * @param array                           $methodCodes
      */
     public function __construct(
@@ -57,12 +65,14 @@ class ConfigProvider extends CcGenericConfigProvider
         CustomerSession $customerSession,
         PaymentTokenManagementInterface $paymentTokenManagement,
         UrlInterface $urlBuilder,
+        RequestFactory $requestFactory,
         array $methodCodes
     ) {
         $this->moduleConfig = $moduleConfig;
         $this->customerSession = $customerSession;
         $this->paymentTokenManagement = $paymentTokenManagement;
         $this->urlBuilder = $urlBuilder;
+        $this->requestFactory = $requestFactory;
 
         $methodCodes = array_merge_recursive(
             $methodCodes,
@@ -93,6 +103,8 @@ class ConfigProvider extends CcGenericConfigProvider
         $savedCards = $this->getSavedCards();
         $canSaveCard = $customerId ? true : false;
 
+        $apmMethods = $this->getApmMethods();
+
         $config = [
             'payment' => [
                 Payment::METHOD_CODE => [
@@ -101,10 +113,14 @@ class ConfigProvider extends CcGenericConfigProvider
                     'useccv' => $this->moduleConfig->getUseCcv(),
                     'savedCards' => $savedCards,
                     'canSaveCard' => $canSaveCard,
+                    'countryId' => $this->moduleConfig->getQuoteCountryCode(),
+                    'apmMethods' => $apmMethods,
                     'is3dSecureEnabled' => $this->moduleConfig->is3dSecureEnabled(),
                     'authenticateUrl' => $this->urlBuilder->getUrl('safecharge/payment/authenticate'),
                     'externalSolution' => $this->moduleConfig->getPaymentSolution() === Payment::SOLUTION_EXTERNAL,
                     'redirectUrl' => $this->urlBuilder->getUrl('safecharge/payment/redirect'),
+                    'paymentApmUrl' => $this->urlBuilder->getUrl('safecharge/payment/apm'),
+                    'getMerchantPaymentMethodsUrl' => $this->urlBuilder->getUrl('safecharge/payment/GetMerchantPaymentMethods'),
                 ],
             ],
         ];
@@ -156,5 +172,26 @@ class ConfigProvider extends CcGenericConfigProvider
         }
 
         return $savedCards;
+    }
+
+    /**
+     * Return AMP Methods.
+     *
+     * @return array
+     */
+    private function getApmMethods()
+    {
+        if ($this->moduleConfig->getPaymentSolution() === Payment::SOLUTION_EXTERNAL) {
+            return [];
+        }
+        $request = $this->requestFactory->create(AbstractRequest::GET_MERCHANT_PAYMENT_METHODS_METHOD);
+
+        try {
+            $apmMethods = $request->process();
+        } catch (PaymentException $e) {
+            return [];
+        }
+
+        return $apmMethods->getPaymentMethods();
     }
 }

@@ -2,9 +2,6 @@
 
 namespace Safecharge\Safecharge\Model;
 
-use Safecharge\Safecharge\Model\Config as ModuleConfig;
-use Safecharge\Safecharge\Model\Request\Payment\Factory as PaymentRequestFactory;
-use Safecharge\Safecharge\Model\Response\Payment\Dynamic3D as Dynamic3DResponse;
 use Magento\Checkout\Model\Session\Proxy as CheckoutSession;
 use Magento\Customer\Model\Session\Proxy as CustomerSession;
 use Magento\Framework\Api\AttributeValueFactory;
@@ -26,6 +23,9 @@ use Magento\Payment\Model\Method\Logger as PaymentLogger;
 use Magento\Payment\Model\Method\TransparentInterface;
 use Magento\Quote\Api\Data\PaymentInterface;
 use Magento\Vault\Api\PaymentTokenManagementInterface;
+use Safecharge\Safecharge\Model\Config as ModuleConfig;
+use Safecharge\Safecharge\Model\Request\Payment\Factory as PaymentRequestFactory;
+use Safecharge\Safecharge\Model\Response\Payment\Dynamic3D as Dynamic3DResponse;
 
 /**
  * Safecharge Safecharge payment model.
@@ -57,6 +57,7 @@ class Payment extends Cc implements TransparentInterface
     const KEY_CC_SAVE = 'cc_save';
     const KEY_CC_TOKEN = 'cc_token';
     const KEY_CC_TEMP_TOKEN = 'cc_temp_token';
+    const KEY_CHOSEN_APM_METHOD = 'chosen_apm_method';
 
     /**
      * Transaction keys const.
@@ -86,6 +87,8 @@ class Payment extends Cc implements TransparentInterface
      */
     const SOLUTION_INTERNAL = 'internal';
     const SOLUTION_EXTERNAL = 'external';
+
+    const APM_METHOD_CC = 'cc_card';
 
     /**
      * @var string
@@ -168,11 +171,6 @@ class Payment extends Cc implements TransparentInterface
      * @var bool
      */
     protected $_isInitializeNeeded = false;
-
-    /**
-     * @var array
-     */
-    private $supportedCurrencyCodes = ['USD'];
 
     /**
      * @var PaymentRequestFactory
@@ -291,6 +289,10 @@ class Payment extends Cc implements TransparentInterface
             ? $additionalData[self::KEY_CC_TOKEN]
             : null;
 
+        $chosenApmMethod = !empty($additionalData[self::KEY_CHOSEN_APM_METHOD])
+            ? $additionalData[self::KEY_CHOSEN_APM_METHOD]
+            : null;
+
         if ($ccToken !== null) {
             $ccSave = false;
         }
@@ -298,6 +300,7 @@ class Payment extends Cc implements TransparentInterface
         $info = $this->getInfoInstance();
         $info->setAdditionalInformation(self::KEY_CC_SAVE, $ccSave);
         $info->setAdditionalInformation(self::KEY_CC_TOKEN, $ccToken);
+        $info->setAdditionalInformation(self::KEY_CHOSEN_APM_METHOD, $chosenApmMethod);
 
         return $this;
     }
@@ -311,11 +314,12 @@ class Payment extends Cc implements TransparentInterface
     public function validate()
     {
         $paymentSolution = $this->moduleConfig->getPaymentSolution();
-        if ($paymentSolution === self::SOLUTION_EXTERNAL) {
+        $info = $this->getInfoInstance();
+
+        if ($paymentSolution === self::SOLUTION_EXTERNAL || ($info->getAdditionalInformation(self::KEY_CHOSEN_APM_METHOD) !== self::APM_METHOD_CC)) {
             return $this;
         }
 
-        $info = $this->getInfoInstance();
         $tokenHash = $info->getAdditionalInformation(self::KEY_CC_TOKEN);
 
         if ($tokenHash === null) {
@@ -366,10 +370,6 @@ class Payment extends Cc implements TransparentInterface
      */
     public function canUseForCurrency($currencyCode)
     {
-        if (!in_array($currencyCode, $this->supportedCurrencyCodes, true)) {
-            return false;
-        }
-
         return true;
     }
 
@@ -427,9 +427,8 @@ class Payment extends Cc implements TransparentInterface
 
         $authCode = $payment->getAdditionalInformation(self::TRANSACTION_AUTH_CODE_KEY);
 
-        if ($authCode === null && $paymentSolution === self::SOLUTION_EXTERNAL) {
+        if (($authCode === null && $paymentSolution === self::SOLUTION_EXTERNAL) || ($paymentSolution === self::SOLUTION_INTERNAL && $this->moduleConfig->getPaymentAction() === self::ACTION_AUTHORIZE_CAPTURE && ($chosenApmMethod = $payment->getAdditionalInformation(self::KEY_CHOSEN_APM_METHOD)) && $chosenApmMethod !== self::APM_METHOD_CC)) {
             $payment->setIsTransactionPending(true);
-
             return $this;
         }
 

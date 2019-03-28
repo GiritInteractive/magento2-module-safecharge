@@ -2,14 +2,14 @@
 
 namespace Safecharge\Safecharge\Model\Request\Payment;
 
+use Magento\Sales\Api\Data\OrderAddressInterface;
+use Magento\Sales\Model\Order;
+use Magento\Sales\Model\Order\Payment as OrderPayment;
 use Safecharge\Safecharge\Model\AbstractRequest;
 use Safecharge\Safecharge\Model\AbstractResponse;
 use Safecharge\Safecharge\Model\Payment;
 use Safecharge\Safecharge\Model\Request\AbstractPayment;
 use Safecharge\Safecharge\Model\RequestInterface;
-use Magento\Sales\Api\Data\OrderAddressInterface;
-use Magento\Sales\Model\Order;
-use Magento\Sales\Model\Order\Payment as OrderPayment;
 
 /**
  * Safecharge Safecharge card tokenization payment request model.
@@ -91,6 +91,10 @@ class CardTokenization extends AbstractPayment implements RequestInterface
                 'country' => $billing->getCountryId(),
                 'state' => $billing->getRegionCode(),
                 'email' => $billing->getEmail(),
+            ],
+            'merchant_unique_id' => $order->getIncrementId(),
+            'urlDetails' => [
+                'notificationUrl' => $this->config->getCallbackDmnUrl($order->getIncrementId(), $order->getStoreId()),
             ],
         ];
 

@@ -2,6 +2,10 @@
 
 namespace Safecharge\Safecharge\Model\Request\Payment;
 
+use Magento\Framework\Exception\PaymentException;
+use Magento\Sales\Model\Order;
+use Magento\Sales\Model\Order\Payment as OrderPayment;
+use Magento\Vault\Api\PaymentTokenManagementInterface;
 use Safecharge\Safecharge\Lib\Http\Client\Curl;
 use Safecharge\Safecharge\Model\AbstractRequest;
 use Safecharge\Safecharge\Model\AbstractResponse;
@@ -14,10 +18,6 @@ use Safecharge\Safecharge\Model\Request\Payment\Factory as PaymentRequestFactory
 use Safecharge\Safecharge\Model\RequestInterface;
 use Safecharge\Safecharge\Model\Response\Factory as ResponseFactory;
 use Safecharge\Safecharge\Model\Service\CardTokenization as CardTokenizationService;
-use Magento\Framework\Exception\PaymentException;
-use Magento\Sales\Model\Order;
-use Magento\Sales\Model\Order\Payment as OrderPayment;
-use Magento\Vault\Api\PaymentTokenManagementInterface;
 
 /**
  * Safecharge Safecharge 3d secure payment request model.
@@ -129,7 +129,11 @@ class Dynamic3D extends AbstractPayment implements RequestInterface
             [
                 'sessionToken' => $tokenResponse->getToken(),
                 'isDynamic3D' => 1,
-                'amount' => (float)$this->amount,
+                'amount' => (float)$order->getGrandTotal(),
+                'merchant_unique_id' => $order->getIncrementId(),
+                'urlDetails' => [
+                    'notificationUrl' => $this->config->getCallbackDmnUrl($order->getIncrementId(), $order->getStoreId()),
+                ],
             ]
         );
 

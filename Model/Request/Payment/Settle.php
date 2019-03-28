@@ -2,15 +2,14 @@
 
 namespace Safecharge\Safecharge\Model\Request\Payment;
 
+use Magento\Framework\Exception\PaymentException;
+use Magento\Sales\Model\Order;
+use Magento\Sales\Model\Order\Payment as OrderPayment;
 use Safecharge\Safecharge\Model\AbstractRequest;
 use Safecharge\Safecharge\Model\AbstractResponse;
 use Safecharge\Safecharge\Model\Payment;
 use Safecharge\Safecharge\Model\Request\AbstractPayment;
 use Safecharge\Safecharge\Model\RequestInterface;
-use Magento\Framework\Exception\PaymentException;
-use Magento\Sales\Model\Order;
-use Magento\Sales\Model\Order\Payment as OrderPayment;
-use Magento\Sales\Model\Order\Payment\Transaction;
 
 /**
  * Safecharge Safecharge settle payment request model.
@@ -86,7 +85,9 @@ class Settle extends AbstractPayment implements RequestInterface
             'descriptorMerchantName' => 'Merchant Name',
             'descriptorMerchantPhone' => '12345789',
             'comment' => 'No Comment',
+            'merchant_unique_id' => $order->getIncrementId(),
             'urlDetails' => [
+                //'notificationUrl' => $this->config->getCallbackDmnUrl($order->getIncrementId(), $order->getStoreId()),
                 'notificationUrl' => '',
             ],
         ];

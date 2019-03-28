@@ -2,11 +2,11 @@
 
 namespace Safecharge\Safecharge\Model\Request\Payment;
 
-use Safecharge\Safecharge\Model\AbstractRequest;
-use Safecharge\Safecharge\Model\RequestInterface;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\ObjectManagerInterface;
 use Magento\Sales\Model\Order\Payment as OrderPayment;
+use Safecharge\Safecharge\Model\AbstractRequest;
+use Safecharge\Safecharge\Model\RequestInterface;
 
 /**
  * Safecharge Safecharge payment request factory model.

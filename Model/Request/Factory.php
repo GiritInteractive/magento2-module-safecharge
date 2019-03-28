@@ -2,10 +2,10 @@
 
 namespace Safecharge\Safecharge\Model\Request;
 
-use Safecharge\Safecharge\Model\AbstractRequest;
-use Safecharge\Safecharge\Model\RequestInterface;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\ObjectManagerInterface;
+use Safecharge\Safecharge\Model\AbstractRequest;
+use Safecharge\Safecharge\Model\RequestInterface;
 
 /**
  * Safecharge Safecharge request factory model.
@@ -25,6 +25,8 @@ class Factory
         AbstractRequest::CREATE_USER_METHOD => \Safecharge\Safecharge\Model\Request\CreateUser::class,
         AbstractRequest::GET_USER_DETAILS_METHOD => \Safecharge\Safecharge\Model\Request\GetUserDetails::class,
         AbstractRequest::OPEN_ORDER_METHOD => \Safecharge\Safecharge\Model\Request\OpenOrder::class,
+        AbstractRequest::PAYMENT_APM_METHOD => \Safecharge\Safecharge\Model\Request\PaymentApm::class,
+        AbstractRequest::GET_MERCHANT_PAYMENT_METHODS_METHOD => \Safecharge\Safecharge\Model\Request\GetMerchantPaymentMethods::class
     ];
 
     /**

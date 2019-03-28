@@ -1,13 +1,13 @@
 <?php
 
-namespace Safecharge\Safecharge\Controller\Payment\Redirect;
+namespace Safecharge\Safecharge\Controller\Payment\Callback;
 
-use Safecharge\Safecharge\Model\Config as ModuleConfig;
-use Safecharge\Safecharge\Model\Logger as SafechargeLogger;
 use Magento\Framework\App\Action\Action;
 use Magento\Framework\App\Action\Context;
 use Magento\Framework\Controller\ResultFactory;
 use Magento\Framework\Controller\ResultInterface;
+use Safecharge\Safecharge\Model\Config as ModuleConfig;
+use Safecharge\Safecharge\Model\Logger as SafechargeLogger;
 
 /**
  * Safecharge Safecharge payment place controller.
@@ -52,10 +52,12 @@ class Error extends Action
      */
     public function execute()
     {
+        $params = $this->getRequest()->getParams();
+
         if ($this->moduleConfig->isDebugEnabled() === true) {
             $this->safechargeLogger->debug(
-                'Redirect Error Response: '
-                . var_export($this->getRequest()->getParams(), true)
+                'Error Callback Response: '
+                . var_export($params, true)
             );
         }
 

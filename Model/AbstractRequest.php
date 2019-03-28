@@ -2,12 +2,13 @@
 
 namespace Safecharge\Safecharge\Model;
 
+use Magento\Framework\Exception\PaymentException;
+use Magento\Quote\Model\Quote;
+use Magento\Sales\Api\Data\OrderAddressInterface;
+use Magento\Sales\Model\Order;
 use Safecharge\Safecharge\Lib\Http\Client\Curl;
 use Safecharge\Safecharge\Model\Logger as SafechargeLogger;
 use Safecharge\Safecharge\Model\Response\Factory as ResponseFactory;
-use Magento\Framework\Exception\PaymentException;
-use Magento\Sales\Api\Data\OrderAddressInterface;
-use Magento\Sales\Model\Order;
 
 /**
  * Safecharge Safecharge abstract request model.
@@ -38,6 +39,8 @@ abstract class AbstractRequest extends AbstractApi
     const PAYMENT_REFUND_METHOD = 'refundTransaction';
     const PAYMENT_VOID_METHOD = 'voidTransaction';
     const OPEN_ORDER_METHOD = 'openOrder';
+    const PAYMENT_APM_METHOD = 'paymentAPM';
+    const GET_MERCHANT_PAYMENT_METHODS_METHOD = 'getMerchantPaymentMethods';
 
     /**
      * @var Curl
@@ -169,6 +172,10 @@ abstract class AbstractRequest extends AbstractApi
             'merchantSiteId' => $this->config->getMerchantSiteId(),
             'clientRequestId' => (string)$this->getRequestId(),
             'timeStamp' => date('YmdHis'),
+            'merchantDetails' => [
+                'customField1' => $this->config->getSourcePlatformField(),
+            ],
+            'encoding' => 'UTF-8',
         ];
 
         return $params;
@@ -308,6 +315,7 @@ abstract class AbstractRequest extends AbstractApi
                 'deviceType' => 'DESKTOP',
                 'ipAddress' => $order->getRemoteIp(),
             ],
+            'ipAddress' => $order->getRemoteIp(),
         ];
 
         if ($billing !== null) {
@@ -325,6 +333,7 @@ abstract class AbstractRequest extends AbstractApi
                 'state' => $billing->getRegionCode(),
                 'email' => $billing->getEmail(),
             ];
+            $orderData = array_merge($orderData, $orderData['billingAddress']);
         }
 
         // Add items details.
@@ -343,5 +352,77 @@ abstract class AbstractRequest extends AbstractApi
         }
 
         return $orderData;
+    }
+
+    /**
+     * @param Quote $quote
+     *
+     * @return array
+     */
+    protected function getQuoteData(Quote $quote)
+    {
+        /** @var OrderAddressInterface $billing */
+        $billing = $quote->getBillingAddress();
+
+        $shipping = 0;
+        $totalTax = 0;
+        $shippingAddress = $quote->getShippingAddress();
+        if ($shippingAddress !== null) {
+            $shipping = $shippingAddress->getBaseShippingAmount();
+            $totalTax = $shippingAddress->getBaseTaxAmount();
+        }
+
+        $quoteData = [
+            'userTokenId' => $quote->getCustomerId() ?: $quote->getCustomerEmail(),
+            'clientUniqueId' => $quote->getReservedOrderId() ?: $this->config->getReservedOrderId(),
+            'currency' => $quote->getBaseCurrencyCode(),
+            'amountDetails' => [
+                'totalShipping' => (float)$shipping,
+                'totalHandling' => (float)0,
+                'totalDiscount' => (float)abs($quote->getBaseSubtotal() - $quote->getBaseSubtotalWithDiscount()),
+                'totalTax' => (float)$totalTax,
+            ],
+            'items' => [],
+            'deviceDetails' => [
+                'deviceType' => 'DESKTOP',
+                'ipAddress' => $quote->getRemoteIp(),
+            ],
+            'ipAddress' => $quote->getRemoteIp(),
+        ];
+
+        if ($billing !== null) {
+            $quoteData['billingAddress'] = [
+                'firstName' => $billing->getFirstname(),
+                'lastName' => $billing->getLastname(),
+                'address' => is_array($billing->getStreet())
+                    ? implode(' ', $billing->getStreet())
+                    : '',
+                'cell' => '',
+                'phone' => $billing->getTelephone(),
+                'zip' => $billing->getPostcode(),
+                'city' => $billing->getCity(),
+                'country' => $billing->getCountryId(),
+                'state' => $billing->getRegionCode(),
+                'email' => $billing->getEmail(),
+            ];
+            $quoteData = array_merge($quoteData, $quoteData['billingAddress']);
+        }
+
+        // Add items details.
+        $quoteItems = $quote->getAllVisibleItems();
+        foreach ($quoteItems as $quoteItem) {
+            $price = (float)$quoteItem->getBasePrice();
+            if (!$price) {
+                continue;
+            }
+
+            $quoteData['items'][] = [
+                'name' => $quoteItem->getName(),
+                'price' => $price,
+                'quantity' => (int)$quoteItem->getQty(),
+            ];
+        }
+
+        return $quoteData;
     }
 }
