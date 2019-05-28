@@ -151,23 +151,29 @@ class Success extends Action
             /** @var OrderPayment $payment */
             $orderPayment = $order->getPayment();
 
-            if (!in_array(strtolower($params['Status']), ['approved', 'success'])) {
+            if (isset($params['Status']) && !in_array(strtolower($params['Status']), ['approved', 'success'])) {
                 throw new PaymentException(__('Your payment failed.'));
             }
 
-            $transactionId = $params['TransactionID'];
-            $orderPayment->setAdditionalInformation(
-                Payment::TRANSACTION_ID,
-                $transactionId
-            );
-            $orderPayment->setAdditionalInformation(
-                Payment::TRANSACTION_AUTH_CODE_KEY,
-                $params['AuthCode']
-            );
-            $orderPayment->setAdditionalInformation(
-                Payment::TRANSACTION_EXTERNAL_PAYMENT_METHOD,
-                $params['payment_method']
-            );
+            if (isset($params['TransactionID'])) {
+                $transactionId = $params['TransactionID'];
+                $orderPayment->setAdditionalInformation(
+                    Payment::TRANSACTION_ID,
+                    $transactionId
+                );
+            }
+            if (isset($params['TransactionID'])) {
+                $orderPayment->setAdditionalInformation(
+                    Payment::TRANSACTION_AUTH_CODE_KEY,
+                    $params['AuthCode']
+                );
+            }
+            if (isset($params['payment_method'])) {
+                $orderPayment->setAdditionalInformation(
+                    Payment::TRANSACTION_EXTERNAL_PAYMENT_METHOD,
+                    $params['payment_method']
+                );
+            }
             $orderPayment->setTransactionAdditionalInfo(
                 Transaction::RAW_DETAILS,
                 $params
