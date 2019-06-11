@@ -162,7 +162,7 @@ class Success extends Action
                     $transactionId
                 );
             }
-            if (isset($params['TransactionID'])) {
+            if (isset($params['AuthCode'])) {
                 $orderPayment->setAdditionalInformation(
                     Payment::TRANSACTION_AUTH_CODE_KEY,
                     $params['AuthCode']
