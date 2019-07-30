@@ -150,9 +150,11 @@ class Success extends Action
 
             /** @var OrderPayment $payment */
             $orderPayment = $order->getPayment();
-
-            if (isset($params['Status']) && !in_array(strtolower($params['Status']), ['approved', 'success'])) {
+            
+            if(isset($params['Status'])){
+             if (!in_array(strtolower($params['Status']), ['approved', 'success'])) {
                 throw new PaymentException(__('Your payment failed.'));
+             }
             }
 
             if (isset($params['TransactionID'])) {
