@@ -1,7 +1,5 @@
 <?php
-
 namespace Safecharge\Safecharge\Controller\Payment\Callback;
-
 use Magento\Checkout\Model\Session\Proxy as CheckoutSession;
 use Magento\Checkout\Model\Type\Onepage;
 use Magento\Framework\App\Action\Action;
@@ -22,7 +20,6 @@ use Safecharge\Safecharge\Model\Config as ModuleConfig;
 use Safecharge\Safecharge\Model\Logger as SafechargeLogger;
 use Safecharge\Safecharge\Model\Payment;
 use Safecharge\Safecharge\Model\Request\Payment\Factory as PaymentRequestFactory;
-
 /**
  * Safecharge Safecharge redirect success controller.
  *
@@ -35,52 +32,42 @@ class Success extends Action
      * @var OrderFactory
      */
     private $orderFactory;
-
     /**
      * @var ModuleConfig
      */
     private $moduleConfig;
-
     /**
      * @var AuthorizeCommand
      */
     private $authorizeCommand;
-
     /**
      * @var CaptureCommand
      */
     private $captureCommand;
-
     /**
      * @var SafechargeLogger
      */
     private $safechargeLogger;
-
     /**
      * @var PaymentRequestFactory
      */
     private $paymentRequestFactory;
-
     /**
      * @var DataObjectFactory
      */
     private $dataObjectFactory;
-
     /**
      * @var CartManagementInterface
      */
     private $cartManagement;
-
     /**
      * @var CheckoutSession
      */
     private $checkoutSession;
-
     /**
      * @var Onepage
      */
     private $onepageCheckout;
-
     /**
      * Object constructor.
      *
@@ -110,7 +97,6 @@ class Success extends Action
         Onepage $onepageCheckout
     ) {
         parent::__construct($context);
-
         $this->orderFactory = $orderFactory;
         $this->moduleConfig = $moduleConfig;
         $this->authorizeCommand = $authorizeCommand;
@@ -122,7 +108,6 @@ class Success extends Action
         $this->checkoutSession = $checkoutSession;
         $this->onepageCheckout = $onepageCheckout;
     }
-
     /**
      * @return ResultInterface
      * @throws \InvalidArgumentException
@@ -131,32 +116,24 @@ class Success extends Action
     public function execute()
     {
         $params = $this->getRequest()->getParams();
-
         if ($this->moduleConfig->isDebugEnabled() === true) {
             $this->safechargeLogger->debug(
                 'Success Callback Response: '
                 . json_encode($params)
             );
         }
-
         try {
             $result = $this->placeOrder();
             if ($result->getSuccess() !== true) {
                 throw new PaymentException(__($result->getErrorMessage()));
             }
-
             /** @var Order $order */
             $order = $this->orderFactory->create()->load($result->getOrderId());
-
             /** @var OrderPayment $payment */
             $orderPayment = $order->getPayment();
-            
-            if(isset($params['Status'])){
-             if (!in_array(strtolower($params['Status']), ['approved', 'success'])) {
+            if (isset($params['Status']) && !in_array(strtolower($params['Status']), ['approved', 'success'])) {
                 throw new PaymentException(__('Your payment failed.'));
-             }
             }
-
             if (isset($params['TransactionID'])) {
                 $transactionId = $params['TransactionID'];
                 $orderPayment->setAdditionalInformation(
@@ -180,7 +157,6 @@ class Success extends Action
                 Transaction::RAW_DETAILS,
                 $params
             );
-
             $orderPayment->save();
             $order->save();
         } catch (PaymentException $e) {
@@ -192,13 +168,10 @@ class Success extends Action
             }
             $this->messageManager->addErrorMessage($e->getMessage());
         }
-
         $resultRedirect = $this->resultFactory->create(ResultFactory::TYPE_REDIRECT);
         $resultRedirect->setUrl($this->_url->getUrl('checkout/onepage/success/'));
-
         return $resultRedirect;
     }
-
     /**
      * Place order.
      *
@@ -207,20 +180,16 @@ class Success extends Action
     private function placeOrder()
     {
         $result = $this->dataObjectFactory->create();
-
         try {
             /**
              * Current workaround depends on Onepage checkout model defect
              * Method Onepage::getCheckoutMethod performs setCheckoutMethod
              */
             $this->onepageCheckout->getCheckoutMethod();
-
             $orderId = $this->cartManagement->placeOrder($this->getQuoteId());
-
             $result
                 ->setData('success', true)
                 ->setData('order_id', $orderId);
-
             $this->_eventManager->dispatch(
                 'safecharge_place_order',
                 [
@@ -236,10 +205,8 @@ class Success extends Action
                     __('An error occurred on the server. Please try to place the order again.')
                 );
         }
-
         return $result;
     }
-
     /**
      * @return int
      * @throws PaymentException
@@ -247,11 +214,9 @@ class Success extends Action
     private function getQuoteId()
     {
         $quoteId = (int)$this->getRequest()->getParam('quote');
-
         if ((int)$this->checkoutSession->getQuoteId() === $quoteId) {
             return $quoteId;
         }
-
         throw new PaymentException(
             __('Session has expired, order has been not placed.')
         );
