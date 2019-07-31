@@ -71,6 +71,7 @@ class Success extends Action
      * @var Onepage
      */
     private $onepageCheckout;
+
     /**
      * Object constructor.
      *
