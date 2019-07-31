@@ -2,8 +2,8 @@
 
 namespace Safecharge\Safecharge\Model\Adminhtml\Source;
 
-use Safecharge\Safecharge\Model\Payment;
 use Magento\Framework\Option\ArrayInterface;
+use Safecharge\Safecharge\Model\Payment;
 
 /**
  * Safecharge Safecharge payment solution source model.
@@ -23,11 +23,11 @@ class PaymentSolution implements ArrayInterface
         return [
             [
                 'value' => Payment::SOLUTION_INTERNAL,
-                'label' => __('Built In Form'),
+                'label' => __('SafeCharge API'),
             ],
             [
                 'value' => Payment::SOLUTION_EXTERNAL,
-                'label' => __('Redirect'),
+                'label' => __('Hosted payment page'),
             ],
         ];
     }
